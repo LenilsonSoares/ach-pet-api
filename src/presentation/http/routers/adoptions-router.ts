@@ -12,6 +12,13 @@ import { rejectRequest } from "../../../application/use-cases/adoptions/rejectRe
 import { interveneAdoption } from "../../../application/use-cases/adoptions/interveneAdoption.js";
 import { asyncHandler } from "../async-handler.js";
 
+/**
+ * Rotas do fluxo de adoção.
+ *
+ * - ADOPTER cria solicitações e lista as próprias
+ * - SHELTER lista inbox e aprova/rejeita
+ * - SHELTER pode marcar intervenção em uma adoção ativa
+ */
 export function createAdoptionsRouter(deps: {
   adoptionsRepo: AdoptionsRepository;
   auth: {

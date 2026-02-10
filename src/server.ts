@@ -1,3 +1,9 @@
+/**
+ * Entry point do servidor HTTP.
+ *
+ * Importa variáveis de ambiente antes de inicializar o app, garantindo que
+ * `env` seja validado com `process.env` já carregado.
+ */
 import "dotenv/config";
 import { env } from "./infra/env.js";
 import { app } from "./app.js";

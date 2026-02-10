@@ -1,3 +1,10 @@
+/**
+ * Especificação OpenAPI 3.0 usada por:
+ * - `GET /openapi.json`
+ * - Swagger UI em `GET /docs`
+ *
+ * Mantida como objeto estático para ser simples de revisar/entregar no contexto acadêmico.
+ */
 export const openapiSpec = {
   openapi: "3.0.3",
   info: {

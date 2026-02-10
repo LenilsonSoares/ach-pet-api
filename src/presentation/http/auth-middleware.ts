@@ -2,10 +2,21 @@ import type { NextFunction, Request, Response } from "express";
 import { AppError } from "../../domain/errors/AppError.js";
 import type { TokenService } from "../../application/ports/TokenService.js";
 
+/**
+ * Request com usuário autenticado anexado após validação do JWT.
+ *
+ * Observação: `user` só existe depois de passar por `requireAuth`.
+ */
 export type AuthenticatedRequest = Request & {
   user?: { id: string; role: "ADOPTER" | "SHELTER" };
 };
 
+/**
+ * Constrói middlewares de autenticação/autorização a partir do TokenService.
+ *
+ * Mantém o acoplamento com JWT isolado em infra (TokenService) e deixa o HTTP
+ * com regras simples: autenticar e checar perfil.
+ */
 export function buildAuthMiddlewares(tokenService: TokenService) {
   function requireAuth(req: AuthenticatedRequest, _res: Response, next: NextFunction) {
     const auth = req.header("authorization");

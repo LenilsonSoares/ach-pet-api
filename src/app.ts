@@ -28,6 +28,16 @@ import { createFollowupRouter } from "./presentation/http/routers/followup-route
 import swaggerUi from "swagger-ui-express";
 import { openapiSpec } from "./presentation/http/openapi.js";
 
+/**
+ * App Express (camada de Presentation / HTTP).
+ *
+ * Responsabilidades:
+ * - configurar middlewares globais (segurança, rate limit, JSON)
+ * - expor uploads locais em `/uploads` (MVP)
+ * - publicar OpenAPI/Swagger
+ * - compor dependências (infra) e conectar nas rotas (routers)
+ */
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -46,7 +56,7 @@ app.use(
   }),
 );
 
-// Uploads local (MVP)
+// Upload local (MVP): salva arquivos em disco e publica via `/uploads/*`.
 const uploadsDir = path.resolve(__dirname, "..", env.UPLOADS_DIR);
 fs.mkdirSync(uploadsDir, { recursive: true });
 const upload = multer({
@@ -79,7 +89,7 @@ app.get("/health", (_req, res) => res.json({ ok: true }));
 app.get("/openapi.json", (_req, res) => res.json(openapiSpec));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
-// Composition Root (Clean Architecture): infra implementations
+// Composition Root (Clean Architecture): instancia as implementações de infra.
 const authRepo = new PrismaAuthRepository();
 const petsRepo = new PrismaPetsRepository();
 const adoptionsRepo = new PrismaAdoptionsRepository();
@@ -91,7 +101,7 @@ const tokenService = new JwtTokenService();
 
 const auth = buildAuthMiddlewares(tokenService);
 
-// Presentation routers
+// Routers HTTP: adaptam request/response e chamam os use cases.
 app.use("/auth", createAuthRouter({ authRepo, passwordHasher, tokenService }));
 app.use("/pets", createPetsRouter({ petsRepo, upload, auth }));
 app.use("/adoptions", createAdoptionsRouter({ adoptionsRepo, auth }));

@@ -8,6 +8,11 @@ import { listUpdates } from "../../../application/use-cases/followup/listUpdates
 import { createUpdate } from "../../../application/use-cases/followup/createUpdate.js";
 import { asyncHandler } from "../async-handler.js";
 
+/**
+ * Validação simples para aceitar:
+ * - arquivos locais servidos pela API (`/uploads/...`)
+ * - URLs absolutas (quando o front armazenar a imagem externamente)
+ */
 function isValidUrlOrUploads(value: string) {
   if (value.startsWith("/uploads/")) return true;
   try {
@@ -18,6 +23,11 @@ function isValidUrlOrUploads(value: string) {
   }
 }
 
+/**
+ * Rotas de acompanhamento pós-adoção (follow-up).
+ *
+ * O access control (somente participantes) é aplicado nos use cases.
+ */
 export function createFollowupRouter(deps: {
   followupRepo: FollowupRepository;
   auth: { requireAuth: (req: AuthenticatedRequest, res: any, next: any) => void };

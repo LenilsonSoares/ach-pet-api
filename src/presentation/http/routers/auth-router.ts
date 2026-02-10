@@ -8,6 +8,11 @@ import type { PasswordHasher } from "../../../application/ports/PasswordHasher.j
 import type { TokenService } from "../../../application/ports/TokenService.js";
 import { asyncHandler } from "../async-handler.js";
 
+/**
+ * Rotas de autenticação.
+ *
+ * Responsabilidade: validar payload HTTP (Zod) e delegar para os use cases.
+ */
 export function createAuthRouter(deps: {
   authRepo: AuthRepository;
   passwordHasher: PasswordHasher;

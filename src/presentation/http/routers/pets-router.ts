@@ -16,6 +16,13 @@ import { favoritePet } from "../../../application/use-cases/pets/favoritePet.js"
 import { unfavoritePet } from "../../../application/use-cases/pets/unfavoritePet.js";
 import { asyncHandler } from "../async-handler.js";
 
+/**
+ * Rotas de pets.
+ *
+ * Inclui endpoints públicos (listagem/detalhe) e endpoints protegidos para:
+ * - SHELTER: criar/editar pet e enviar fotos
+ * - ADOPTER: favoritar/desfavoritar
+ */
 export function createPetsRouter(deps: {
   petsRepo: PetsRepository;
   upload: multer.Multer;

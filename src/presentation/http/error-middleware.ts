@@ -2,6 +2,12 @@ import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { AppError } from "../../domain/errors/AppError.js";
 
+/**
+ * Middleware central de erros.
+ *
+ * Padroniza o formato de resposta de erro e traduz exceções comuns (Zod, Multer,
+ * erros do domínio e indisponibilidade do Prisma) para códigos HTTP apropriados.
+ */
 export function errorMiddleware(err: unknown, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof ZodError) {
     return res.status(400).json({

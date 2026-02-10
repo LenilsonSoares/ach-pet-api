@@ -8,6 +8,12 @@ import { listMessages } from "../../../application/use-cases/chat/listMessages.j
 import { sendMessage } from "../../../application/use-cases/chat/sendMessage.js";
 import { asyncHandler } from "../async-handler.js";
 
+/**
+ * Rotas de chat.
+ *
+ * Mensagens são organizadas por thread. O acesso é protegido e a autorização
+ * de participantes é feita no use case.
+ */
 export function createChatRouter(deps: {
   chatRepo: ChatRepository;
   auth: { requireAuth: (req: AuthenticatedRequest, res: any, next: any) => void };
