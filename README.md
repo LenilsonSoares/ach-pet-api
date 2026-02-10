@@ -58,6 +58,12 @@ npm run dev
 
 A API sobe em `http://localhost:3000`.
 
+Documentação (Swagger UI): `http://localhost:3000/docs`
+
+OpenAPI JSON: `http://localhost:3000/openapi.json`
+
+Demo na faculdade (APK): veja [docs/faculdade-apk-tunel.md](docs/faculdade-apk-tunel.md)
+
 ## Mobile (React Native + Expo) — para o Alex
 
 Veja o guia de implementação do app em [docs/mobile-expo-handoff.md](docs/mobile-expo-handoff.md).
@@ -94,7 +100,7 @@ Importe ambos no Postman e selecione o environment **Ach Pet - Local**. A coleç
 
 ### Pets
 
-- `GET /pets` (público, com filtros: `status`, `species`, `q`)
+- `GET /pets` (público, com filtros: `status`, `species`, `q` + paginação: `page`, `pageSize` + ordenação: `order=asc|desc`)
 - `GET /pets/:id` (público)
 - `POST /pets` (SHELTER)
 - `GET /pets/mine` (SHELTER)

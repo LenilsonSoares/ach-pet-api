@@ -214,6 +214,33 @@
           ]
         },
         {
+          "name": "PATCH /pets/:id (SHELTER) - AVAILABLE",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenShelter}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"AVAILABLE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/pets/{{petId}}", "host": ["{{baseUrl}}"], "path": ["pets", "{{petId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('status 200', () => pm.response.code === 200);",
+                  "const json = pm.response.json();",
+                  "pm.test('status atualizado', () => json.pet?.status === 'AVAILABLE');"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "POST /pets/:id/favorite (ADOPTER)",
           "request": {
             "method": "POST",

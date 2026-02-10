@@ -39,8 +39,22 @@ export type UpdatePetInput = {
   status?: PetStatus;
 };
 
+export type ListPetsInput = {
+  status?: PetStatus;
+  species?: string;
+  q?: string;
+  page: number;
+  pageSize: number;
+  order: "asc" | "desc";
+};
+
+export type PaginatedPets = {
+  items: PetListItem[];
+  total: number;
+};
+
 export type PetsRepository = {
-  list(filters: { status?: PetStatus; species?: string; q?: string }): Promise<PetListItem[]>;
+  list(input: ListPetsInput): Promise<PaginatedPets>;
   listMine(shelterId: string): Promise<PetListItem[]>;
   getById(id: string): Promise<PetDetails | null>;
   create(shelterId: string, input: CreatePetInput): Promise<PetDetails>;

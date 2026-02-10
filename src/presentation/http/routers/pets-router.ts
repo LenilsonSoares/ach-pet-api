@@ -4,6 +4,7 @@ import type multer from "multer";
 
 import type { PetsRepository } from "../../../application/ports/PetsRepository.js";
 import type { AuthenticatedRequest } from "../auth-middleware.js";
+import { AppError } from "../../../domain/errors/AppError.js";
 
 import { listPets } from "../../../application/use-cases/pets/listPets.js";
 import { listMyPets } from "../../../application/use-cases/pets/listMyPets.js";
@@ -29,6 +30,9 @@ export function createPetsRouter(deps: {
     status: z.enum(["AVAILABLE", "ADOPTED", "PAUSED"]).optional(),
     species: z.string().optional(),
     q: z.string().optional(),
+    page: z.coerce.number().int().positive().optional(),
+    pageSize: z.coerce.number().int().positive().max(100).optional(),
+    order: z.enum(["asc", "desc"]).optional(),
   });
 
   router.get(
@@ -36,7 +40,14 @@ export function createPetsRouter(deps: {
     asyncHandler(async (req, res) => {
     const query = listQuerySchema.parse(req.query);
     const handler = listPets({ petsRepo: deps.petsRepo });
-    const result = await handler(query);
+    const result = await handler({
+      status: query.status,
+      species: query.species,
+      q: query.q,
+      page: query.page,
+      pageSize: query.pageSize,
+      order: query.order,
+    });
     return res.json(result);
     }),
   );
@@ -116,7 +127,7 @@ export function createPetsRouter(deps: {
     deps.auth.requireRole("SHELTER"),
     deps.upload.single("photo"),
     asyncHandler(async (req: AuthenticatedRequest, res) => {
-      if (!req.file) return res.status(400).json({ error: "Arquivo ausente" });
+      if (!req.file) throw new AppError(400, "Arquivo ausente", "UPLOAD_MISSING_FILE");
       const url = `/uploads/${req.file.filename}`;
 
       const handler = addPetPhoto({ petsRepo: deps.petsRepo });

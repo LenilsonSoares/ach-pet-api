@@ -25,6 +25,8 @@ import { createPetsRouter } from "./presentation/http/routers/pets-router.js";
 import { createAdoptionsRouter } from "./presentation/http/routers/adoptions-router.js";
 import { createChatRouter } from "./presentation/http/routers/chat-router.js";
 import { createFollowupRouter } from "./presentation/http/routers/followup-router.js";
+import swaggerUi from "swagger-ui-express";
+import { openapiSpec } from "./presentation/http/openapi.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,7 +64,20 @@ const upload = multer({
 
 app.use("/uploads", express.static(uploadsDir));
 
+app.get("/", (_req, res) =>
+  res.json({
+    ok: true,
+    name: "Ach Pet API",
+    health: "/health",
+    docs: "/docs",
+    openapi: "/openapi.json",
+  }),
+);
+
 app.get("/health", (_req, res) => res.json({ ok: true }));
+
+app.get("/openapi.json", (_req, res) => res.json(openapiSpec));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
 // Composition Root (Clean Architecture): infra implementations
 const authRepo = new PrismaAuthRepository();

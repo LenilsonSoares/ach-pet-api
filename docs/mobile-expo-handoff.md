@@ -57,6 +57,64 @@ Crie um arquivo (exemplo):
 
 ## 3) Contratos de API (o que chamar em cada tela)
 
+## 3.1) Configuração completa do `API_BASE_URL` (local / faculdade / produção)
+
+O app precisa de um `API_BASE_URL` (string) para montar as URLs:
+
+- Ex.: `https://xxxx.trycloudflare.com`
+
+### Regra prática
+
+- **Expo (dev):** dá para trocar o `API_BASE_URL` e reiniciar o app.
+- **APK (build):** o `API_BASE_URL` normalmente fica “gravado” no build se estiver hardcoded.
+
+Como o **Quick Tunnel** muda a URL sempre que você fecha/abre o túnel, o ideal é deixar o `API_BASE_URL` **configurável por ambiente**.
+
+### Sugestão simples (Expo): variável `EXPO_PUBLIC_API_BASE_URL`
+
+No front, ao invés de fixar o valor, leia de env e tenha fallback.
+
+Exemplo (em `src/config.ts` no app):
+
+```ts
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://10.0.2.2:3000";
+```
+
+#### Para rodar local (dev)
+
+- Android emulator: `EXPO_PUBLIC_API_BASE_URL=http://10.0.2.2:3000`
+- iOS simulator: `EXPO_PUBLIC_API_BASE_URL=http://localhost:3000`
+
+#### Para rodar na faculdade (APK/celular) usando túnel HTTPS
+
+1) Suba a API no notebook: `npm run dev`
+2) Crie o túnel no notebook: `cloudflared tunnel --url http://localhost:3000`
+3) Copie a URL gerada (ex.: `https://xxxx.trycloudflare.com`)
+4) No front, configure o `EXPO_PUBLIC_API_BASE_URL` para essa URL
+
+Teste no celular:
+
+- Acessar `https://xxxx.trycloudflare.com/health` deve retornar `{ "ok": true }`
+
+### Imagens no mobile
+
+As imagens salvas no backend ficam com URL relativa, por exemplo:
+
+- `photoUrl: "/uploads/arquivo.jpg"`
+
+No app, para exibir a imagem, monte a URL completa:
+
+- `${API_BASE_URL}${photoUrl}`
+
+### Observação importante (APK)
+
+Se você gerar um APK com `API_BASE_URL` hardcoded, e depois o túnel mudar de URL, você vai precisar **rebuildar o APK**.
+
+Por isso, para apresentação na faculdade, prefira:
+
+- ler de `EXPO_PUBLIC_API_BASE_URL` (config por ambiente), ou
+- usar backend publicado com URL fixa `https://...`.
+
 ### Auth
 
 #### Cadastro (POST /auth/register)
@@ -110,11 +168,17 @@ Crie um arquivo (exemplo):
 
 #### Listagem (GET /pets)
 
-- Query (opcional): `status`, `species`, `q`
+- Query (opcional): `status`, `species`, `q`, `page`, `pageSize`, `order` (`asc`|`desc`)
 - Response:
 
 ```json
 { "pets": [ { "id": "...", "name": "...", "status": "AVAILABLE", "photos": [ {"url": "/uploads/..."} ] } ] }
+```
+
+> Observação (erros): quando der erro, o backend retorna no padrão:
+
+```json
+{ "error": { "message": "...", "code": "...", "issues": [] } }
 ```
 
 #### Detalhe (GET /pets/:id)

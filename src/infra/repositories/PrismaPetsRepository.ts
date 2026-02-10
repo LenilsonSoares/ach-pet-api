@@ -1,30 +1,46 @@
 import type {
   CreatePetInput,
+  ListPetsInput,
+  PaginatedPets,
   PetDetails,
   PetListItem,
   PetsRepository,
   PetStatus,
   UpdatePetInput,
 } from "../../application/ports/PetsRepository.js";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 
 export class PrismaPetsRepository implements PetsRepository {
-  async list(filters: { status?: PetStatus; species?: string; q?: string }): Promise<PetListItem[]> {
-    return prisma.pet.findMany({
-      where: {
-        status: filters.status,
-        species: filters.species,
-        OR: filters.q
-          ? [
-              { name: { contains: filters.q, mode: "insensitive" } },
-              { breed: { contains: filters.q, mode: "insensitive" } },
-            ]
-          : undefined,
-      },
-      include: { photos: true, shelter: { select: { id: true, name: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
+  async list(input: ListPetsInput): Promise<PaginatedPets> {
+    const page = Math.max(1, input.page);
+    const pageSize = Math.min(Math.max(1, input.pageSize), 100);
+    const skip = (page - 1) * pageSize;
+
+    const where: Prisma.PetWhereInput = {
+      status: input.status as PetStatus | undefined,
+      species: input.species,
+      OR: input.q
+        ? [
+            { name: { contains: input.q, mode: Prisma.QueryMode.insensitive } },
+            { breed: { contains: input.q, mode: Prisma.QueryMode.insensitive } },
+            { description: { contains: input.q, mode: Prisma.QueryMode.insensitive } },
+          ]
+        : undefined,
+    };
+
+    const [items, total] = await prisma.$transaction([
+      prisma.pet.findMany({
+        where,
+        include: { photos: true, shelter: { select: { id: true, name: true } } },
+        orderBy: { createdAt: input.order },
+        skip,
+        take: pageSize,
+      }),
+      prisma.pet.count({ where }),
+    ]);
+
+    return { items, total };
   }
 
   async listMine(shelterId: string): Promise<PetListItem[]> {
