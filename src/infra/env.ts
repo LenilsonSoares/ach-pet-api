@@ -1,3 +1,4 @@
+import path from "node:path";
 import { z } from "zod";
 
 const envSchema = z.object({
@@ -6,7 +7,18 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(10),
   JWT_EXPIRES_IN: z.string().default("7d"),
-  UPLOADS_DIR: z.string().default("uploads"),
+  UPLOADS_DIR: z
+    .string()
+    .min(1)
+    .default("uploads")
+    .refine(
+      (value) => {
+        if (path.isAbsolute(value)) return false;
+        const segments = value.split(/[\\/]+/).filter(Boolean);
+        return !segments.includes("..");
+      },
+      { message: "UPLOADS_DIR deve ser um caminho relativo sem '..'" },
+    ),
 });
 
 export const env = envSchema.parse(process.env);

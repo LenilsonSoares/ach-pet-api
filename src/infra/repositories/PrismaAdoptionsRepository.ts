@@ -1,6 +1,7 @@
 import type {
   AdoptionRequest,
   AdoptionsRepository,
+  AdoptionStatus,
   InboxRequest,
   MineRequest,
   PetSnapshot,
@@ -117,5 +118,33 @@ export class PrismaAdoptionsRepository implements AdoptionsRepository {
         createdAt: true,
       },
     });
+  }
+
+  async getAdoptionForAction(adoptionId: string) {
+    const adoption = await prisma.adoption.findUnique({
+      where: { id: adoptionId },
+      select: {
+        id: true,
+        status: true,
+        adoptionRequest: { select: { shelterId: true } },
+      },
+    });
+
+    if (!adoption) return null;
+    return {
+      id: adoption.id,
+      status: adoption.status as AdoptionStatus,
+      shelterId: adoption.adoptionRequest.shelterId,
+    };
+  }
+
+  async interveneAdoption(adoptionId: string) {
+    const adoption = await prisma.adoption.update({
+      where: { id: adoptionId },
+      data: { status: "INTERVENTION" },
+      select: { id: true, status: true },
+    });
+
+    return { id: adoption.id, status: adoption.status as AdoptionStatus };
   }
 }

@@ -38,6 +38,14 @@ export type AdoptionSnapshot = {
   thread: AdoptionThreadSnapshot | null;
 };
 
+export type AdoptionStatus = "ACTIVE" | "COMPLETED" | "INTERVENTION" | "CANCELED";
+
+export type AdoptionActionSnapshot = {
+  id: string;
+  status: AdoptionStatus;
+  shelterId: string;
+};
+
 export type InboxRequest = {
   id: string;
   pet: PetWithPhotos;
@@ -68,4 +76,7 @@ export type AdoptionsRepository = {
   getRequestForDecision(requestId: string): Promise<{ id: string; status: AdoptionRequestStatus; shelterId: string; petId: string } | null>;
   approveRequest(requestId: string, followUpDays: number): Promise<{ adoption: { id: string; followUpDays: number; thread: { id: string } } }>; 
   rejectRequest(requestId: string): Promise<AdoptionRequest>;
+
+  getAdoptionForAction(adoptionId: string): Promise<AdoptionActionSnapshot | null>;
+  interveneAdoption(adoptionId: string): Promise<{ id: string; status: AdoptionStatus }>;
 };

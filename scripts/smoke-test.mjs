@@ -114,6 +114,32 @@ async function main() {
   const petId = createdPet?.pet?.id;
   if (!petId) throw new Error("POST /pets não retornou pet.id");
 
+  printStep("Pause pet");
+  const paused = await http(`/pets/${petId}`, {
+    method: "PATCH",
+    headers: { authorization: `Bearer ${shelterToken}` },
+    json: { status: "PAUSED" },
+  });
+  if (paused?.pet?.status !== "PAUSED") throw new Error("PATCH /pets/:id não aplicou status=PAUSED");
+  ok();
+
+  printStep("Resume pet");
+  const resumed = await http(`/pets/${petId}`, {
+    method: "PATCH",
+    headers: { authorization: `Bearer ${shelterToken}` },
+    json: { status: "AVAILABLE" },
+  });
+  if (resumed?.pet?.status !== "AVAILABLE") throw new Error("PATCH /pets/:id não aplicou status=AVAILABLE");
+  ok();
+
+  printStep("List my pets (shelter)");
+  const myPets = await http("/pets/mine", {
+    headers: { authorization: `Bearer ${shelterToken}` },
+  });
+  if (!myPets || !Array.isArray(myPets.pets)) throw new Error("GET /pets/mine não retornou { pets: [] }");
+  if (!myPets.pets.some((p) => p.id === petId)) throw new Error("GET /pets/mine não incluiu o pet criado");
+  ok();
+
   printStep("Create adoption request");
   const req = await http("/adoptions/requests", {
     method: "POST",
@@ -165,6 +191,16 @@ async function main() {
     headers: { authorization: `Bearer ${shelterToken}` },
   });
   if (!updatesRes || !Array.isArray(updatesRes.updates)) throw new Error("GET updates não retornou { updates: [] }");
+  ok();
+
+  printStep("Intervene adoption");
+  const intervened = await http(`/adoptions/${adoptionId}/intervene`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${shelterToken}` },
+  });
+  if (intervened?.adoption?.status !== "INTERVENTION") {
+    throw new Error("POST /adoptions/:adoptionId/intervene não retornou status=INTERVENTION");
+  }
   ok();
 
   console.log("\nSmoke test finalizado com sucesso.");

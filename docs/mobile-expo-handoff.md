@@ -130,6 +130,21 @@ Crie um arquivo (exemplo):
 
 - `POST /pets` com token do abrigo
 
+#### Meus pets (SHELTER)
+
+- `GET /pets/mine` com token do abrigo
+
+#### Atualizar/pausar pet (SHELTER)
+
+- `PATCH /pets/:id` com token do abrigo
+- Body (envie 1+ campos):
+
+```json
+{ "name": "Novo nome", "description": "...", "status": "PAUSED" }
+```
+
+- `status`: `AVAILABLE` | `PAUSED`
+
 #### Enviar foto (SHELTER)
 
 - `POST /pets/:id/photos` `multipart/form-data` campo `photo`
@@ -173,6 +188,15 @@ Crie um arquivo (exemplo):
 #### Rejeitar (SHELTER)
 
 - `POST /adoptions/requests/:id/reject`
+
+#### Intervir na adoção (SHELTER)
+
+- `POST /adoptions/:adoptionId/intervene`
+- Response:
+
+```json
+{ "adoption": { "id": "...", "status": "INTERVENTION" } }
+```
 
 ### Chat (após aprovação)
 

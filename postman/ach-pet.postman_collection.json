@@ -150,6 +150,26 @@
           ]
         },
         {
+          "name": "GET /pets/mine (SHELTER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenShelter}}" }],
+            "url": { "raw": "{{baseUrl}}/pets/mine", "host": ["{{baseUrl}}"], "path": ["pets", "mine"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('status 200', () => pm.response.code === 200);",
+                  "const json = pm.response.json();",
+                  "pm.test('retorna { pets: [] }', () => Array.isArray(json.pets));"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "GET /pets",
           "request": {
             "method": "GET",
@@ -164,6 +184,34 @@
             "header": [],
             "url": { "raw": "{{baseUrl}}/pets/{{petId}}", "host": ["{{baseUrl}}"], "path": ["pets", "{{petId}}"] }
           }
+        },
+        {
+          "name": "PATCH /pets/:id (SHELTER)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenShelter}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PAUSED\",\n  \"description\": \"Pausado para revisão\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/pets/{{petId}}", "host": ["{{baseUrl}}"], "path": ["pets", "{{petId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('status 200', () => pm.response.code === 200);",
+                  "const json = pm.response.json();",
+                  "pm.test('retorna pet', () => !!json.pet);",
+                  "pm.test('status atualizado', () => json.pet?.status === 'PAUSED');"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "POST /pets/:id/favorite (ADOPTER)",
@@ -237,6 +285,52 @@
                   "const json = pm.response.json();",
                   "if (json.adoption?.id) pm.environment.set('adoptionId', json.adoption.id);",
                   "if (json.adoption?.thread?.id) pm.environment.set('threadId', json.adoption.thread.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /adoptions/requests/:id/reject (SHELTER)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenShelter}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/adoptions/requests/{{requestId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["adoptions", "requests", "{{requestId}}", "reject"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('status 200', () => pm.response.code === 200);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /adoptions/:adoptionId/intervene (SHELTER)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenShelter}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/adoptions/{{adoptionId}}/intervene",
+              "host": ["{{baseUrl}}"],
+              "path": ["adoptions", "{{adoptionId}}", "intervene"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('status 200', () => pm.response.code === 200);",
+                  "const json = pm.response.json();",
+                  "pm.test('status INTERVENTION', () => json.adoption?.status === 'INTERVENTION');"
                 ]
               }
             }

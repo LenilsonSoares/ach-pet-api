@@ -6,8 +6,10 @@ import type { PetsRepository } from "../../../application/ports/PetsRepository.j
 import type { AuthenticatedRequest } from "../auth-middleware.js";
 
 import { listPets } from "../../../application/use-cases/pets/listPets.js";
+import { listMyPets } from "../../../application/use-cases/pets/listMyPets.js";
 import { getPet } from "../../../application/use-cases/pets/getPet.js";
 import { createPet } from "../../../application/use-cases/pets/createPet.js";
+import { updatePet } from "../../../application/use-cases/pets/updatePet.js";
 import { addPetPhoto } from "../../../application/use-cases/pets/addPetPhoto.js";
 import { favoritePet } from "../../../application/use-cases/pets/favoritePet.js";
 import { unfavoritePet } from "../../../application/use-cases/pets/unfavoritePet.js";
@@ -40,6 +42,17 @@ export function createPetsRouter(deps: {
   );
 
   router.get(
+    "/mine",
+    deps.auth.requireAuth,
+    deps.auth.requireRole("SHELTER"),
+    asyncHandler(async (req: AuthenticatedRequest, res) => {
+      const handler = listMyPets({ petsRepo: deps.petsRepo });
+      const result = await handler(req.user!.id);
+      return res.json(result);
+    }),
+  );
+
+  router.get(
     "/:id",
     asyncHandler(async (req, res) => {
     const handler = getPet({ petsRepo: deps.petsRepo });
@@ -67,6 +80,33 @@ export function createPetsRouter(deps: {
       const handler = createPet({ petsRepo: deps.petsRepo });
       const result = await handler(req.user!.id, body);
       return res.status(201).json(result);
+    }),
+  );
+
+  const updatePetSchema = z
+    .object({
+      name: z.string().min(1).optional(),
+      species: z.string().min(1).optional(),
+      breed: z.string().nullable().optional(),
+      sex: z.string().nullable().optional(),
+      ageMonths: z.coerce.number().int().nonnegative().nullable().optional(),
+      size: z.string().nullable().optional(),
+      description: z.string().nullable().optional(),
+      status: z.enum(["AVAILABLE", "PAUSED"]).optional(),
+    })
+    .refine((value) => Object.values(value).some((v) => v !== undefined), {
+      message: "Envie ao menos um campo para atualizar",
+    });
+
+  router.patch(
+    "/:id",
+    deps.auth.requireAuth,
+    deps.auth.requireRole("SHELTER"),
+    asyncHandler(async (req: AuthenticatedRequest, res) => {
+      const input = updatePetSchema.parse(req.body);
+      const handler = updatePet({ petsRepo: deps.petsRepo });
+      const result = await handler({ petId: req.params.id, shelterId: req.user!.id, input });
+      return res.json(result);
     }),
   );
 

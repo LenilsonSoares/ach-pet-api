@@ -97,6 +97,8 @@ Importe ambos no Postman e selecione o environment **Ach Pet - Local**. A coleç
 - `GET /pets` (público, com filtros: `status`, `species`, `q`)
 - `GET /pets/:id` (público)
 - `POST /pets` (SHELTER)
+- `GET /pets/mine` (SHELTER)
+- `PATCH /pets/:id` (SHELTER, editar/pausar/reativar)
 - `POST /pets/:id/photos` (SHELTER, `multipart/form-data` com campo `photo`)
 - `POST /pets/:id/favorite` (ADOPTER)
 - `DELETE /pets/:id/favorite` (ADOPTER)
@@ -108,6 +110,7 @@ Importe ambos no Postman e selecione o environment **Ach Pet - Local**. A coleç
 - `GET /adoptions/requests/inbox` (SHELTER)
 - `POST /adoptions/requests/:id/approve` (SHELTER, opcional `followUpDays`)
 - `POST /adoptions/requests/:id/reject` (SHELTER)
+- `POST /adoptions/:adoptionId/intervene` (SHELTER)
 
 ### Chat (após aprovação)
 

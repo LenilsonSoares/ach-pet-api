@@ -8,6 +8,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { env } from "./infra/env.js";
+import { AppError } from "./domain/errors/AppError.js";
 import { errorMiddleware } from "./presentation/http/error-middleware.js";
 import { buildAuthMiddlewares } from "./presentation/http/auth-middleware.js";
 
@@ -46,7 +47,18 @@ app.use(
 // Uploads local (MVP)
 const uploadsDir = path.resolve(__dirname, "..", env.UPLOADS_DIR);
 fs.mkdirSync(uploadsDir, { recursive: true });
-const upload = multer({ dest: uploadsDir });
+const upload = multer({
+  dest: uploadsDir,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new AppError(400, "Apenas imagens são permitidas"));
+    }
+    return cb(null, true);
+  },
+});
 
 app.use("/uploads", express.static(uploadsDir));
 

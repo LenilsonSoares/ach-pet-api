@@ -9,6 +9,7 @@ import { listInbox } from "../../../application/use-cases/adoptions/listInbox.js
 import { listMine } from "../../../application/use-cases/adoptions/listMine.js";
 import { approveRequest } from "../../../application/use-cases/adoptions/approveRequest.js";
 import { rejectRequest } from "../../../application/use-cases/adoptions/rejectRequest.js";
+import { interveneAdoption } from "../../../application/use-cases/adoptions/interveneAdoption.js";
 import { asyncHandler } from "../async-handler.js";
 
 export function createAdoptionsRouter(deps: {
@@ -86,6 +87,17 @@ export function createAdoptionsRouter(deps: {
     asyncHandler(async (req: AuthenticatedRequest, res) => {
       const handler = rejectRequest({ adoptionsRepo: deps.adoptionsRepo });
       const result = await handler({ shelterId: req.user!.id, requestId: req.params.id });
+      return res.json(result);
+    }),
+  );
+
+  router.post(
+    "/:adoptionId/intervene",
+    deps.auth.requireAuth,
+    deps.auth.requireRole("SHELTER"),
+    asyncHandler(async (req: AuthenticatedRequest, res) => {
+      const handler = interveneAdoption({ adoptionsRepo: deps.adoptionsRepo });
+      const result = await handler({ adoptionId: req.params.adoptionId, shelterId: req.user!.id });
       return res.json(result);
     }),
   );

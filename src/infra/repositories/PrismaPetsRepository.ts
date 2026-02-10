@@ -1,4 +1,11 @@
-import type { CreatePetInput, PetDetails, PetListItem, PetsRepository, PetStatus } from "../../application/ports/PetsRepository.js";
+import type {
+  CreatePetInput,
+  PetDetails,
+  PetListItem,
+  PetsRepository,
+  PetStatus,
+  UpdatePetInput,
+} from "../../application/ports/PetsRepository.js";
 import { prisma } from "../db/prisma.js";
 
 export class PrismaPetsRepository implements PetsRepository {
@@ -20,6 +27,15 @@ export class PrismaPetsRepository implements PetsRepository {
     });
   }
 
+  async listMine(shelterId: string): Promise<PetListItem[]> {
+    return prisma.pet.findMany({
+      where: { shelterId },
+      include: { photos: true, shelter: { select: { id: true, name: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+  }
+
   async getById(id: string): Promise<PetDetails | null> {
     return prisma.pet.findUnique({
       where: { id },
@@ -38,6 +54,23 @@ export class PrismaPetsRepository implements PetsRepository {
         ageMonths: input.ageMonths,
         size: input.size,
         description: input.description,
+      },
+      include: { photos: true, shelter: { select: { id: true, name: true } } },
+    });
+  }
+
+  async update(petId: string, input: UpdatePetInput): Promise<PetDetails> {
+    return prisma.pet.update({
+      where: { id: petId },
+      data: {
+        name: input.name,
+        species: input.species,
+        breed: input.breed,
+        sex: input.sex,
+        ageMonths: input.ageMonths,
+        size: input.size,
+        description: input.description,
+        status: input.status,
       },
       include: { photos: true, shelter: { select: { id: true, name: true } } },
     });
