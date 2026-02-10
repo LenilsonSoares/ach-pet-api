@@ -146,10 +146,10 @@ async function main() {
   ok();
 
   printStep("List chat messages");
-  const messages = await http(`/chat/threads/${threadId}/messages`, {
+  const messagesRes = await http(`/chat/threads/${threadId}/messages`, {
     headers: { authorization: `Bearer ${shelterToken}` },
   });
-  if (!Array.isArray(messages)) throw new Error("GET messages não retornou array");
+  if (!messagesRes || !Array.isArray(messagesRes.messages)) throw new Error("GET messages não retornou { messages: [] }");
   ok();
 
   printStep("Create follow-up update");
@@ -161,10 +161,10 @@ async function main() {
   ok();
 
   printStep("List follow-up updates");
-  const updates = await http(`/followup/adoptions/${adoptionId}/updates`, {
+  const updatesRes = await http(`/followup/adoptions/${adoptionId}/updates`, {
     headers: { authorization: `Bearer ${shelterToken}` },
   });
-  if (!Array.isArray(updates)) throw new Error("GET updates não retornou array");
+  if (!updatesRes || !Array.isArray(updatesRes.updates)) throw new Error("GET updates não retornou { updates: [] }");
   ok();
 
   console.log("\nSmoke test finalizado com sucesso.");

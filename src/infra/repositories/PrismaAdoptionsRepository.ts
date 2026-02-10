@@ -5,6 +5,7 @@ import type {
   MineRequest,
   PetSnapshot,
 } from "../../application/ports/AdoptionsRepository.js";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 
 export class PrismaAdoptionsRepository implements AdoptionsRepository {
@@ -80,7 +81,7 @@ export class PrismaAdoptionsRepository implements AdoptionsRepository {
   }
 
   async approveRequest(requestId: string, followUpDays: number) {
-    const adoption = await prisma.$transaction(async (tx: any) => {
+    const adoption = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const req = await tx.adoptionRequest.update({
         where: { id: requestId },
         data: { status: "APPROVED" },
