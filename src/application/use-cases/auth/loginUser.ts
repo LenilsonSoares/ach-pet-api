@@ -1,0 +1,35 @@
+import { AppError } from "../../../domain/errors/AppError.js";
+import type { AuthRepository, PublicUser } from "../../ports/AuthRepository.js";
+import type { PasswordHasher } from "../../ports/PasswordHasher.js";
+import type { TokenService } from "../../ports/TokenService.js";
+
+export type LoginUserRequest = {
+  email: string;
+  password: string;
+};
+
+export type LoginUserResponse = {
+  user: PublicUser;
+  token: string;
+};
+
+export function loginUser(deps: {
+  authRepo: AuthRepository;
+  passwordHasher: PasswordHasher;
+  tokenService: TokenService;
+}) {
+  return async (req: LoginUserRequest): Promise<LoginUserResponse> => {
+    const user = await deps.authRepo.findByEmail(req.email);
+    if (!user) throw new AppError(401, "Credenciais inválidas");
+
+    const ok = await deps.passwordHasher.compare(req.password, user.passwordHash);
+    if (!ok) throw new AppError(401, "Credenciais inválidas");
+
+    const token = deps.tokenService.signAccessToken({ sub: user.id, role: user.role });
+
+    return {
+      user: { id: user.id, role: user.role, name: user.name, email: user.email },
+      token,
+    };
+  };
+}

@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADOPTER
+  SHELTER
+}
+
+enum PetStatus {
+  AVAILABLE
+  ADOPTED
+  PAUSED
+}
+
+enum AdoptionRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELED
+}
+
+enum AdoptionStatus {
+  ACTIVE
+  COMPLETED
+  INTERVENTION
+  CANCELED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  role         UserRole
+  name         String
+  email        String    @unique
+  passwordHash String
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  shelterProfile ShelterProfile?
+  adopterProfile AdopterProfile?
+
+  pets              Pet[]              @relation("ShelterPets")
+  favorites         Favorite[]
+  adoptionRequests  AdoptionRequest[]  @relation("AdopterRequests")
+  receivedRequests  AdoptionRequest[]  @relation("ShelterRequests")
+
+  sentMessages     Message[]          @relation("SentMessages")
+  followUpUpdates  FollowUpUpdate[]   @relation("FollowUpAuthor")
+
+  @@index([role])
+}
+
+model ShelterProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orgName   String
+  address   String?
+  city      String?
+  state     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AdopterProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Pet {
+  id          String    @id @default(cuid())
+  shelterId   String
+  shelter     User      @relation("ShelterPets", fields: [shelterId], references: [id], onDelete: Cascade)
+
+  name        String
+  species     String
+  breed       String?
+  sex         String?
+  ageMonths   Int?
+  size        String?
+  description String?
+  status      PetStatus @default(AVAILABLE)
+
+  photos      PetPhoto[]
+  favorites   Favorite[]
+  requests    AdoptionRequest[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([species])
+}
+
+model PetPhoto {
+  id        String   @id @default(cuid())
+  petId     String
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+
+  @@index([petId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  petId     String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, petId])
+  @@index([petId])
+}
+
+model AdoptionRequest {
+  id          String                 @id @default(cuid())
+  petId       String
+  pet         Pet                    @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  adopterId   String
+  adopter     User                   @relation("AdopterRequests", fields: [adopterId], references: [id], onDelete: Cascade)
+
+  shelterId   String
+  shelter     User                   @relation("ShelterRequests", fields: [shelterId], references: [id], onDelete: Cascade)
+
+  message     String?
+  status      AdoptionRequestStatus  @default(PENDING)
+
+  adoption    Adoption?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([petId])
+  @@index([adopterId])
+  @@index([shelterId])
+  @@index([status])
+}
+
+model Adoption {
+  id                String         @id @default(cuid())
+  adoptionRequestId String         @unique
+  adoptionRequest   AdoptionRequest @relation(fields: [adoptionRequestId], references: [id], onDelete: Cascade)
+
+  status            AdoptionStatus @default(ACTIVE)
+  followUpDays      Int           @default(30)
+  startsAt          DateTime      @default(now())
+  endsAt            DateTime?
+
+  thread            ChatThread?
+  updates           FollowUpUpdate[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model ChatThread {
+  id         String   @id @default(cuid())
+  adoptionId String   @unique
+  adoption   Adoption @relation(fields: [adoptionId], references: [id], onDelete: Cascade)
+
+  messages   Message[]
+
+  createdAt  DateTime @default(now())
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  threadId   String
+  thread     ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  content    String
+  createdAt  DateTime @default(now())
+
+  @@index([threadId])
+  @@index([createdAt])
+}
+
+model FollowUpUpdate {
+  id          String   @id @default(cuid())
+  adoptionId  String
+  adoption    Adoption @relation(fields: [adoptionId], references: [id], onDelete: Cascade)
+
+  authorId    String
+  author      User     @relation("FollowUpAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  text        String?
+  photoUrl    String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([adoptionId])
+  @@index([createdAt])
+}
