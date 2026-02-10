@@ -68,7 +68,7 @@ O app precisa de um `API_BASE_URL` (string) para montar as URLs:
 - **Expo (dev):** dá para trocar o `API_BASE_URL` e reiniciar o app.
 - **APK (build):** o `API_BASE_URL` normalmente fica “gravado” no build se estiver hardcoded.
 
-Como o **Quick Tunnel** muda a URL sempre que você fecha/abre o túnel, o ideal é deixar o `API_BASE_URL` **configurável por ambiente**.
+Como o **Quick Tunnel** muda a URL sempre que você fecha/abre o túnel, o ideal é deixar o `API_BASE_URL` **configurável** (especialmente para APK).
 
 ### Sugestão simples (Expo): variável `EXPO_PUBLIC_API_BASE_URL`
 
@@ -114,6 +114,64 @@ Por isso, para apresentação na faculdade, prefira:
 
 - ler de `EXPO_PUBLIC_API_BASE_URL` (config por ambiente), ou
 - usar backend publicado com URL fixa `https://...`.
+
+### Recomendado para APK + Quick Tunnel (sem rebuild): `API_BASE_URL` configurável no app
+
+Se a ideia é **instalar um APK** e, no dia da apresentação, apenas colar a URL do túnel (sem gerar outro APK), o app precisa salvar a `baseUrl` localmente.
+
+Resumo do fluxo:
+
+1) O app tem uma tela (pode ser escondida) **"Configurar API"** com um input para URL
+2) O usuário cola `https://xxxx.trycloudflare.com` e salva
+3) O app persiste isso (AsyncStorage ou SecureStore)
+4) Toda request usa `baseUrl` lida do storage
+
+> A URL da API **não é segredo**. O token (JWT) é que deve ficar no SecureStore. Ainda assim, pode usar SecureStore por simplicidade.
+
+#### Exemplo com `expo-secure-store`
+
+Crie um módulo (ex.: `src/config/api-base-url.ts`):
+
+```ts
+import * as SecureStore from "expo-secure-store";
+
+const KEY = "achpet:apiBaseUrl";
+const DEFAULT = "http://10.0.2.2:3000";
+
+function normalizeBaseUrl(value: string) {
+  // remove barra no final para evitar `//health`
+  return value.trim().replace(/\/+$/, "");
+}
+
+export async function getApiBaseUrl() {
+  const value = await SecureStore.getItemAsync(KEY);
+  return normalizeBaseUrl(value ?? DEFAULT);
+}
+
+export async function setApiBaseUrl(value: string) {
+  await SecureStore.setItemAsync(KEY, normalizeBaseUrl(value));
+}
+```
+
+Uso no client HTTP (fetch):
+
+```ts
+import { getApiBaseUrl } from "../config/api-base-url";
+
+export async function apiFetch(path: string, init?: RequestInit) {
+  const baseUrl = await getApiBaseUrl();
+  const url = `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+  return fetch(url, init);
+}
+```
+
+#### Sugestão de UX (mínima)
+
+- Tela simples com:
+  - Input: `API Base URL`
+  - Botão: `Salvar`
+- (Opcional) Botão: `Testar /health` para validar a URL antes de continuar
+- Para não “poluir” o MVP, essa tela pode ficar em "Sobre" ou atrás de um gesto (ex.: 5 taps no logo)
 
 ### Auth
 
