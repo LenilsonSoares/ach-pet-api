@@ -6,6 +6,7 @@ import type { AuthenticatedRequest } from "../auth-middleware.js";
 
 import { listUpdates } from "../../../application/use-cases/followup/listUpdates.js";
 import { createUpdate } from "../../../application/use-cases/followup/createUpdate.js";
+import { asyncHandler } from "../async-handler.js";
 
 function isValidUrlOrUploads(value: string) {
   if (value.startsWith("/uploads/")) return true;
@@ -23,11 +24,15 @@ export function createFollowupRouter(deps: {
 }) {
   const router = Router();
 
-  router.get("/adoptions/:adoptionId/updates", deps.auth.requireAuth, async (req: AuthenticatedRequest, res) => {
-    const handler = listUpdates({ followupRepo: deps.followupRepo });
-    const result = await handler({ adoptionId: req.params.adoptionId, userId: req.user!.id });
-    return res.json(result);
-  });
+  router.get(
+    "/adoptions/:adoptionId/updates",
+    deps.auth.requireAuth,
+    asyncHandler(async (req: AuthenticatedRequest, res) => {
+      const handler = listUpdates({ followupRepo: deps.followupRepo });
+      const result = await handler({ adoptionId: req.params.adoptionId, userId: req.user!.id });
+      return res.json(result);
+    }),
+  );
 
   const createSchema = z.object({
     text: z.string().max(2000).optional(),
@@ -39,19 +44,23 @@ export function createFollowupRouter(deps: {
       }),
   });
 
-  router.post("/adoptions/:adoptionId/updates", deps.auth.requireAuth, async (req: AuthenticatedRequest, res) => {
-    const body = createSchema.parse(req.body);
+  router.post(
+    "/adoptions/:adoptionId/updates",
+    deps.auth.requireAuth,
+    asyncHandler(async (req: AuthenticatedRequest, res) => {
+      const body = createSchema.parse(req.body);
 
-    const handler = createUpdate({ followupRepo: deps.followupRepo });
-    const result = await handler({
-      adoptionId: req.params.adoptionId,
-      userId: req.user!.id,
-      text: body.text,
-      photoUrl: body.photoUrl,
-    });
+      const handler = createUpdate({ followupRepo: deps.followupRepo });
+      const result = await handler({
+        adoptionId: req.params.adoptionId,
+        userId: req.user!.id,
+        text: body.text,
+        photoUrl: body.photoUrl,
+      });
 
-    return res.status(201).json(result);
-  });
+      return res.status(201).json(result);
+    }),
+  );
 
   return router;
 }

@@ -6,6 +6,7 @@ import { loginUser } from "../../../application/use-cases/auth/loginUser.js";
 import type { AuthRepository } from "../../../application/ports/AuthRepository.js";
 import type { PasswordHasher } from "../../../application/ports/PasswordHasher.js";
 import type { TokenService } from "../../../application/ports/TokenService.js";
+import { asyncHandler } from "../async-handler.js";
 
 export function createAuthRouter(deps: {
   authRepo: AuthRepository;
@@ -23,24 +24,30 @@ export function createAuthRouter(deps: {
     orgName: z.string().min(2).optional(),
   });
 
-  router.post("/register", async (req, res) => {
+  router.post(
+    "/register",
+    asyncHandler(async (req, res) => {
     const body = registerSchema.parse(req.body);
     const handler = registerUser(deps);
     const result = await handler(body);
     return res.status(201).json(result);
-  });
+    }),
+  );
 
   const loginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(1),
   });
 
-  router.post("/login", async (req, res) => {
+  router.post(
+    "/login",
+    asyncHandler(async (req, res) => {
     const body = loginSchema.parse(req.body);
     const handler = loginUser(deps);
     const result = await handler(body);
     return res.json(result);
-  });
+    }),
+  );
 
   return router;
 }
