@@ -1,278 +1,267 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>Guia Completo Ach Pet API</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; background: #f9f9f9; }
-    h1, h2, h3 { color: #2d6a4f; }
-    ul, ol { margin-left: 2rem; }
-    .file { font-weight: bold; color: #1b4332; }
-    .folder { font-weight: bold; color: #40916c; }
-    .step { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 1rem; margin-bottom: 1rem; }
-    .endpoint { background: #e9f5db; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; }
-    .code { background: #eee; padding: 0.5rem; border-radius: 4px; font-family: monospace; }
-  </style>
+  <link rel="stylesheet" href="guia-completo.css">
 </head>
 <body>
-  <h1>Guia Completo Ach Pet API</h1>
-  <img src="img-arquitetura-clean.png" alt="Diagrama Clean Architecture" style="max-width:100%;margin-bottom:1rem;border:1px solid #ccc;">
-  <img src="img-fluxo-negocio.png" alt="Fluxo de Negócio" style="max-width:100%;margin-bottom:2rem;border:1px solid #ccc;">
-  <h2>Requisitos do Projeto</h2>
-  <ul>
-    <li>Node.js + TypeScript</li>
-    <li>Express (API HTTP)</li>
-    <li>PostgreSQL (banco de dados)</li>
-    <li>Prisma ORM</li>
-    <li>JWT para autenticação</li>
-    <li>Arquitetura Clean (domínio, aplicação, infra, apresentação)</li>
-    <li>Testes automatizados (Jest)</li>
-    <li>Docker para banco local</li>
-  </ul>
+  <header class="header">
+    <h1>Guia Completo <span>Ach Pet API</span></h1>
+  </header>
+  <section class="hero">
+    <img src="img-arquitetura-clean.png" alt="Diagrama Clean Architecture" class="img-diagrama">
+    <img src="img-fluxo-negocio.png" alt="Fluxo de Negócio" class="img-fluxo">
+  </section>
+  <section class="card">
+    <h2>Requisitos do Projeto</h2>
+    <ul>
+      <li>Node.js + TypeScript</li>
+      <li>Express (API HTTP)</li>
+      <li>PostgreSQL (banco de dados)</li>
+      <li>Prisma ORM</li>
+      <li>JWT para autenticação</li>
+      <li>Arquitetura Clean (domínio, aplicação, infra, apresentação)</li>
+      <li>Testes automatizados (Jest)</li>
+      <li>Docker para banco local</li>
+    </ul>
+  </section>
 
-  <h2>Passo a Passo para Rodar</h2>
-    <div class="step">
-      <h3>0. Instalar Node.js, Docker e VS Code</h3>
-      <ul>
-        <li><a href="https://nodejs.org/pt-br/download/" target="_blank">Node.js</a></li>
-        <li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a></li>
-        <li><a href="https://code.visualstudio.com/" target="_blank">VS Code</a></li>
-      </ul>
-    </div>
-    <div class="step">
-      <h3>Comandos Git Essenciais</h3>
-      <div class="code">git init<br>git add .<br>git commit -m "primeiro commit"<br>git branch -M main<br>git remote add origin &lt;url&gt;<br>git push -u origin main</div>
-      <p>Crie commits pequenos e claros. Use branches para novas features.</p>
-    </div>
-  <div class="step">
-    <h3>1. Instalar dependências</h3>
-    <div class="code">npm install</div>
-  </div>
-  <div class="step">
-    <h3>2. Configurar variáveis de ambiente</h3>
-    <div class="code">cp .env.example .env</div>
-    <p>Edite <span class="file">.env</span> e defina <b>JWT_SECRET</b> forte.</p>
-  </div>
-  <div class="step">
-    <h3>3. Subir o banco de dados</h3>
-    <div class="code">docker compose up -d</div>
-  </div>
-  <div class="step">
-    <h3>4. Gerar client do Prisma e rodar migração</h3>
-    <div class="code">npm run prisma:generate<br>npm run prisma:migrate</div>
-  </div>
-  <div class="step">
-    <h3>5. Rodar a API</h3>
-    <div class="code">npm run dev</div>
-    <p>Acesse <b>http://localhost:3000</b></p>
-  </div>
-  <div class="step">
-    <h3>6. Popular dados de teste (opcional)</h3>
-    <div class="code">npm run prisma:seed</div>
-  </div>
+  <section class="card">
+    <h2>Passo a Passo para Rodar</h2>
+    <ol class="steps">
+      <li>
+        <strong>Instalar Node.js, Docker e VS Code</strong>
+        <ul>
+          <li><a href="https://nodejs.org/pt-br/download/" target="_blank" rel="noopener">Node.js</a></li>
+          <li><a href="https://www.docker.com/products/docker-desktop/" target="_blank" rel="noopener">Docker Desktop</a></li>
+          <li><a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VS Code</a></li>
+        </ul>
+      </li>
+      <li>
+        <strong>Comandos Git Essenciais</strong>
+        <div class="code">git init<br>git add .<br>git commit -m "primeiro commit"<br>git branch -M main<br>git remote add origin &lt;url&gt;<br>git push -u origin main</div>
+        <span class="tip">Crie commits pequenos e claros. Use branches para novas features.</span>
+      </li>
+      <li>
+        <strong>Instalar dependências</strong>
+        <div class="code">npm install</div>
+      </li>
+      <li>
+        <strong>Configurar variáveis de ambiente</strong>
+        <div class="code">cp .env.example .env</div>
+        <span class="tip">Edite <span class="file">.env</span> e defina <b>JWT_SECRET</b> forte.</span>
+      </li>
+      <li>
+        <strong>Subir o banco de dados</strong>
+        <div class="code">docker compose up -d</div>
+      </li>
+      <li>
+        <strong>Gerar client do Prisma e rodar migração</strong>
+        <div class="code">npm run prisma:generate<br>npm run prisma:migrate</div>
+      </li>
+      <li>
+        <strong>Rodar a API</strong>
+        <div class="code">npm run dev</div>
+        <span class="tip">Acesse <b>http://localhost:3000</b></span>
+      </li>
+      <li>
+        <strong>Popular dados de teste (opcional)</strong>
+        <div class="code">npm run prisma:seed</div>
+      </li>
+    </ol>
+  </section>
 
   <h2>Estrutura de Pastas e Arquivos</h2>
   <ul>
-    <li class="folder">src/</li>
-    <ul>
-      <li class="folder">domain/</li>
+    <li class="folder">src/
       <ul>
-        <li class="file">entities/</li>
-        <ul>
-          <li class="file">User.ts</li>
-          <li class="file">Pet.ts</li>
-          <li class="file">Email.ts</li>
-          <li class="file">Password.ts</li>
-          <li class="file">Phone.ts</li>
-          <li class="file">FollowUpUpdate.ts</li>
-          <li class="file">ChatMessage.ts</li>
-        </ul>
-        <li class="file">errors/AppError.ts</li>
+        <li class="folder">domain/
+          <ul>
+            <li class="file">entities/
+              <ul>
+                <li class="file">User.ts</li>
+                <li class="file">Pet.ts</li>
+                <li class="file">Email.ts</li>
+                <li class="file">Password.ts</li>
+                <li class="file">Phone.ts</li>
+                <li class="file">FollowUpUpdate.ts</li>
+                <li class="file">ChatMessage.ts</li>
+              </ul>
+            </li>
+            <li class="file">errors/AppError.ts</li>
+          </ul>
+        </li>
+        <li class="folder">application/
+          <ul>
+            <li class="folder">ports/
+              <ul>
+                <li class="file">AuthRepository.ts</li>
+                <li class="file">PetsRepository.ts</li>
+                <li class="file">AdoptionsRepository.ts</li>
+                <li class="file">ChatRepository.ts</li>
+                <li class="file">FollowupRepository.ts</li>
+                <li class="file">PasswordHasher.ts</li>
+                <li class="file">TokenService.ts</li>
+              </ul>
+            </li>
+            <li class="folder">use-cases/
+              <ul>
+                <li class="folder">auth/
+                  <ul>
+                    <li class="file">loginUser.ts</li>
+                    <li class="file">registerUser.ts</li>
+                  </ul>
+                </li>
+                <li class="folder">pets/
+                  <ul>
+                    <li class="file">createPet.ts</li>
+                    <li class="file">favoritePet.ts</li>
+                    <li class="file">getPet.ts</li>
+                  </ul>
+                </li>
+                <li class="folder">adoptions/
+                  <ul>
+                    <li class="file">createRequest.ts</li>
+                    <li class="file">approveRequest.ts</li>
+                    <li class="file">rejectRequest.ts</li>
+                  </ul>
+                </li>
+                <li class="folder">chat/
+                  <ul>
+                    <li class="file">sendMessage.ts</li>
+                    <li class="file">listMessages.ts</li>
+                  </ul>
+                </li>
+                <li class="folder">followup/
+                  <ul>
+                    <li class="file">createUpdate.ts</li>
+                    <li class="file">listUpdates.ts</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="folder">infra/
+          <ul>
+            <li class="folder">repositories/
+              <ul>
+                <li class="file">PrismaAuthRepository.ts</li>
+                <li class="file">PrismaPetsRepository.ts</li>
+                <li class="file">PrismaAdoptionsRepository.ts</li>
+                <li class="file">PrismaChatRepository.ts</li>
+                <li class="file">PrismaFollowupRepository.ts</li>
+              </ul>
+            </li>
+            <li class="folder">security/
+              <ul>
+                <li class="file">BcryptPasswordHasher.ts</li>
+                <li class="file">JwtTokenService.ts</li>
+              </ul>
+            </li>
+            <li class="folder">observability/
+              <ul>
+                <li class="file">logger.ts</li>
+                <li class="file">metrics.ts</li>
+                <li class="file">tracing.ts</li>
+              </ul>
+            </li>
+            <li class="folder">db/
+              <ul>
+                <li class="file">prisma.ts</li>
+              </ul>
+            </li>
+            <li class="folder">config/
+              <ul>
+                <li class="file">env.ts</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="folder">presentation/
+          <ul>
+            <li class="folder">http/
+              <ul>
+                <li class="file">async-handler.ts</li>
+                <li class="file">auth-middleware.ts</li>
+                <li class="file">error-middleware.ts</li>
+                <li class="folder">routers/
+                  <ul>
+                    <li class="file">auth-router.ts</li>
+                    <li class="file">pets-router.ts</li>
+                    <li class="file">adoptions-router.ts</li>
+                    <li class="file">chat-router.ts</li>
+                    <li class="file">followup-router.ts</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="file">app.ts</li>
+            <li class="file">server.ts</li>
+          </ul>
+        </li>
+        <li class="folder">prisma/
+          <ul>
+            <li class="file">schema.prisma</li>
+            <li class="file">seed.ts</li>
+            <li class="folder">migrations/</li>
+          </ul>
+        </li>
+        <li class="folder">__tests__/
+          <ul>
+            <li class="file">auth.integration.test.ts</li>
+            <li class="file">pet.test.ts</li>
+            <li class="file">registerUser.usecase.test.ts</li>
+            <li class="file">integration-fluxos.test.ts</li>
+            <li class="file">integration-edgecases.test.ts</li>
+            <li class="file">createPet.usecase.test.ts</li>
+            <li class="file">businessrules.test.ts</li>
+            <li class="file">user.test.ts</li>
+            <li class="file">valueobjects.test.ts</li>
+          </ul>
+        </li>
+        <li class="folder">docs/
+          <ul>
+            <li class="file">arquitetura-clean.md</li>
+            <li class="file">fluxo-negocio.md</li>
+            <li class="file">openapi-example.yaml</li>
+          </ul>
+        </li>
       </ul>
-      <li class="folder">application/</li>
-      <ul>
-        <li class="folder">ports/</li>
-        <ul>
-          <li class="file">AuthRepository.ts</li>
-          <li class="file">PetsRepository.ts</li>
-          <li class="file">AdoptionsRepository.ts</li>
-          <li class="file">ChatRepository.ts</li>
-          <li class="file">FollowupRepository.ts</li>
-          <li class="file">PasswordHasher.ts</li>
-          <li class="file">TokenService.ts</li>
-        </ul>
-        <li class="folder">use-cases/</li>
-        <ul>
-          <li class="folder">auth/</li>
-          <ul>
-            <li class="file">loginUser.ts</li>
-            <li class="file">registerUser.ts</li>
-          </ul>
-          <li class="folder">pets/</li>
-          <ul>
-            <li class="file">createPet.ts</li>
-            <li class="file">favoritePet.ts</li>
-            <li class="file">getPet.ts</li>
-          </ul>
-          <li class="folder">adoptions/</li>
-          <ul>
-            <li class="file">createRequest.ts</li>
-            <li class="file">approveRequest.ts</li>
-            <li class="file">rejectRequest.ts</li>
-          </ul>
-          <li class="folder">chat/</li>
-          <ul>
-            <li class="file">sendMessage.ts</li>
-            <li class="file">listMessages.ts</li>
-          </ul>
-          <li class="folder">followup/</li>
-          <ul>
-            <li class="file">createUpdate.ts</li>
-            <li class="file">listUpdates.ts</li>
-          </ul>
-        </ul>
-      </ul>
-      <li class="folder">infra/</li>
-      <ul>
-        <li class="folder">repositories/</li>
-        <ul>
-          <li class="file">PrismaAuthRepository.ts</li>
-          <li class="file">PrismaPetsRepository.ts</li>
-          <li class="file">PrismaAdoptionsRepository.ts</li>
-          <li class="file">PrismaChatRepository.ts</li>
-          <li class="file">PrismaFollowupRepository.ts</li>
-        </ul>
-        <li class="folder">security/</li>
-        <ul>
-          <li class="file">BcryptPasswordHasher.ts</li>
-          <li class="file">JwtTokenService.ts</li>
-        </ul>
-        <li class="folder">observability/</li>
-        <ul>
-          <li class="file">logger.ts</li>
-          <li class="file">metrics.ts</li>
-          <li class="file">tracing.ts</li>
-        </ul>
-        <li class="folder">db/</li>
-        <ul>
-          <li class="file">prisma.ts</li>
-        </ul>
-        <li class="folder">config/</li>
-        <ul>
-          <li class="file">env.ts</li>
-        </ul>
-      </ul>
-      <li class="folder">presentation/</li>
-      <ul>
-        <li class="folder">http/</li>
-        <ul>
-          <li class="file">async-handler.ts</li>
-          <li class="file">auth-middleware.ts</li>
-          <li class="file">error-middleware.ts</li>
-          <li class="folder">routers/</li>
-          <ul>
-            <li class="file">auth-router.ts</li>
-            <li class="file">pets-router.ts</li>
-            <li class="file">adoptions-router.ts</li>
-            <li class="file">chat-router.ts</li>
-            <li class="file">followup-router.ts</li>
-          </ul>
-        </ul>
-      </ul>
-      <li class="file">app.ts</li>
-      <li class="file">server.ts</li>
-    </ul>
-    <li class="folder">prisma/</li>
-    <ul>
-      <li class="file">schema.prisma</li>
-      <li class="file">seed.ts</li>
-      <li class="folder">migrations/</li>
-    </ul>
-    <li class="folder">__tests__/</li>
-    <ul>
-      <li class="file">auth.integration.test.ts</li>
-      <li class="file">pet.test.ts</li>
-      <li class="file">registerUser.usecase.test.ts</li>
-      <li class="file">integration-fluxos.test.ts</li>
-      <li class="file">integration-edgecases.test.ts</li>
-      <li class="file">createPet.usecase.test.ts</li>
-      <li class="file">businessrules.test.ts</li>
-      <li class="file">user.test.ts</li>
-      <li class="file">valueobjects.test.ts</li>
-    </ul>
-    <li class="folder">docs/</li>
-    <ul>
-      <li class="file">arquitetura-clean.md</li>
-      <li class="file">fluxo-negocio.md</li>
-      <li class="file">openapi-example.yaml</li>
-    </ul>
-    <li class="file">README.md</li>
-    <li class="file">docker-compose.yml</li>
-    <li class="file">package.json</li>
-    <li class="file">tsconfig.json</li>
-    <li class="file">jest.config.js</li>
-    <li class="file">eslint.config.js</li>
-    <li class="file">.env.example</li>
-    <li class="file">.env</li>
+    </li>
   </ul>
-
-  <h2>Explicação dos Arquivos Principais</h2>
-  <ul>
-    <li><span class="file">app.ts</span>: Inicializa o Express, faz wiring das dependências e routers.</li>
-    <li><span class="file">server.ts</span>: Entry point do servidor, carrega variáveis de ambiente e inicia o app.</li>
-    <li><span class="file">README.md</span>: Documentação inicial do projeto.</li>
-    <li><span class="file">docker-compose.yml</span>: Configuração do banco PostgreSQL via Docker.</li>
-    <li><span class="file">package.json</span>: Scripts, dependências e metadados do projeto.</li>
-    <li><span class="file">tsconfig.json</span>: Configuração do TypeScript.</li>
-    <li><span class="file">jest.config.js</span>: Configuração dos testes automatizados.</li>
-    <li><span class="file">eslint.config.js</span>: Regras de lint para o código.</li>
-    <li><span class="file">.env.example</span>: Exemplo de variáveis de ambiente.</li>
-    <li><span class="file">.env</span>: Variáveis de ambiente reais (não versionado).</li>
-  </ul>
-
-  <h2>Endpoints Principais</h2>
-    <h3>Exemplos de Requisição e Resposta</h3>
-    <div class="endpoint"><b>POST /auth/register</b></div>
-    <div class="code">{
-    "role": "ADOPTER",
-    "name": "Maria",
-    "email": "maria@email.com",
-    "password": "123456"
-  }</div>
-    <div class="code">{
-    "user": { "id": "...", "name": "Maria", "role": "ADOPTER" },
-    "token": "<jwt>"
-  }</div>
-    <div class="endpoint"><b>POST /auth/login</b></div>
-    <div class="code">{
-    "email": "maria@email.com",
-    "password": "123456"
-  }</div>
-    <div class="code">{
-    "user": { "id": "...", "name": "Maria", "role": "ADOPTER" },
-    "token": "<jwt>"
-  }</div>
-    <div class="endpoint"><b>GET /pets</b></div>
-    <div class="code">Resposta: {
-    "pets": [ { "id": "...", "name": "Rex", "status": "AVAILABLE" } ],
-    "page": 1, "pageSize": 10, "total": 25
-  }</div>
-    <div class="endpoint"><b>POST /pets</b></div>
-    <div class="code">{
-    "name": "Rex",
-    "species": "dog",
-    "age": 2,
-    "description": "Muito dócil"
-  }</div>
-    <div class="endpoint"><b>POST /adoptions/requests</b></div>
-    <div class="code">{
-    "petId": "...",
-    "message": "Quero adotar"
-  }</div>
-    <div class="endpoint"><b>POST /adoptions/requests/:id/approve</b></div>
-    <div class="code">{
-    "followUpDays": 30
-  }</div>
+                <section class="card">
+                  <h2>Checklist Final</h2>
+                  <ul class="checklist">
+                    <li>README.md revisado e atualizado</li>
+                    <li>API rodando localmente</li>
+                    <li>Testes automatizados passando</li>
+                    <li>Endpoints testados no Postman</li>
+                    <li>Banco de dados migrado e populado</li>
+                    <li>Commits organizados e claros</li>
+                    <li>Documentação de arquitetura e fluxo lida</li>
+                    <li>Projeto versionado no GitHub</li>
+                  </ul>
+                </section>
+                <section class="card">
+                  <h2>Links Úteis</h2>
+                  <ul class="links">
+                    <li><a href="https://nodejs.org/pt-br/docs/" target="_blank" rel="noopener">Documentação Node.js</a></li>
+                    <li><a href="https://www.prisma.io/docs" target="_blank" rel="noopener">Documentação Prisma</a></li>
+                    <li><a href="https://expressjs.com/pt-br/" target="_blank" rel="noopener">Documentação Express</a></li>
+                    <li><a href="https://www.postgresql.org/docs/pt-br/" target="_blank" rel="noopener">Documentação PostgreSQL</a></li>
+                    <li><a href="https://jestjs.io/pt-BR/docs/getting-started" target="_blank" rel="noopener">Testes com Jest</a></li>
+                    <li><a href="https://www.docker.com/" target="_blank" rel="noopener">Docker</a></li>
+                    <li><a href="https://git-scm.com/doc" target="_blank" rel="noopener">Git</a></li>
+                    <li><a href="https://code.visualstudio.com/docs" target="_blank" rel="noopener">VS Code</a></li>
+                  </ul>
+                </section>
+                <section class="card dica">
+                  <h2>Dica Final</h2>
+                  <p>Se tiver dúvidas, consulte os arquivos <span class="file">docs/arquitetura-clean.md</span> e <span class="file">docs/fluxo-negocio.md</span> para entender a lógica e arquitetura.</p>
+                </section>
   <div class="endpoint"><b>POST /auth/register</b> — Registrar usuário (ADOPTER/SHELTER)</div>
   <div class="endpoint"><b>POST /auth/login</b> — Login</div>
   <div class="endpoint"><b>GET /pets</b> — Listar pets</div>
@@ -322,14 +311,14 @@
 
     <h2>Links Úteis</h2>
     <ul>
-      <li><a href="https://nodejs.org/pt-br/docs/" target="_blank">Documentação Node.js</a></li>
-      <li><a href="https://www.prisma.io/docs" target="_blank">Documentação Prisma</a></li>
-      <li><a href="https://expressjs.com/pt-br/" target="_blank">Documentação Express</a></li>
-      <li><a href="https://www.postgresql.org/docs/pt-br/" target="_blank">Documentação PostgreSQL</a></li>
-      <li><a href="https://jestjs.io/pt-BR/docs/getting-started" target="_blank">Testes com Jest</a></li>
-      <li><a href="https://www.docker.com/" target="_blank">Docker</a></li>
-      <li><a href="https://git-scm.com/doc" target="_blank">Git</a></li>
-      <li><a href="https://code.visualstudio.com/docs" target="_blank">VS Code</a></li>
+      <li><a href="https://nodejs.org/pt-br/docs/" target="_blank" rel="noopener">Documentação Node.js</a></li>
+      <li><a href="https://www.prisma.io/docs" target="_blank" rel="noopener">Documentação Prisma</a></li>
+      <li><a href="https://expressjs.com/pt-br/" target="_blank" rel="noopener">Documentação Express</a></li>
+      <li><a href="https://www.postgresql.org/docs/pt-br/" target="_blank" rel="noopener">Documentação PostgreSQL</a></li>
+      <li><a href="https://jestjs.io/pt-BR/docs/getting-started" target="_blank" rel="noopener">Testes com Jest</a></li>
+      <li><a href="https://www.docker.com/" target="_blank" rel="noopener">Docker</a></li>
+      <li><a href="https://git-scm.com/doc" target="_blank" rel="noopener">Git</a></li>
+      <li><a href="https://code.visualstudio.com/docs" target="_blank" rel="noopener">VS Code</a></li>
     </ul>
   <ol>
     <li>Leia o README.md para entender o objetivo.</li>

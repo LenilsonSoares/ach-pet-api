@@ -1,0 +1,165 @@
+
+body {
+	font-family: 'Segoe UI', Arial, sans-serif;
+	margin: 0;
+	background: #f6f8fa;
+	color: #222;
+}
+
+.header {
+	background: #2d6a4f;
+	color: #fff;
+	padding: 2rem 0 1rem 0;
+	text-align: center;
+	margin-bottom: 2rem;
+	box-shadow: 0 2px 8px #0001;
+}
+.header h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin: 0;
+}
+.header h1 span {
+	color: #b7e4c7;
+}
+
+.hero {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 2rem;
+	margin-bottom: 2rem;
+}
+.img-diagrama, .img-fluxo {
+	max-width: 480px;
+	width: 100%;
+	border-radius: 12px;
+	border: 1px solid #b7e4c7;
+	box-shadow: 0 2px 8px #0001;
+	background: #fff;
+}
+.img-diagrama { margin-bottom: 0; }
+.img-fluxo { margin-bottom: 0; }
+
+.card {
+	background: #fff;
+	border-radius: 14px;
+	box-shadow: 0 2px 12px #0002;
+	margin: 2rem auto;
+	max-width: 900px;
+	padding: 2rem 2.5rem 1.5rem 2.5rem;
+	border-left: 8px solid #40916c;
+}
+.card.dica {
+	border-left: 8px solid #f9c74f;
+	background: #fffbe6;
+}
+.card h2 {
+	color: #2d6a4f;
+	margin-top: 0;
+}
+
+.checklist {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.checklist li {
+	padding-left: 2rem;
+	margin-bottom: 0.7rem;
+	position: relative;
+	font-size: 1.08rem;
+}
+.checklist li:before {
+	content: '✔';
+	color: #40916c;
+	position: absolute;
+	left: 0;
+	font-weight: bold;
+}
+
+.steps {
+	padding-left: 1.2rem;
+	margin: 0 0 0.5rem 0;
+}
+.steps li {
+	margin-bottom: 1.2rem;
+	font-size: 1.08rem;
+}
+.steps .tip {
+	display: block;
+	color: #888;
+	font-size: 0.98rem;
+	margin-top: 0.2rem;
+}
+
+.links {
+	list-style: none;
+	padding: 0;
+	margin: 0.5rem 0 0 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.2rem;
+}
+.links li {
+	margin: 0;
+}
+.links a {
+	color: #1b4332;
+	background: #e9f5db;
+	padding: 0.4rem 1rem;
+	border-radius: 6px;
+	text-decoration: none;
+	font-weight: 500;
+	transition: background 0.2s;
+}
+.links a:hover {
+	background: #b7e4c7;
+}
+
+.treeview {
+	font-size: 1.02rem;
+	background: #f8fafc;
+	border-radius: 8px;
+	padding: 1.2rem 1.5rem;
+	margin-bottom: 1rem;
+	border: 1px solid #e0e0e0;
+	overflow-x: auto;
+}
+.treeview ul {
+	list-style: none;
+	padding-left: 1.2rem;
+	margin: 0;
+}
+.treeview .folder {
+	font-weight: bold;
+	color: #40916c;
+	margin-top: 0.5rem;
+}
+.treeview .file {
+	color: #495057;
+	margin-left: 0.5rem;
+}
+
+.code {
+	background: #f1f3f4;
+	padding: 0.6rem 1rem;
+	border-radius: 6px;
+	font-family: 'Fira Mono', 'Consolas', monospace;
+	font-size: 1rem;
+	margin: 0.5rem 0;
+	display: inline-block;
+}
+
+@media (max-width: 700px) {
+	.card {
+		padding: 1.2rem 0.7rem;
+	}
+	.hero {
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.img-diagrama, .img-fluxo {
+		max-width: 100%;
+	}
+}
