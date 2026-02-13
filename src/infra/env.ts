@@ -1,14 +1,6 @@
 import path from "node:path";
 import { z } from "zod";
-
-/**
- * Validação e normalização de variáveis de ambiente.
- *
- * A ideia aqui é falhar rápido no boot se algum valor obrigatório estiver ausente,
- * e restringir caminhos de upload para evitar path traversal em ambientes locais.
- */
-
-const envSchema = z.object({
+// Arquivo movido para infra/config/env.ts
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.string().default("development"),
   DATABASE_URL: z.string().min(1),

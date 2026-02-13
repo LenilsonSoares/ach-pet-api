@@ -1,3 +1,9 @@
+# Cobertura de Testes
+
+![Cobertura](coverage/badge.svg)
+
+---
+
 # Ach Pet API
 
 Backend (API) do projeto **Ach Pet** (adoção responsável + acompanhamento pós-adoção).

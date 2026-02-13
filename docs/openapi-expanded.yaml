@@ -1,0 +1,188 @@
+openapi: 3.0.3
+info:
+  title: Ach Pet API
+  version: 1.0.0
+  description: API para adoção responsável e acompanhamento pós-adoção.
+servers:
+  - url: http://localhost:3000
+paths:
+  /auth/register:
+    post:
+      summary: Registrar usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        '201':
+          description: Usuário criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterUserResponse'
+        '400':
+          description: Payload inválido
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserRequest'
+      responses:
+        '200':
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginUserResponse'
+        '401':
+          description: Credenciais inválidas
+  /pets:
+    get:
+      summary: Listar pets
+      responses:
+        '200':
+          description: Lista de pets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetsListResponse'
+    post:
+      summary: Criar pet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePetRequest'
+      responses:
+        '201':
+          description: Pet criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '401':
+          description: Não autorizado
+  /pets/{id}:
+    get:
+      summary: Detalhar pet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detalhe do pet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet não encontrado
+components:
+  schemas:
+    RegisterUserRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [ADOPTER, SHELTER]
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        orgName:
+          type: string
+    RegisterUserResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+    LoginUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LoginUserResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+    PetsListResponse:
+      type: object
+      properties:
+        pets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pet'
+    CreatePetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        species:
+          type: string
+        breed:
+          type: string
+        sex:
+          type: string
+        ageMonths:
+          type: integer
+        size:
+          type: string
+        description:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+    Pet:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        species:
+          type: string
+        status:
+          type: string
+        shelterId:
+          type: string
+        photos:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              url:
+                type: string
+        createdAt:
+          type: string
+          format: date-time

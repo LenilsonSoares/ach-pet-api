@@ -22,7 +22,33 @@ export function registerUser(deps: {
   passwordHasher: PasswordHasher;
   tokenService: TokenService;
 }) {
+  // Importa value objects
+  const { Email } = await import("../../../domain/entities/Email.js");
+  const { Password } = await import("../../../domain/entities/Password.js");
+  const { Phone } = await import("../../../domain/entities/Phone.js");
   return async (req: RegisterUserRequest): Promise<RegisterUserResponse> => {
+    // Validação de campos obrigatórios
+    if (!req.role || !["ADOPTER", "SHELTER"].includes(req.role)) {
+      throw new AppError(400, "Role inválido ou ausente");
+    }
+    if (!req.name || req.name.trim().length < 2) {
+      throw new AppError(400, "Nome obrigatório e mínimo 2 caracteres");
+    }
+    if (!req.email) {
+      throw new AppError(400, "E-mail obrigatório");
+    }
+    if (!req.password) {
+      throw new AppError(400, "Senha obrigatória");
+    }
+    // Validação de value objects
+    try {
+      new Email(req.email);
+      new Password(req.password);
+      if (req.phone) new Phone(req.phone);
+    } catch (err) {
+      throw new AppError(400, err.message);
+    }
+
     const exists = await deps.authRepo.findByEmail(req.email);
     if (exists) throw new AppError(409, "E-mail já cadastrado");
 

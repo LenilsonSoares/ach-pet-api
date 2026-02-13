@@ -1,7 +1,7 @@
 import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
 import type { TokenService, AccessTokenPayload } from "../../application/ports/TokenService.js";
 import { AppError } from "../../domain/errors/AppError.js";
-import { env } from "../env.js";
+import { env } from "../config/env.js";
 
 export class JwtTokenService implements TokenService {
   signAccessToken(payload: AccessTokenPayload) {

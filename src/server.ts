@@ -5,7 +5,7 @@
  * `env` seja validado com `process.env` já carregado.
  */
 import "dotenv/config";
-import { env } from "./infra/env.js";
+import { env } from "./infra/config/env.js";
 import { app } from "./app.js";
 
 app.listen(env.PORT, () => {
