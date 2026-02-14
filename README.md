@@ -1,9 +1,3 @@
-# Cobertura de Testes
-
-![Cobertura](coverage/badge.svg)
-
----
-
 # Ach Pet API
 
 Backend (API) do projeto **Ach Pet** (adoção responsável + acompanhamento pós-adoção).
@@ -64,12 +58,6 @@ npm run dev
 
 A API sobe em `http://localhost:3000`.
 
-Documentação (Swagger UI): `http://localhost:3000/docs`
-
-OpenAPI JSON: `http://localhost:3000/openapi.json`
-
-Demo na faculdade (APK): veja [docs/faculdade-apk-tunel.md](docs/faculdade-apk-tunel.md)
-
 ## Mobile (React Native + Expo) — para o Alex
 
 Veja o guia de implementação do app em [docs/mobile-expo-handoff.md](docs/mobile-expo-handoff.md).
@@ -106,11 +94,9 @@ Importe ambos no Postman e selecione o environment **Ach Pet - Local**. A coleç
 
 ### Pets
 
-- `GET /pets` (público, com filtros: `status`, `species`, `q` + paginação: `page`, `pageSize` + ordenação: `order=asc|desc`)
+- `GET /pets` (público, com filtros: `status`, `species`, `q`)
 - `GET /pets/:id` (público)
 - `POST /pets` (SHELTER)
-- `GET /pets/mine` (SHELTER)
-- `PATCH /pets/:id` (SHELTER, editar/pausar/reativar)
 - `POST /pets/:id/photos` (SHELTER, `multipart/form-data` com campo `photo`)
 - `POST /pets/:id/favorite` (ADOPTER)
 - `DELETE /pets/:id/favorite` (ADOPTER)
@@ -122,7 +108,6 @@ Importe ambos no Postman e selecione o environment **Ach Pet - Local**. A coleç
 - `GET /adoptions/requests/inbox` (SHELTER)
 - `POST /adoptions/requests/:id/approve` (SHELTER, opcional `followUpDays`)
 - `POST /adoptions/requests/:id/reject` (SHELTER)
-- `POST /adoptions/:adoptionId/intervene` (SHELTER)
 
 ### Chat (após aprovação)
 

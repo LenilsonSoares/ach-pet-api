@@ -1,4 +1,6 @@
+
 import client from "prom-client";
+import { Request, Response, NextFunction } from "express";
 
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics();
@@ -14,14 +16,16 @@ export const httpRequestDuration = new client.Histogram({
 // ...
 // end({ status_code })
 
-export function metricsMiddleware(_req, res, next) {
+
+export function metricsMiddleware(_req: Request, res: Response, next: NextFunction): void {
   res.on("finish", () => {
     // Aqui você pode registrar métricas customizadas
   });
   next();
 }
 
-export function metricsEndpoint(req, res) {
+
+export function metricsEndpoint(_req: Request, res: Response): void {
   res.set("Content-Type", client.register.contentType);
   res.end(client.register.metrics());
 }

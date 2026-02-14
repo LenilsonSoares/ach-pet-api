@@ -13,7 +13,7 @@ export type LoginUserResponse = {
   token: string;
 };
 
-export function loginUser(deps: {
+export async function loginUser(deps: {
   authRepo: AuthRepository;
   passwordHasher: PasswordHasher;
   tokenService: TokenService;

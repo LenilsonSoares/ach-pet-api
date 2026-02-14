@@ -1,4 +1,4 @@
-import { FollowUpUpdate } from "../src/domain/entities/FollowUpUpdate.js";
+import { FollowUpUpdate } from "../../domain/entities/FollowUpUpdate.js";
 
 export function prismaFollowUpUpdateToDomain(fu: any): FollowUpUpdate {
   return new FollowUpUpdate(

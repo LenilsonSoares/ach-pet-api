@@ -1,4 +1,4 @@
-import { ChatMessage } from "../src/domain/entities/ChatMessage.js";
+import { ChatMessage } from "../../domain/entities/ChatMessage.js";
 
 export function prismaChatMessageToDomain(msg: any): ChatMessage {
   return new ChatMessage(

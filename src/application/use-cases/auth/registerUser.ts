@@ -1,5 +1,6 @@
 import { AppError } from "../../../domain/errors/AppError.js";
 import type { AuthRepository, PublicUser, RegisterInput, UserRole } from "../../ports/AuthRepository.js";
+import { logger } from "../../../infra/observability/logger.js";
 import type { PasswordHasher } from "../../ports/PasswordHasher.js";
 import type { TokenService } from "../../ports/TokenService.js";
 
@@ -17,7 +18,7 @@ export type RegisterUserResponse = {
   token: string;
 };
 
-export function registerUser(deps: {
+export async function registerUser(deps: {
   authRepo: AuthRepository;
   passwordHasher: PasswordHasher;
   tokenService: TokenService;
@@ -46,7 +47,8 @@ export function registerUser(deps: {
       new Password(req.password);
       if (req.phone) new Phone(req.phone);
     } catch (err) {
-      throw new AppError(400, err.message);
+      const error = err as Error;
+      throw new AppError(400, error.message);
     }
 
     const exists = await deps.authRepo.findByEmail(req.email);
@@ -64,8 +66,8 @@ export function registerUser(deps: {
     };
 
     const user = await deps.authRepo.createUser(input);
+    logger.info({ userId: user.id, email: user.email, role: user.role }, "Usuário registrado");
     const token = deps.tokenService.signAccessToken({ sub: user.id, role: user.role });
-
     return { user, token };
   };
 }

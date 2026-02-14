@@ -7,11 +7,11 @@ import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { env } from "./infra/env.js";
+
+import { env } from "./infra/config/env.js";
 import { AppError } from "./domain/errors/AppError.js";
 import { errorMiddleware } from "./presentation/http/error-middleware.js";
 import { buildAuthMiddlewares } from "./presentation/http/auth-middleware.js";
-
 
 import { createAuthModule } from "./modules/auth/index.js";
 import { createPetsModule } from "./modules/pets/index.js";
@@ -100,7 +100,12 @@ const auth = buildAuthMiddlewares(authModule.tokenService);
 
 // Routers HTTP: adaptam request/response e chamam os use cases.
 app.use("/auth", createAuthRouter(authModule));
-app.use("/pets", createPetsRouter({ ...petsModule, upload, auth }));
+app.use("/pets", createPetsRouter({
+  petsRepo: petsModule.petsRepo,
+  storageProvider: petsModule.storageProvider,
+  upload,
+  auth
+}));
 app.use("/adoptions", createAdoptionsRouter({ ...adoptionsModule, auth }));
 app.use("/chat", createChatRouter({ ...chatModule, auth }));
 app.use("/followup", createFollowupRouter({ ...followupModule, auth }));

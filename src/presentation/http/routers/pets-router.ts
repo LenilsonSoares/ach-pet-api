@@ -3,6 +3,7 @@ import { z } from "zod";
 import type multer from "multer";
 
 import type { PetsRepository } from "../../../application/ports/PetsRepository.js";
+import type { StorageProvider } from "../../../application/ports/StorageProvider.js";
 import type { AuthenticatedRequest } from "../auth-middleware.js";
 import { AppError } from "../../../domain/errors/AppError.js";
 
@@ -23,8 +24,10 @@ import { asyncHandler } from "../async-handler.js";
  * - SHELTER: criar/editar pet e enviar fotos
  * - ADOPTER: favoritar/desfavoritar
  */
+
 export function createPetsRouter(deps: {
   petsRepo: PetsRepository;
+  storageProvider: StorageProvider;
   upload: multer.Multer;
   auth: {
     requireAuth: (req: AuthenticatedRequest, res: any, next: any) => void;
@@ -45,17 +48,17 @@ export function createPetsRouter(deps: {
   router.get(
     "/",
     asyncHandler(async (req, res) => {
-    const query = listQuerySchema.parse(req.query);
-    const handler = listPets({ petsRepo: deps.petsRepo });
-    const result = await handler({
-      status: query.status,
-      species: query.species,
-      q: query.q,
-      page: query.page,
-      pageSize: query.pageSize,
-      order: query.order,
-    });
-    return res.json(result);
+      const query = listQuerySchema.parse(req.query);
+      const handler = listPets({ petsRepo: deps.petsRepo });
+      const result = await handler({
+        status: query.status,
+        species: query.species,
+        q: query.q,
+        page: query.page,
+        pageSize: query.pageSize,
+        order: query.order,
+      });
+      return res.json(result);
     }),
   );
 
@@ -135,8 +138,8 @@ export function createPetsRouter(deps: {
     deps.upload.single("photo"),
     asyncHandler(async (req: AuthenticatedRequest, res) => {
       if (!req.file) throw new AppError(400, "Arquivo ausente", "UPLOAD_MISSING_FILE");
-      const url = `/uploads/${req.file.filename}`;
-
+      // Salva via StorageProvider (Cloudinary)
+      const url = await deps.storageProvider.save(req.file.buffer, req.file.originalname, req.file.mimetype);
       const handler = addPetPhoto({ petsRepo: deps.petsRepo });
       const result = await handler({ petId: req.params.id, shelterId: req.user!.id, url });
       return res.status(201).json(result);

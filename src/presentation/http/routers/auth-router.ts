@@ -33,8 +33,8 @@ export function createAuthRouter(deps: {
     "/register",
     asyncHandler(async (req, res) => {
     const body = registerSchema.parse(req.body);
-    const handler = registerUser(deps);
-    const result = await handler(body);
+    const handlerFactory = await registerUser(deps);
+    const result = await handlerFactory(body);
     return res.status(201).json(result);
     }),
   );
@@ -47,10 +47,10 @@ export function createAuthRouter(deps: {
   router.post(
     "/login",
     asyncHandler(async (req, res) => {
-    const body = loginSchema.parse(req.body);
-    const handler = loginUser(deps);
-    const result = await handler(body);
-    return res.json(result);
+      const body = loginSchema.parse(req.body);
+      const handlerFactory = await loginUser(deps);
+      const result = await handlerFactory(body);
+      return res.status(200).json(result);
     }),
   );
 

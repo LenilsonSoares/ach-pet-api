@@ -1,5 +1,6 @@
 import { AppError } from "../../../domain/errors/AppError.js";
 import type { AdoptionsRepository } from "../../ports/AdoptionsRepository.js";
+import { logger } from "../../../infra/observability/logger.js";
 
 export function createAdoptionRequest(deps: { adoptionsRepo: AdoptionsRepository }) {
   return async (params: { adopterId: string; petId: string; message?: string }) => {
@@ -16,7 +17,7 @@ export function createAdoptionRequest(deps: { adoptionsRepo: AdoptionsRepository
       shelterId: pet.shelterId,
       message: params.message,
     });
-
+    logger.info({ adopterId: params.adopterId, petId: params.petId }, "Solicitação de adoção criada");
     return { request };
   };
 }

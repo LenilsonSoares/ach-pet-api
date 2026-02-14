@@ -1,5 +1,6 @@
 import { AppError } from "../../../domain/errors/AppError.js";
 import type { AdoptionsRepository } from "../../ports/AdoptionsRepository.js";
+import { logger } from "../../../infra/observability/logger.js";
 
 export function rejectRequest(deps: { adoptionsRepo: AdoptionsRepository }) {
   return async (params: { shelterId: string; requestId: string }) => {
@@ -9,6 +10,7 @@ export function rejectRequest(deps: { adoptionsRepo: AdoptionsRepository }) {
     if (request.status !== "PENDING") throw new AppError(400, "Solicitação não está pendente");
 
     const updated = await deps.adoptionsRepo.rejectRequest(request.id);
+    logger.info({ shelterId: params.shelterId, requestId: params.requestId }, "Solicitação de adoção rejeitada");
     return { request: updated };
   };
 }
