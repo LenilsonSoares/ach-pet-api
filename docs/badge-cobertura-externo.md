@@ -2,7 +2,7 @@
 
 ## Codecov
 
-1. Crie conta em https://codecov.io/
+1. Crie conta em <https://codecov.io/>
 2. Adicione o projeto (GitHub)
 3. No workflow CI/CD, adicione:
 
@@ -14,7 +14,7 @@
     files: coverage/lcov.info
 ```
 
-4. Gere badge:
+1. Gere badge:
 
 ```
 ![Codecov](https://codecov.io/gh/<usuario>/<repo>/branch/master/graph/badge.svg)
@@ -22,7 +22,7 @@
 
 ## Coveralls
 
-1. Crie conta em https://coveralls.io/
+1. Crie conta em <https://coveralls.io/>
 2. Adicione o projeto (GitHub)
 3. No workflow CI/CD, adicione:
 
@@ -34,7 +34,7 @@
     path-to-lcov: coverage/lcov.info
 ```
 
-4. Gere badge:
+1. Gere badge:
 
 ```
 ![Coveralls](https://coveralls.io/repos/github/<usuario>/<repo>/badge.svg?branch=master)

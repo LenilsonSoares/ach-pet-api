@@ -3,9 +3,11 @@
 ## 1. Preparação
 
 ### 1.1. Instale o Postman
-Baixe e instale o Postman: https://www.postman.com/downloads/
+
+Baixe e instale o Postman: <https://www.postman.com/downloads/>
 
 ### 1.2. Inicie a API
+
 Certifique-se que a API está rodando:
 
 ```
@@ -13,16 +15,18 @@ powershell
 npm run dev
 ```
 
-Acesse: http://localhost:3000
+Acesse: <http://localhost:3000>
 
 ## 2. Importando Coleção e Ambiente
 
 ### 2.1. Coleção
+
 - Abra o Postman
 - Clique em "Import"
 - Selecione o arquivo: `postman/ach-pet.postman_collection.json`
 
 ### 2.2. Ambiente
+
 - Clique em "Import"
 - Selecione o arquivo: `postman/ach-pet.postman_environment.json`
 - Ative o ambiente (canto superior direito)
@@ -30,10 +34,12 @@ Acesse: http://localhost:3000
 ## 3. Testando Endpoints
 
 ### 3.1. Autenticação
+
 - `POST /auth/register`: Crie usuário (adotante ou abrigo)
 - `POST /auth/login`: Faça login e obtenha token JWT
 
 ### 3.2. Pets
+
 - `POST /pets`: Crie pet (abrigo)
 - `GET /pets`: Liste pets
 - `GET /pets/{id}`: Detalhe do pet
@@ -41,16 +47,19 @@ Acesse: http://localhost:3000
 - `POST /pets/{id}/unfavorite`: Remover favorito
 
 ### 3.3. Adoção
+
 - `POST /adoptions/request`: Solicite adoção (adotante)
 - `GET /adoptions/inbox`: Abrigo vê solicitações
 - `POST /adoptions/{id}/approve`: Abrigo aprova
 - `POST /adoptions/{id}/reject`: Abrigo rejeita
 
 ### 3.4. Chat
+
 - `POST /chat/send`: Envie mensagem
 - `GET /chat/messages`: Liste mensagens
 
 ### 3.5. Followup
+
 - `POST /followup/update`: Crie atualização pós-adoção
 - `GET /followup/updates`: Liste atualizações
 
@@ -81,7 +90,7 @@ npx newman run postman/ach-pet.postman_collection.json -e postman/ach-pet.postma
 ## 7. Troubleshooting
 
 - Se algum endpoint falhar, verifique o token, dados enviados e status do servidor.
-- Consulte a documentação Swagger em: http://localhost:3000/docs
+- Consulte a documentação Swagger em: <http://localhost:3000/docs>
 
 ---
 

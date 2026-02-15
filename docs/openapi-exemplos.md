@@ -1,8 +1,11 @@
 # Exemplos reais para OpenAPI
 
 ## Auth
+
 ### /auth/register
+
 - Request:
+
 ```json
 {
   "role": "ADOPTER",
@@ -12,7 +15,9 @@
   "phone": "+5511999999999"
 }
 ```
+
 - Response:
+
 ```json
 {
   "user": {
@@ -24,19 +29,24 @@
   "token": "eyJhbGciOiJI..."
 }
 ```
+
 - Erros:
   - 400: Payload inválido
   - 409: Email já cadastrado
 
 ### /auth/login
+
 - Request:
+
 ```json
 {
   "email": "maria@email.com",
   "password": "Senha123!"
 }
 ```
+
 - Response:
+
 ```json
 {
   "user": {
@@ -48,12 +58,16 @@
   "token": "eyJhbGciOiJI..."
 }
 ```
+
 - Erros:
   - 401: Credenciais inválidas
 
 ## Pets
+
 ### /pets (GET)
+
 - Response:
+
 ```json
 {
   "pets": [
@@ -71,7 +85,9 @@
 ```
 
 ### /pets (POST)
+
 - Request:
+
 ```json
 {
   "name": "Rex",
@@ -83,7 +99,9 @@
   "description": "Muito dócil"
 }
 ```
+
 - Response:
+
 ```json
 {
   "id": "pet-1",
@@ -95,11 +113,14 @@
   "createdAt": "2026-02-13T10:00:00Z"
 }
 ```
+
 - Erros:
   - 401: Não autorizado
 
 ### /pets/{id} (GET)
+
 - Response:
+
 ```json
 {
   "id": "pet-1",
@@ -111,16 +132,20 @@
   "createdAt": "2026-02-13T10:00:00Z"
 }
 ```
+
 - Erros:
   - 404: Pet não encontrado
 
 ## Autenticação
+
 - Todos endpoints protegidos exigem header:
+
 ```
 Authorization: Bearer <token>
 ```
 
 ## Erros globais
+
 - 400: Payload inválido
 - 401: Não autorizado
 - 404: Não encontrado
