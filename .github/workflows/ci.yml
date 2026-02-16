@@ -33,6 +33,8 @@ jobs:
       - run: npm ci
       - run: npx prisma generate
       - run: npx prisma migrate deploy
+      - name: Wait for DB
+        run: npx wait-on tcp:5432
       - run: npm run lint
       - run: npm run lint:e2e
       - run: npm run build
