@@ -1,4 +1,3 @@
-/* eslint-env cypress, mocha */
 // Exemplo de teste E2E com Cypress (API)
 // Instale: npm install cypress --save-dev
 
