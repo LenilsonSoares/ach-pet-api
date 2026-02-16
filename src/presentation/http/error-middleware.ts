@@ -31,11 +31,20 @@ export function errorMiddleware(err: unknown, _req: Request, res: Response, _nex
     });
   }
 
+
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       message: err.message,
       code: err.code ?? "APP_ERROR",
     });
+  }
+
+  // Log detalhado para CI/debug
+  // eslint-disable-next-line no-console
+  console.error("[error-middleware] Erro não tratado:", err);
+  if (err instanceof Error && err.stack) {
+    // eslint-disable-next-line no-console
+    console.error(err.stack);
   }
 
   if (typeof err === "object" && err && "name" in err && (err as any).name === "PrismaClientInitializationError") {

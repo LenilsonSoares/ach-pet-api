@@ -15,12 +15,20 @@ describe('Auth (integração)', () => {
     const reg = await request(app)
       .post('/auth/register')
       .send({ name: 'Teste', email, password, role: 'ADOPTER' });
+    if (reg.status !== 201) {
+      // eslint-disable-next-line no-console
+      console.error('auth.register status:', reg.status, 'body:', reg.body);
+    }
     expect(reg.status).toBe(201);
     logExample('POST /auth/register', { name: 'Teste', email, password, role: 'ADOPTER' }, reg.body);
     // Login
     const login = await request(app)
       .post('/auth/login')
       .send({ email, password });
+    if (login.status !== 200) {
+      // eslint-disable-next-line no-console
+      console.error('auth.login status:', login.status, 'body:', login.body);
+    }
     expect(login.status).toBe(200);
     expect(login.body.token).toBeDefined();
     logExample('POST /auth/login', { email, password }, login.body);
@@ -38,6 +46,10 @@ describe('Auth (integração)', () => {
     const login = await request(app)
       .post('/auth/login')
       .send({ email, password: 'errada' });
+    if (login.status !== 401) {
+      // eslint-disable-next-line no-console
+      console.error('auth.login (senha errada) status:', login.status, 'body:', login.body);
+    }
     expect(login.status).toBe(401);
     expect(login.body.token).toBeUndefined();
     expect(login.body.message).toMatch(/senha/i);
@@ -47,6 +59,10 @@ describe('Auth (integração)', () => {
     const login = await request(app)
       .post('/auth/login')
       .send({ email: 'naoexiste@x.com', password: 'qualquer' });
+    if (login.status !== 401) {
+      // eslint-disable-next-line no-console
+      console.error('auth.login (usuario inexistente) status:', login.status, 'body:', login.body);
+    }
     expect(login.status).toBe(401);
     expect(login.body.token).toBeUndefined();
     expect(login.body.message).toMatch(/usu[aá]rio/i);

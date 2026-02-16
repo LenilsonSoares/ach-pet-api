@@ -7,6 +7,10 @@ import { app } from '../../app.js';
 describe('Pets (integração)', () => {
   it('deve listar pets (GET /pets)', async () => {
     const res = await request(app).get('/pets');
+    if (res.status !== 200) {
+      // eslint-disable-next-line no-console
+      console.error('pets.list status:', res.status, 'body:', res.body);
+    }
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.pets)).toBe(true);
   });
@@ -29,12 +33,20 @@ describe('Pets (integração)', () => {
       .post('/auth/login')
       .send({ email, password });
     const token = login.body.token;
+    if (!token) {
+      // eslint-disable-next-line no-console
+      console.error('pets.cadastro-obrigatorio: token não definido', login.status, login.body);
+    }
     expect(token).toBeDefined();
     // Tenta cadastrar pet sem o campo obrigatório 'name'
     const res = await request(app)
       .post('/pets')
       .set('Authorization', `Bearer ${token}`)
       .send({ species: 'dog' }); // falta o campo name
+    if (![400, 422].includes(res.status)) {
+      // eslint-disable-next-line no-console
+      console.error('pets.cadastro-obrigatorio status:', res.status, 'body:', res.body);
+    }
     expect([400, 422]).toContain(res.status); // aceita 400 ou 422
     if (res.body && res.body.message) {
       expect(res.body.message).toMatch(/obrigat[óo]rio|faltando|inv[aá]lido/i);
