@@ -18,6 +18,7 @@ import { createPetsModule } from "./modules/pets/index.js";
 import { createAdoptionsModule } from "./modules/adoptions/index.js";
 import { createChatModule } from "./modules/chat/index.js";
 import { createFollowupModule } from "./modules/followup/index.js";
+import { metricsMiddleware, metricsEndpoint } from "./infra/observability/metrics.js";
 
 import { createAuthRouter } from "./presentation/http/routers/auth-router.js";
 import { createPetsRouter } from "./presentation/http/routers/pets-router.js";
@@ -41,6 +42,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const app = express();
+
+
+// Observabilidade: métricas Prometheus
+app.use(metricsMiddleware);
 
 app.use(helmet());
 app.use(cors());
@@ -83,7 +88,11 @@ app.get("/", (_req, res) =>
   }),
 );
 
+
 app.get("/health", (_req, res) => res.json({ ok: true }));
+
+// Endpoint Prometheus
+app.get("/metrics", metricsEndpoint);
 
 app.get("/openapi.json", (_req, res) => res.json(openapiSpec));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));

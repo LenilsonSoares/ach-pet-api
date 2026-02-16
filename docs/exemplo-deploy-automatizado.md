@@ -16,7 +16,8 @@
           heroku_email: "seu-email@dominio.com"
 ```
 
-# Exemplo para Vercel
+
+## Exemplo para Vercel
 
 - Adicione ao workflow:
 
@@ -30,7 +31,8 @@
         run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
 ```
 
-# Exemplo para Azure
+
+## Exemplo para Azure
 
 - Adicione ao workflow:
 

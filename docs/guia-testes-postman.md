@@ -10,10 +10,10 @@ Baixe e instale o Postman: <https://www.postman.com/downloads/>
 
 Certifique-se que a API está rodando:
 
-```
+```js
 powershell
 npm run dev
-```
+```js
 
 Acesse: <http://localhost:3000>
 
@@ -83,8 +83,10 @@ Acesse: <http://localhost:3000>
 - Edite variáveis do ambiente conforme necessário.
 - Para integração contínua, use o Newman (CLI do Postman):
 
-```
+```js
+
 npx newman run postman/ach-pet.postman_collection.json -e postman/ach-pet.postman_environment.json
+
 ```
 
 ## 7. Troubleshooting

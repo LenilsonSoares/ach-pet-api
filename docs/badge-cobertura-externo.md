@@ -12,13 +12,13 @@
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
     files: coverage/lcov.info
-```
+```bash
 
 1. Gere badge:
 
-```
+```bash
 ![Codecov](https://codecov.io/gh/<usuario>/<repo>/branch/master/graph/badge.svg)
-```
+```sh
 
 ## Coveralls
 

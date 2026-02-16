@@ -1,3 +1,5 @@
+# Exemplo de script de teste automatizado no Postman
+
 // Exemplo de script de teste automatizado no Postman
 // Adicione no campo "Tests" de cada request
 

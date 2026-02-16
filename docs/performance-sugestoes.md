@@ -10,11 +10,13 @@
 - Para produção, configure alertas para latência alta e erros.
 
 Exemplo de autocannon:
+
 ```bash
 autocannon -c 50 -d 30 http://localhost:3000/pets
 ```
 
 Exemplo de ajuste no Prisma:
+
 ```js
 // prisma.ts
 export const prisma = new PrismaClient({

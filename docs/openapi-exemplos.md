@@ -14,7 +14,7 @@
   "password": "Senha123!",
   "phone": "+5511999999999"
 }
-```
+```yaml
 
 - Response:
 
@@ -28,7 +28,7 @@
   },
   "token": "eyJhbGciOiJI..."
 }
-```
+```http
 
 - Erros:
   - 400: Payload inválido
@@ -136,11 +136,12 @@
 - Erros:
   - 404: Pet não encontrado
 
+
 ## Autenticação
 
 - Todos endpoints protegidos exigem header:
 
-```
+```http
 Authorization: Bearer <token>
 ```
 

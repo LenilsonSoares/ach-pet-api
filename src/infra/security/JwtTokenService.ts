@@ -13,7 +13,10 @@ export class JwtTokenService implements TokenService {
   verifyAccessToken(token: string): AccessTokenPayload {
     try {
       return jwt.verify(token, env.JWT_SECRET as Secret) as AccessTokenPayload;
-    } catch {
+    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { logger } = require("../observability/logger.js");
+      logger.warn({ err, token }, "Falha na verificação do JWT");
       throw new AppError(401, "Token inválido");
     }
   }
