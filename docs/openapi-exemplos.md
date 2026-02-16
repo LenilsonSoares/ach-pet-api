@@ -2,52 +2,52 @@
 
 ## POST /auth/register
 
-### Register Request
+### Request
 
 ```json
 {
   "name": "Teste",
-  "email": "test1771265597559@mail.com",
+  "email": "test1771267190843@mail.com",
   "password": "123456",
   "role": "ADOPTER"
 }
 ```
 
-### Register Response
+### Response
 
 ```json
 {
   "user": {
-    "id": "cmlphsyab0000qwrsje2e2634",
+    "id": "cmlpir3n60000qww47tyqw0n7",
     "role": "ADOPTER",
     "name": "Teste",
-    "email": "test1771265597559@mail.com"
+    "email": "test1771267190843@mail.com"
   },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxwaHN5YWIwMDAwcXdyc2plMmUyNjM0Iiwicm9sZSI6IkFET1BURVIiLCJpYXQiOjE3NzEyNjU1OTcsImV4cCI6MTc3MTg3MDM5N30.JUrOqqifTMZQcVONQqSctmMk5BB1kRcAcIrlTbcgFrY"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxwaXIzbjYwMDAwcXd3NDd0eXF3MG43Iiwicm9sZSI6IkFET1BURVIiLCJpYXQiOjE3NzEyNjcxOTEsImV4cCI6MTc3MTg3MTk5MX0.7Lr0d_w1v38gPogpY-kEu9vqZwpkFdRrbH-feIiGDUc"
 }
 ```
 
 ## POST /auth/login
 
-### Login Request
+### Request
 
 ```json
 {
-  "email": "test1771265597559@mail.com",
+  "email": "test1771267190843@mail.com",
   "password": "123456"
 }
 ```
 
-### Login Response
+### Response
 
 ```json
 {
   "user": {
-    "id": "cmlphsyab0000qwrsje2e2634",
+    "id": "cmlpir3n60000qww47tyqw0n7",
     "role": "ADOPTER",
     "name": "Teste",
-    "email": "test1771265597559@mail.com"
+    "email": "test1771267190843@mail.com"
   },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxwaHN5YWIwMDAwcXdyc2plMmUyNjM0Iiwicm9sZSI6IkFET1BURVIiLCJpYXQiOjE3NzEyNjU1OTcsImV4cCI6MTc3MTg3MDM5N30.JUrOqqifTMZQcVONQqSctmMk5BB1kRcAcIrlTbcgFrY"
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxwaXIzbjYwMDAwcXd3NDd0eXF3MG43Iiwicm9sZSI6IkFET1BURVIiLCJpYXQiOjE3NzEyNjcxOTEsImV4cCI6MTc3MTg3MTk5MX0.7Lr0d_w1v38gPogpY-kEu9vqZwpkFdRrbH-feIiGDUc"
 }
 ```
