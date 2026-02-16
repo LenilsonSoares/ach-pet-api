@@ -153,7 +153,121 @@ Authorization: Bearer <token>
 - 422: Erro de validação
 - 500: Erro interno
 
----
-Adicione exemplos semelhantes para adoptions, chat, followup.
+## Adoptions
 
-Esses exemplos podem ser incluídos diretamente no OpenAPI usando o campo `example` em cada schema/response.
+### /adoptions/requests (POST)
+
+- Request:
+
+```json
+{
+  "petId": "pet-1",
+  "message": "Gostaria de adotar o Rex!"
+}
+```
+
+- Response:
+
+```json
+{
+  "id": "adoption-request-1",
+  "petId": "pet-1",
+  "adopterId": "user-2",
+  "shelterId": "user-1",
+  "status": "PENDING",
+  "createdAt": "2026-02-13T10:10:00Z"
+}
+```
+
+- Erros:
+  - 401: Não autorizado
+  - 404: Pet não encontrado
+
+### /adoptions/requests/mine (GET)
+
+- Response:
+
+```json
+{
+  "requests": [
+    {
+      "id": "adoption-request-1",
+      "petId": "pet-1",
+      "status": "PENDING",
+      "createdAt": "2026-02-13T10:10:00Z"
+    }
+  ]
+}
+```
+
+## Chat
+
+### /chat/threads/{threadId}/messages (GET)
+
+- Response:
+
+```json
+{
+  "messages": [
+    {
+      "id": "msg-1",
+      "threadId": "thread-1",
+      "senderId": "user-1",
+      "content": "Olá, tudo bem?",
+      "createdAt": "2026-02-13T11:00:00Z"
+    }
+  ]
+}
+```
+
+### /chat/threads/{threadId}/messages (POST)
+
+- Request:
+
+```json
+{
+  "content": "Olá, tudo bem?"
+}
+```
+
+- Response:
+
+```json
+{
+  "id": "msg-1",
+  "threadId": "thread-1",
+  "senderId": "user-1",
+  "content": "Olá, tudo bem?",
+  "createdAt": "2026-02-13T11:00:00Z"
+}
+```
+
+## Followup
+
+### /followup/adoptions/{adoptionId}/updates (POST)
+
+- Request:
+
+```json
+{
+  "text": "O pet está se adaptando bem!",
+  "photoUrl": "https://..."
+}
+```
+
+- Response:
+
+```json
+{
+  "id": "update-1",
+  "adoptionId": "adoption-1",
+  "authorId": "user-2",
+  "text": "O pet está se adaptando bem!",
+  "photoUrl": "https://...",
+  "createdAt": "2026-02-13T12:00:00Z"
+}
+```
+
+- Erros:
+  - 401: Não autorizado
+  - 404: Adoção não encontrada

@@ -1,0 +1,118 @@
+---
+config:
+  theme: neo-dark
+  layout: dagre
+---
+erDiagram
+  User {
+    String id PK
+    UserRole role
+    String name
+    String email
+    String passwordHash
+    String phone
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  ShelterProfile {
+    String id PK
+    String userId FK
+    String orgName
+    String address
+    String city
+    String state
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  AdopterProfile {
+    String id PK
+    String userId FK
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  Pet {
+    String id PK
+    String shelterId FK
+    String name
+    String species
+    String breed
+    String sex
+    Int ageMonths
+    String size
+    String description
+    PetStatus status
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  PetPhoto {
+    String id PK
+    String petId FK
+    String url
+    DateTime createdAt
+  }
+  Favorite {
+    String id PK
+    String userId FK
+    String petId FK
+    DateTime createdAt
+  }
+  AdoptionRequest {
+    String id PK
+    String petId FK
+    String adopterId FK
+    String shelterId FK
+    String message
+    AdoptionRequestStatus status
+    String adoption FK
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  Adoption {
+    String id PK
+    String adoptionRequestId FK
+    AdoptionStatus status
+    Int followUpDays
+    DateTime startsAt
+    DateTime endsAt
+    String thread FK
+    DateTime createdAt
+    DateTime updatedAt
+  }
+  ChatThread {
+    String id PK
+    String adoptionId FK
+    DateTime createdAt
+  }
+  Message {
+    String id PK
+    String threadId FK
+    String senderId FK
+    String content
+    DateTime createdAt
+  }
+  FollowUpUpdate {
+    String id PK
+    String adoptionId FK
+    String authorId FK
+    String text
+    String photoUrl
+    DateTime createdAt
+  }
+
+  User ||--o{ ShelterProfile : "1:N"
+  User ||--o{ AdopterProfile : "1:N"
+  User ||--o{ Pet : "1:N (Shelter)"
+  User ||--o{ Favorite : "1:N"
+  User ||--o{ AdoptionRequest : "1:N (Adopter)"
+  User ||--o{ AdoptionRequest : "1:N (Shelter)"
+  User ||--o{ Message : "1:N (Sender)"
+  User ||--o{ FollowUpUpdate : "1:N (Author)"
+  Pet ||--o{ PetPhoto : "1:N"
+  Pet ||--o{ Favorite : "1:N"
+  Pet ||--o{ AdoptionRequest : "1:N"
+  AdoptionRequest ||--o| Adoption : "1:1"
+  AdoptionRequest ||--o{ Adoption : "1:N"
+  Adoption ||--o| ChatThread : "1:1"
+  Adoption ||--o{ FollowUpUpdate : "1:N"
+  ChatThread ||--o{ Message : "1:N"
+  Adoption ||--o{ FollowUpUpdate : "1:N"

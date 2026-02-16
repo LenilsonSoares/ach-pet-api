@@ -1,4 +1,3 @@
-
 # Ach Pet API
 
 ## Fallback seguro para uploads locais
@@ -187,9 +186,44 @@ npm run lint:fix
 
 ## Observabilidade
 
-- Logs: Pino
-- Métricas: Prometheus
-- Tracing: OpenTelemetry
+O projeto já está pronto para monitoramento e tracing em produção:
+
+- **Logs:** via [Pino](https://getpino.io/), já integrado em middlewares e infraestrutura.
+- **Métricas Prometheus:** endpoint `/metrics` expõe métricas para scraping por Prometheus.
+- **Tracing distribuído:** via [OpenTelemetry](https://opentelemetry.io/), inicializado automaticamente.
+
+### Expondo métricas para Prometheus
+
+- Endpoint: `GET /metrics`
+- Exemplo de configuração Prometheus:
+
+```yaml
+scrape_configs:
+  - job_name: 'ach-pet-api'
+    static_configs:
+      - targets: ['localhost:3000']
+```
+
+### Tracing distribuído (OpenTelemetry)
+
+- O tracing é inicializado automaticamente ao subir a API.
+- Para exportar traces para Jaeger, OTLP ou outro backend, configure variáveis de ambiente conforme a documentação do OpenTelemetry Node SDK.
+
+### Logs estruturados
+
+- Todos os logs são emitidos em JSON (produção) ou formatados (dev) via Pino.
+- Exemplo de log:
+
+```json
+{
+  "level": "info",
+  "msg": "Usuário autenticado com sucesso",
+  "userId": "...",
+  "role": "ADOPTER"
+}
+```
+
+> Consulte `src/infra/observability/` para customização avançada.
 
 ## Contribuição
 
