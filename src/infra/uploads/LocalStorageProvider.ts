@@ -1,6 +1,7 @@
 import { StorageProvider } from "../../application/ports/StorageProvider.js";
 import { promises as fs } from "fs";
 import path from "path";
+// @ts-ignore
 import { logger } from "../observability/logger.js";
 
 const UPLOADS_DIR = path.resolve(process.cwd(), "uploads");

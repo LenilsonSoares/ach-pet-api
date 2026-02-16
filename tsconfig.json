@@ -11,8 +11,13 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "types": ["node", "jest"],
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "noEmitOnError": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@infra/*": ["infra/*"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.mts", "src/**/*.js"]
 }

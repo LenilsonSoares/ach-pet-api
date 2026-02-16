@@ -23,15 +23,16 @@ export async function loginUser(deps: {
   return async (req: LoginUserRequest): Promise<LoginUserResponse> => {
     logger.info({ email: req.email }, "Tentativa de login");
     const user = await deps.authRepo.findByEmail(req.email);
+
     if (!user) {
       logger.warn({ email: req.email }, "Login falhou: usuário não encontrado");
-      throw new AppError(401, "Credenciais inválidas");
+      throw new AppError(401, "Usuário não encontrado");
     }
 
     const ok = await deps.passwordHasher.compare(req.password, user.passwordHash);
     if (!ok) {
       logger.warn({ email: req.email, userId: user.id }, "Login falhou: senha inválida");
-      throw new AppError(401, "Credenciais inválidas");
+      throw new AppError(401, "Senha inválida");
     }
 
     const token = deps.tokenService.signAccessToken({ sub: user.id, role: user.role });

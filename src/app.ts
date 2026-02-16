@@ -19,6 +19,7 @@ import { createAdoptionsModule } from "./modules/adoptions/index.js";
 import { createChatModule } from "./modules/chat/index.js";
 import { createFollowupModule } from "./modules/followup/index.js";
 import { metricsMiddleware, metricsEndpoint } from "./infra/observability/metrics.js";
+import { logger } from "./infra/observability/logger.js";
 
 import { createAuthRouter } from "./presentation/http/routers/auth-router.js";
 import { createPetsRouter } from "./presentation/http/routers/pets-router.js";
@@ -41,7 +42,13 @@ import { openapiSpec } from "./presentation/http/openapi.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const app = express();
+
+import { accessLogMiddleware } from "./presentation/http/middlewares/access-log-middleware.js";
+
+
+const app = express();
+// Middleware global de logs de acesso HTTP
+app.use(accessLogMiddleware);
 
 
 // Observabilidade: métricas Prometheus
@@ -78,7 +85,7 @@ const upload = multer({
 
 app.use("/uploads", express.static(uploadsDir));
 
-app.get("/", (_req, res) =>
+app.get("/", (_req: express.Request, res: express.Response) =>
   res.json({
     ok: true,
     name: "Ach Pet API",
@@ -89,12 +96,12 @@ app.get("/", (_req, res) =>
 );
 
 
-app.get("/health", (_req, res) => res.json({ ok: true }));
+app.get("/health", (_req: express.Request, res: express.Response) => res.json({ ok: true }));
 
 // Endpoint Prometheus
 app.get("/metrics", metricsEndpoint);
 
-app.get("/openapi.json", (_req, res) => res.json(openapiSpec));
+app.get("/openapi.json", (_req: express.Request, res: express.Response) => res.json(openapiSpec));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
 
@@ -120,3 +127,5 @@ app.use("/chat", createChatRouter({ ...chatModule, auth }));
 app.use("/followup", createFollowupRouter({ ...followupModule, auth }));
 
 app.use(errorMiddleware);
+
+export { app };

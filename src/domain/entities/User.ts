@@ -1,5 +1,5 @@
-import { Email } from './Email';
-import { Phone } from './Phone';
+import { Email } from './Email.js';
+import { Phone } from './Phone.js';
 /**
  * Representa um usuário do sistema, podendo ser adotante ou abrigo.
  * Responsável por armazenar dados essenciais e regras de negócio relacionadas ao perfil.

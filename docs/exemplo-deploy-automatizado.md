@@ -14,8 +14,6 @@
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "nome-do-app"
           heroku_email: "seu-email@dominio.com"
-```
-
 
 ## Exemplo para Vercel
 
@@ -29,7 +27,6 @@
       - uses: actions/checkout@v3
       - name: Deploy Vercel
         run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-```
 
 
 ## Exemplo para Azure

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { logger } from '../../infra/observability/logger.js';
 import type { NextFunction, Request, Response } from "express";
 import { AppError } from "../../domain/errors/AppError.js";

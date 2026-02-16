@@ -35,7 +35,4 @@
 ```
 
 1. Gere badge:
-
-```
 ![Coveralls](https://coveralls.io/repos/github/<usuario>/<repo>/badge.svg?branch=master)
-```

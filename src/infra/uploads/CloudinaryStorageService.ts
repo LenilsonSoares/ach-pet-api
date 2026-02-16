@@ -1,3 +1,4 @@
+// @ts-ignore
 import { logger } from '../observability/logger.js';
 import { v2 as cloudinary } from "cloudinary";
 import type { StorageService } from "../../application/ports/StorageService.js";

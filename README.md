@@ -256,6 +256,20 @@ Arquivos:
 
 Importe ambos no Postman e selecione o environment **Ach Pet - Local**. A coleção já salva tokens e IDs (petId, requestId, adoptionId, threadId) automaticamente pelos testes.
 
+## Como testar e documentar a API
+
+### Importando exemplos no Postman
+
+1. Abra o Postman e clique em **Import**.
+2. Selecione o arquivo [`postman/ach-pet.postman_collection.json`](postman/ach-pet.postman_collection.json).
+3. Importe também o ambiente [`postman/ach-pet.postman_environment.json`](postman/ach-pet.postman_environment.json) para facilitar uso de variáveis (`baseUrl`, tokens, etc).
+4. Execute os requests diretamente ou automatize testes com os scripts já inclusos.
+
+### Visualizando a documentação OpenAPI
+
+- Importe [`docs/openapi-example.yaml`](docs/openapi-example.yaml) ou [`docs/openapi-expanded.yaml`](docs/openapi-expanded.yaml) no [Swagger Editor online](https://editor.swagger.io/) para visualizar e testar todos os endpoints, schemas e exemplos.
+- Exemplos reais de requests/respostas: [`docs/openapi-exemplos.md`](docs/openapi-exemplos.md).
+
 ## Endpoints (resumo)
 
 ### Saúde

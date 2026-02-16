@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { registerUser } from '../../../../application/use-cases/auth/registerUser';
+import { registerUser } from '../../../../application/use-cases/auth/registerUser.js';
 
 describe('registerUser (unit)', () => {
   it('deve lançar erro se email já existir', async () => {

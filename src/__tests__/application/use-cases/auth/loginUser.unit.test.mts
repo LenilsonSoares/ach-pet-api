@@ -1,4 +1,4 @@
-import { loginUser } from '../../../../application/use-cases/auth/loginUser';
+import { loginUser } from '../../../../application/use-cases/auth/loginUser.js';
 import { describe, it, expect, vi } from 'vitest';
 
 describe('loginUser (unit)', () => {
