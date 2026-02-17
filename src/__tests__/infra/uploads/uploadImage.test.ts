@@ -1,9 +1,11 @@
+
+import { vi } from 'vitest';
 import { uploadImage } from '../../../infra/uploads/uploadImage.js';
 
-jest.mock('../../../infra/uploads/cloudinary.js', () => ({
+vi.mock('../../../infra/uploads/cloudinary.js', () => ({
   default: {
     uploader: {
-      upload: jest.fn(async (filePath) => ({
+      upload: vi.fn(async (filePath) => ({
         secure_url: 'https://res.cloudinary.com/demo/image/upload/sample.jpg',
         original_filename: filePath,
       }))
