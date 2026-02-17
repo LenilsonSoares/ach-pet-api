@@ -1,6 +1,8 @@
+import { describe, it, expect } from 'vitest';
 
 import { vi } from 'vitest';
 import { uploadImage } from '../../../infra/uploads/uploadImage.js';
+import cloudinary from '../../../infra/uploads/cloudinary.js';
 
 vi.mock('../../../infra/uploads/cloudinary.js', () => ({
   default: {
@@ -22,8 +24,7 @@ describe('uploadImage', () => {
   });
 
   it('deve retornar erro ao falhar upload', async () => {
-    const cloudinary = require('../../../infra/uploads/cloudinary.js').default;
-    cloudinary.uploader.upload.mockImplementationOnce(() => { throw new Error('Falha'); });
+    (cloudinary.uploader.upload as ReturnType<typeof vi.fn>).mockImplementationOnce(() => { throw new Error('Falha'); });
     const result = await uploadImage('fake/path/to/image.jpg');
     expect(result.success).toBe(false);
     expect(result.error).toBeInstanceOf(Error);
