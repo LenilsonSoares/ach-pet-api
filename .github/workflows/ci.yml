@@ -30,7 +30,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
       - name: Clean npm cache
         run: npm cache clean --force
       - run: npm ci
@@ -57,7 +56,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
       - run: npm ci
       - name: Start API
         run: npm run start &
