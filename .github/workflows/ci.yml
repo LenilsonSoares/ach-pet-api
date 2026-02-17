@@ -23,7 +23,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/achpet_test
       JWT_SECRET: supersecretjwt
-      CLOUDINARY_URL: ''
+      CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v3
