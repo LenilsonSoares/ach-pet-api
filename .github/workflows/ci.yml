@@ -31,6 +31,8 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+      - name: Clean npm cache
+        run: npm cache clean --force
       - run: npm ci
       - run: npx prisma generate
       - run: npx prisma migrate deploy
