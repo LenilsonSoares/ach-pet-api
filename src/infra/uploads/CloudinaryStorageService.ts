@@ -4,10 +4,11 @@ import { v2 as cloudinary } from "cloudinary";
 import type { StorageService } from "../../application/ports/StorageService.js";
 import type { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 
+if (!process.env.CLOUDINARY_URL) {
+  throw new Error('Variável de ambiente CLOUDINARY_URL não definida.');
+}
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  url: process.env.CLOUDINARY_URL,
 });
 
 export class CloudinaryStorageService implements StorageService {

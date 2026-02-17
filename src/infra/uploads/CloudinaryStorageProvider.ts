@@ -3,10 +3,12 @@ import { logger } from '../observability/logger.js';
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { StorageProvider } from "../../application/ports/StorageProvider.js";
 
+// Validação automática das variáveis de ambiente
+if (!process.env.CLOUDINARY_URL) {
+  throw new Error('Variável de ambiente CLOUDINARY_URL não definida.');
+}
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
-  api_key: process.env.CLOUDINARY_API_KEY!,
-  api_secret: process.env.CLOUDINARY_API_SECRET!,
+  url: process.env.CLOUDINARY_URL,
 });
 
 
@@ -15,6 +17,15 @@ export class CloudinaryStorageProvider implements StorageProvider {
    * Salva um arquivo no Cloudinary e retorna a URL pública.
    */
   async save(buffer: Buffer, filename: string, mimetype: string): Promise<string> {
+    // Validação automática de tipo e tamanho
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (!allowedTypes.includes(mimetype)) {
+      throw new Error("Tipo de arquivo não suportado. Apenas imagens JPEG, PNG, GIF ou WEBP.");
+    }
+    if (buffer.length > maxSize) {
+      throw new Error("Arquivo excede o tamanho máximo de 10MB.");
+    }
     // Converte buffer para base64 data URI
     const base64 = buffer.toString("base64");
     const dataUri = `data:${mimetype};base64,${base64}`;
@@ -30,7 +41,7 @@ export class CloudinaryStorageProvider implements StorageProvider {
     } catch (err) {
       logger.error({ err, filename }, "Falha ao fazer upload no Cloudinary");
       // Retorna erro amigável para a aplicação
-      throw new Error("Falha ao salvar arquivo na nuvem. Tente novamente mais tarde.");
+      throw new Error("Falha ao salvar arquivo na nuvem. Tente novamente mais tarde. Detalhe: " + ((err as Error)?.message || err));
     }
   }
 
