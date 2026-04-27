@@ -9,8 +9,8 @@ import { env } from "./infra/config/env.js";
 import { app } from "./app.js";
 import { prisma } from "./infra/db/prisma.js";
 
-const server = app.listen(env.PORT, () => {
-  console.log(`[ach-pet-api] listening on :${env.PORT}`);
+const server = app.listen(env.PORT, env.HOST, () => {
+  console.log(`[ach-pet-api] listening on ${env.HOST}:${env.PORT}`);
 });
 
 // Graceful shutdown
