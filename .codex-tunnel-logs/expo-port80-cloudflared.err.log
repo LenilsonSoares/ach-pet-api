@@ -20,3 +20,14 @@
 2026-04-27T17:04:44Z INF ICMP proxy will use fe80::5a5c:2b61:b2a6:cd2a in zone Ethernet as source for IPv6
 2026-04-27T17:04:44Z INF Starting metrics server on 127.0.0.1:20242/metrics
 2026-04-27T17:04:45Z INF Registered tunnel connection connIndex=0 connection=0f95ccdd-1e8f-4045-bc0b-a609a7bac209 event=0 ip=198.41.192.77 location=gru13 protocol=quic
+2026-04-27T17:37:14Z ERR  error="stream 201 canceled by remote with error code 0" connIndex=0 event=1 ingressRule=0 originService=http://localhost:80
+2026-04-27T17:37:14Z ERR  error="stream 197 canceled by remote with error code 0" connIndex=0 event=1 ingressRule=0 originService=http://localhost:80
+2026-04-27T17:37:14Z ERR Request failed error="stream 201 canceled by remote with error code 0" connIndex=0 dest=http://hardwood-building-adapter-emacs.trycloudflare.com/assets/?unstable_path=.%2Fsrc%2Fassets%2FLuna.png&platform=android&hash=9c2ded4eba9fb3dcbc794b53bf3e7053 event=0 ip=198.41.192.77 type=http
+2026-04-27T17:37:14Z ERR Request failed error="stream 197 canceled by remote with error code 0" connIndex=0 dest=http://hardwood-building-adapter-emacs.trycloudflare.com/assets/?unstable_path=.%2Fsrc%2Fassets%2FThor.png&platform=android&hash=ead6ea303bcb21fbf81d1630932aa769 event=0 ip=198.41.192.77 type=http
+2026-04-27T19:04:32Z ERR failed to run the datagram handler error="timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.77
+2026-04-27T19:04:32Z ERR failed to accept incoming stream requests error="failed to accept QUIC stream: timeout: no recent network activity" connIndex=0 event=0 ip=198.41.192.77
+2026-04-27T19:04:32Z ERR failed to serve tunnel connection error="datagram manager encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.77
+2026-04-27T19:04:32Z ERR Serve tunnel error error="datagram manager encountered a failure while serving" connIndex=0 event=0 ip=198.41.192.77
+2026-04-27T19:04:32Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.192.77
+2026-04-27T19:04:33Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.77
+2026-04-27T19:04:33Z INF Registered tunnel connection connIndex=0 connection=3115e320-ba8d-483a-b1ed-cddce868d7f9 event=0 ip=198.41.192.77 location=gru13 protocol=quic

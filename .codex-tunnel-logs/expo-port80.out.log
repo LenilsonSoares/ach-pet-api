@@ -11,3 +11,6 @@ Android Bundled 42ms index.js (1 module)
 Android .\index.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
 Android Bundled 34ms index.js (1 module)
  WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/th3rdwave/react-native-safe-area-context
+Android .\index.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Android Bundled 41ms index.js (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/th3rdwave/react-native-safe-area-context
