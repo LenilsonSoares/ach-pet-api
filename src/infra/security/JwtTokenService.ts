@@ -16,7 +16,7 @@ export class JwtTokenService implements TokenService {
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { logger } = require("../observability/logger.js");
-      logger.warn({ err, token }, "Falha na verificação do JWT");
+      logger.warn({ err }, "Falha na verificação do JWT");
       throw new AppError(401, "Token inválido");
     }
   }

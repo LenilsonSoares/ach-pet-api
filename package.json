@@ -23,7 +23,7 @@
     "lint:e2e": "eslint e2e/**/*.cy.js",
     "lint:fix": "eslint . --fix",
     "format": "prettier -w .",
-    "test": "vitest run",
+    "test": "cross-env DATABASE_URL=postgresql://postgres:postgres@localhost:5432/achpet?schema=public JWT_SECRET=testsecret NODE_ENV=test vitest run",
     "test:integration": "vitest run dist/__tests__/integration",
     "test:watch": "vitest",
     "coverage": "c8 vitest run --coverage",

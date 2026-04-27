@@ -4,6 +4,9 @@ const globals = require("globals");
 const cypressPlugin = require("eslint-plugin-cypress");
 
 module.exports = [
+  {
+    ignores: ["dist/**", "coverage/**", "node_modules/**"],
+  },
   js.configs.recommended,
   {
     languageOptions: {

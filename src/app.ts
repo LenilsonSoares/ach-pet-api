@@ -71,7 +71,7 @@ app.use(
 const uploadsDir = path.resolve(__dirname, "..", env.UPLOADS_DIR);
 fs.mkdirSync(uploadsDir, { recursive: true });
 const upload = multer({
-  dest: uploadsDir,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB
   },
