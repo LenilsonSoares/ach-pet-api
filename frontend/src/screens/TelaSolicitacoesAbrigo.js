@@ -26,9 +26,11 @@ export const TelaSolicitacoesAbrigo = ({ applications, onViewDetail, onOpenChat,
             <View style={{ backgroundColor: statusColor, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, alignSelf: 'flex-start' }}>
               <Text style={{ fontSize: 12, fontWeight: '600', color: statusTextColor }}>{app.status}</Text>
             </View>
-            <TouchableOpacity onPress={() => onOpenChat(app.adopterId, app.adopterName, app.petName)} style={{ backgroundColor: '#F4A51C', padding: 8, borderRadius: 8 }}>
-              <Ionicons name="chatbubble-outline" size={16} color="#1E1E1E" />
-            </TouchableOpacity>
+            {app.threadId && (
+              <TouchableOpacity onPress={() => onOpenChat(app.threadId, app.adopterName, app.petName)} style={{ backgroundColor: '#F4A51C', padding: 8, borderRadius: 8 }}>
+                <Ionicons name="chatbubble-outline" size={16} color="#1E1E1E" />
+              </TouchableOpacity>
+            )}
           </View>
         </TouchableOpacity>
       );

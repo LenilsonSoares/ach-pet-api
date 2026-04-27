@@ -13,11 +13,7 @@
     "types": ["node", "jest"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "noEmitOnError": true,
-    "isolatedModules": true,
-    "baseUrl": "./src",
-    "paths": {
-      "@infra/*": ["infra/*"]
-    }
+    "isolatedModules": true
   },
   "include": ["src/**/*.ts", "src/**/*.mts", "src/**/*.js"]
 }

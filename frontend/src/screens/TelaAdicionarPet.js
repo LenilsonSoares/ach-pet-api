@@ -53,6 +53,25 @@ export const TelaAdicionarPet = ({
         </View>
 
         <View style={{ marginBottom: 16 }}>
+          <Text style={{ fontSize: 13, fontWeight: '600', color: '#333', marginBottom: 6 }}>Tipo *</Text>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            {[
+              { label: 'Cão', value: 'dogs' },
+              { label: 'Gato', value: 'cats' },
+              { label: 'Outro', value: 'others' }
+            ].map(item => (
+              <TouchableOpacity
+                key={item.value}
+                onPress={() => onFormChange('tipo', item.value)}
+                style={{ flex: 1, backgroundColor: petForm.tipo === item.value ? '#8B2E0F' : 'white', padding: 12, borderRadius: 8, alignItems: 'center' }}
+              >
+                <Text style={{ color: petForm.tipo === item.value ? 'white' : '#333', fontWeight: '600', fontSize: 12 }}>{item.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: '#333', marginBottom: 6 }}>Sexo *</Text>
           <View style={{ flexDirection: 'row', gap: 12 }}>
             <TouchableOpacity onPress={() => onFormChange('sexo', 'Macho')} style={{ flex: 1, backgroundColor: petForm.sexo === 'Macho' ? '#8B2E0F' : 'white', padding: 12, borderRadius: 8, alignItems: 'center' }}>

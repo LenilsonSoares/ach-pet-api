@@ -23,7 +23,7 @@ export const TelaAdocoesAbrigo = ({ adoptions, onViewDetail, onOpenChat, onVolta
           <TouchableOpacity onPress={() => onViewDetail(adoption.id)} style={{ flex: 1, backgroundColor: '#8B2E0F', paddingVertical: 10, borderRadius: 50, alignItems: 'center' }}>
             <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Ver Detalhes</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onOpenChat(adoption.adopterId, adoption.adopterName, adoption.petName)} style={{ flex: 1, backgroundColor: '#66BB6A', paddingVertical: 10, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => onOpenChat(adoption.threadId, adoption.adopterName, adoption.petName)} style={{ flex: 1, backgroundColor: '#66BB6A', paddingVertical: 10, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
             <Ionicons name="chatbubble-outline" size={16} color="white" />
             <Text style={{ color: 'white', fontSize: 14, fontWeight: '600', marginLeft: 4 }}>Chat</Text>
           </TouchableOpacity>

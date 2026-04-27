@@ -110,9 +110,9 @@ export const TelaSolicitacoesAdotante = ({
                       </View>
                       
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                        {app.status === 'Pendente' && (
+                        {app.threadId && (
                           <TouchableOpacity 
-                            onPress={() => onOpenChat(app.shelterId, app.shelter || 'Abrigo', app.petName)} 
+                            onPress={() => onOpenChat(app.threadId, app.shelter || 'Abrigo', app.petName)} 
                             style={{ 
                               backgroundColor: '#F4A51C', 
                               padding: 8, 

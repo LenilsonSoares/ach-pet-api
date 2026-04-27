@@ -2,10 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
-  Alert,
-  Dimensions
+  Alert
 } from 'react-native';
 import { DATABASE } from '../services/bancoDados';
+import { api } from '../services/api';
+import {
+  categoryToSpecies,
+  mapApiMessageToViewModel,
+  mapApiPetToViewModel,
+  mapApiRequestToAdopterApplication,
+  mapApiRequestToShelterApplication,
+  mapApiUserToViewModel,
+  mapApplicationToShelterAdoption
+} from '../services/mappers';
 import { cores } from '../utils/constantes';
 
 import { TelaSplash } from '../screens/TelaSplash';
@@ -36,6 +45,8 @@ export const NavegacaoPrincipal = () => {
   const [currentScreen, setCurrentScreen] = useState('splash');
   const [userType, setUserType] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [activeNavTab, setActiveNavTab] = useState('home');
   const [activeRequestTab, setActiveRequestTab] = useState('analyzing');
@@ -44,7 +55,10 @@ export const NavegacaoPrincipal = () => {
   const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
   const [favorites, setFavorites] = useState({});
   const [selectedPet, setSelectedPet] = useState(null);
+  const [allPets, setAllPets] = useState([]);
   const [filteredPets, setFilteredPets] = useState([]);
+  const [adopterApplications, setAdopterApplications] = useState([]);
+  const [searchText, setSearchText] = useState('');
   const [activeCategory, setActiveCategory] = useState('dogs');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
@@ -54,7 +68,7 @@ export const NavegacaoPrincipal = () => {
   const [selectedShelterPet, setSelectedShelterPet] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
-  const [petForm, setPetForm] = useState({ nome: '', idade: '', sexo: '', porte: '', descricao: '' });
+  const [petForm, setPetForm] = useState({ nome: '', tipo: 'dogs', idade: '', sexo: '', porte: '', descricao: '' });
   const [petPhoto, setPetPhoto] = useState(null);
   const [isEditingPet, setIsEditingPet] = useState(false);
   const [currentChatId, setCurrentChatId] = useState(null);
@@ -64,8 +78,105 @@ export const NavegacaoPrincipal = () => {
 
   const [filters, setFilters] = useState({ porte: [], idade: [], sexo: [], tipo: [] });
 
+  const notify = (title, message) => {
+    if (typeof window !== 'undefined' && window.alert) window.alert(`${title}: ${message}`);
+    else Alert.alert(title, message);
+  };
+
+  const getPetAgeYears = (pet) => {
+    const ageTag = pet.tags?.find(tag => tag.includes('ano') || tag.includes('mes'));
+    if (!ageTag) return null;
+    const value = Number(ageTag.match(/\d+/)?.[0]);
+    if (Number.isNaN(value)) return null;
+    return ageTag.includes('mes') ? value / 12 : value;
+  };
+
+  const applyPetFiltersToList = (
+    pets,
+    category = activeCategory,
+    currentFilters = filters,
+    currentSearchText = searchText
+  ) => {
+    const normalizedSearch = currentSearchText.trim().toLowerCase();
+
+    return pets.filter((pet) => {
+      if (pet.status !== 'Disponível') return false;
+      if (category && pet.category !== category) return false;
+
+      if (normalizedSearch) {
+        const searchable = `${pet.name} ${pet.description} ${pet.shelter} ${pet.tags?.join(' ')}`.toLowerCase();
+        if (!searchable.includes(normalizedSearch)) return false;
+      }
+
+      if (currentFilters.porte.length > 0) {
+        const porteMatch = currentFilters.porte.some((porte) => pet.tags?.includes(porte));
+        if (!porteMatch) return false;
+      }
+
+      if (currentFilters.sexo.length > 0) {
+        const sexoMatch = currentFilters.sexo.some((sexo) => pet.tags?.includes(sexo));
+        if (!sexoMatch) return false;
+      }
+
+      if (currentFilters.idade.length > 0) {
+        const ageYears = getPetAgeYears(pet);
+        if (ageYears === null) return false;
+
+        const idadeMatch = currentFilters.idade.some((idade) => {
+          if (idade.includes('Filhote')) return ageYears <= 1;
+          if (idade.includes('Adulto')) return ageYears > 1 && ageYears < 7;
+          if (idade.includes('Sênior')) return ageYears >= 7;
+          return true;
+        });
+
+        if (!idadeMatch) return false;
+      }
+
+      return true;
+    });
+  };
+
+  const loadAvailablePets = async ({ silent = false } = {}) => {
+    try {
+      const result = await api.listPets({ status: 'AVAILABLE', pageSize: 100, order: 'desc' });
+      const pets = result.pets.map(mapApiPetToViewModel);
+      setAllPets(pets);
+      setFilteredPets(applyPetFiltersToList(pets));
+    } catch (error) {
+      const fallbackPets = DATABASE.pets.filter(p => p.status === 'Disponível');
+      setAllPets(fallbackPets);
+      setFilteredPets(applyPetFiltersToList(fallbackPets));
+      if (!silent) notify('API indisponível', error.message);
+    }
+  };
+
+  const loadMyApplications = async (token = authToken) => {
+    if (!token) return;
+    const result = await api.listMyRequests(token);
+    setAdopterApplications(result.requests.map(mapApiRequestToAdopterApplication));
+  };
+
+  const loadShelterData = async (token = authToken) => {
+    if (!token) return;
+
+    const [petsResult, inboxResult] = await Promise.all([
+      api.listMyPets(token),
+      api.listInboxRequests(token)
+    ]);
+
+    const pets = petsResult.pets.map(mapApiPetToViewModel);
+    const applications = inboxResult.requests.map(mapApiRequestToShelterApplication);
+    const adoptions = applications
+      .filter(app => app.status === 'Aprovada' && app.adoptionId)
+      .map(mapApplicationToShelterAdoption);
+
+    setShelterPets(pets);
+    setShelterApplications(applications);
+    setShelterAdoptions(adoptions);
+  };
+
   useEffect(() => {
-    setFilteredPets(DATABASE.pets.filter(p => p.status === 'Disponível'));
+    loadAvailablePets({ silent: true });
   }, []);
 
   useEffect(() => {
@@ -78,39 +189,74 @@ export const NavegacaoPrincipal = () => {
   }, [currentScreen]);
 
   useEffect(() => {
-    if (userType === 'shelter' && currentUser) {
-      const myPets = DATABASE.pets.filter(pet => pet.shelterId === currentUser.id);
-      setShelterPets(myPets);
-      
-      const myApplications = DATABASE.applications.filter(app => 
-        myPets.some(pet => pet.id === app.petId)
-      );
-      setShelterApplications(myApplications);
-      
-      const myAdoptions = DATABASE.adoptions.filter(ad => 
-        myPets.some(pet => pet.id === ad.petId)
-      );
-      setShelterAdoptions(myAdoptions);
-      
-      const shelterIndex = DATABASE.shelters.findIndex(s => s.id === currentUser.id);
-      if (shelterIndex !== -1) {
-        DATABASE.shelters[shelterIndex].stats = {
-          totalPets: myPets.length,
-          totalAdoptions: myAdoptions.length,
-          successRate: myApplications.length > 0 
-            ? Math.round((myApplications.filter(a => a.status === 'Aprovada').length / myApplications.length) * 100) 
-            : 0
-        };
-      }
+    if (!currentUser || !authToken) return;
+
+    if (userType === 'shelter') {
+      loadShelterData().catch(error => notify('Erro', error.message));
+    } else if (userType === 'adopter') {
+      loadAvailablePets().catch(error => notify('Erro', error.message));
+      loadMyApplications().catch(error => notify('Erro', error.message));
     }
-  }, [userType, currentUser]);
+  }, [userType, currentUser, authToken]);
 
   const navigateTo = (screen) => setCurrentScreen(screen);
   
-  const handleLogin = () => {
-    if (userType === 'adopter') setCurrentUser(DATABASE.adopters[0]);
-    else if (userType === 'shelter') setCurrentUser(DATABASE.shelters[0]);
-    navigateTo('home');
+  const handleLogin = async ({ email, password }) => {
+    if (!email || !password) {
+      notify('Erro', 'Informe e-mail e senha.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const result = await api.login({ email, password });
+      const mappedUser = mapApiUserToViewModel(result.user);
+      const mappedType = result.user.role === 'SHELTER' ? 'shelter' : 'adopter';
+
+      setAuthToken(result.token);
+      setUserType(mappedType);
+      setCurrentUser(mappedUser);
+      setActiveNavTab('home');
+      navigateTo('home');
+    } catch (error) {
+      notify('Erro no login', error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegister = async (formData) => {
+    if (!userType) {
+      notify('Erro', 'Escolha um perfil antes de cadastrar.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const role = userType === 'shelter' ? 'SHELTER' : 'ADOPTER';
+      const name = role === 'SHELTER' ? formData.orgName || formData.name : formData.name;
+      const phone = formData.phone ? formData.phone.replace(/\D/g, '') : undefined;
+
+      const result = await api.register({
+        role,
+        name,
+        email: formData.email,
+        password: formData.password,
+        phone,
+        orgName: role === 'SHELTER' ? formData.orgName || name : undefined
+      });
+
+      setAuthToken(result.token);
+      setCurrentUser(mapApiUserToViewModel(result.user));
+      setUserType(result.user.role === 'SHELTER' ? 'shelter' : 'adopter');
+      setActiveNavTab('home');
+      notify('Sucesso', 'Cadastro realizado com sucesso!');
+      navigateTo('home');
+    } catch (error) {
+      notify('Erro no cadastro', error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const switchNavTab = (tab) => {
@@ -118,11 +264,19 @@ export const NavegacaoPrincipal = () => {
     setShowSuccessMessage(false);
   };
 
-  const toggleFavorite = (petId) => {
-    setFavorites(prev => ({
-      ...prev,
-      [petId]: !prev[petId]
-    }));
+  const toggleFavorite = async (petId) => {
+    const wasFavorite = !!favorites[petId];
+    setFavorites(prev => ({ ...prev, [petId]: !wasFavorite }));
+
+    if (!authToken || userType !== 'adopter') return;
+
+    try {
+      if (wasFavorite) await api.unfavoritePet(authToken, petId);
+      else await api.favoritePet(authToken, petId);
+    } catch (error) {
+      setFavorites(prev => ({ ...prev, [petId]: wasFavorite }));
+      notify('Erro', error.message);
+    }
   };
 
   const showPetDetails = (pet) => {
@@ -131,24 +285,24 @@ export const NavegacaoPrincipal = () => {
     setCurrentScreen('pet-details');
   };
 
-  const submitAdoptionRequest = () => {
-    const newApp = {
-      id: 'app' + Date.now(),
-      petId: selectedPet.id,
-      petName: selectedPet.name,
-      shelterId: selectedPet.shelterId,
-      shelter: selectedPet.shelter,
-      adopterId: currentUser?.id || 'adopter1',
-      adopterName: currentUser?.name || 'João Silva',
-      adopterEmail: currentUser?.email || 'joao@email.com',
-      adopterPhone: currentUser?.phone || '(77) 98765-4321',
-      status: 'Pendente',
-      date: new Date().toISOString()
-    };
-    DATABASE.applications.push(newApp);
-    setCurrentScreen('home');
-    setShowSuccessMessage(true);
-    setActiveNavTab('home');
+  const submitAdoptionRequest = async () => {
+    if (!authToken || !selectedPet) {
+      notify('Erro', 'Faça login como adotante para solicitar adoção.');
+      return;
+    }
+
+    try {
+      await api.createAdoptionRequest(authToken, {
+        petId: selectedPet.id,
+        message: `Tenho interesse em adotar ${selectedPet.name}.`
+      });
+      await loadMyApplications();
+      setCurrentScreen('home');
+      setShowSuccessMessage(true);
+      setActiveNavTab('home');
+    } catch (error) {
+      notify('Erro ao solicitar adoção', error.message);
+    }
   };
 
   const goToRequests = () => {
@@ -156,9 +310,10 @@ export const NavegacaoPrincipal = () => {
     setActiveNavTab('requests');
   };
 
-  const nextGallerySlide = () => {
+  const nextGallerySlide = (index) => {
     if (selectedPet) {
-      setCurrentGalleryIndex((prev) => (prev + 1) % selectedPet.gallery.length);
+      if (typeof index === 'number') setCurrentGalleryIndex(index);
+      else setCurrentGalleryIndex((prev) => (prev + 1) % selectedPet.gallery.length);
     }
   };
 
@@ -180,9 +335,14 @@ export const NavegacaoPrincipal = () => {
   const logout = () => {
     setUserType(null);
     setCurrentUser(null);
+    setAuthToken(null);
     setCurrentScreen('welcome');
     setActiveNavTab('home');
     setFavorites({});
+    setAdopterApplications([]);
+    setShelterApplications([]);
+    setShelterAdoptions([]);
+    setShelterPets([]);
     setIsEditingProfile(false);
   };
 
@@ -215,50 +375,23 @@ export const NavegacaoPrincipal = () => {
 
   const filterByCategory = (category) => {
     setActiveCategory(category);
-    let filtered = DATABASE.pets.filter(p => p.status === 'Disponível');
-    if (category === 'dogs') filtered = filtered.filter(pet => pet.category === 'dogs');
-    else if (category === 'cats') filtered = filtered.filter(pet => pet.category === 'cats');
-    else if (category === 'others') filtered = filtered.filter(pet => pet.category === 'others');
-    
-    if (filters.porte.length > 0 || filters.idade.length > 0 || filters.sexo.length > 0) {
-      filtered = filtered.filter(pet => {
-        if (filters.porte.length > 0) {
-          const porteMatch = filters.porte.some(p => {
-            if (p === 'Pequeno' && pet.tags.includes('Pequeno')) return true;
-            if (p === 'Médio' && pet.tags.includes('Médio')) return true;
-            if (p === 'Grande' && pet.tags.includes('Grande')) return true;
-            return false;
-          });
-          if (!porteMatch) return false;
-        }
-        if (filters.sexo.length > 0) {
-          const sexoMatch = filters.sexo.some(s => {
-            if (s === 'Macho' && pet.tags.includes('Macho')) return true;
-            if (s === 'Fêmea' && pet.tags.includes('Fêmea')) return true;
-            return false;
-          });
-          if (!sexoMatch) return false;
-        }
-        return true;
-      });
-    }
-    setFilteredPets(filtered);
+    setFilteredPets(applyPetFiltersToList(allPets, category));
+  };
+
+  const handleSearchPets = (text) => {
+    setSearchText(text);
+    setFilteredPets(applyPetFiltersToList(allPets, activeCategory, filters, text));
   };
 
   const applyFilters = () => {
-    filterByCategory(activeCategory);
+    setFilteredPets(applyPetFiltersToList(allPets));
     setFiltersModalVisible(false);
   };
 
   const clearFilters = () => {
-    setFilters({ porte: [], idade: [], sexo: [], tipo: [] });
-    setFilteredPets(DATABASE.pets.filter(p => 
-      p.status === 'Disponível' && (
-        activeCategory === 'dogs' ? p.category === 'dogs' :
-        activeCategory === 'cats' ? p.category === 'cats' :
-        activeCategory === 'others' ? p.category === 'others' : true
-      )
-    ));
+    const cleanFilters = { porte: [], idade: [], sexo: [], tipo: [] };
+    setFilters(cleanFilters);
+    setFilteredPets(applyPetFiltersToList(allPets, activeCategory, cleanFilters));
     setFiltersModalVisible(false);
   };
 
@@ -273,7 +406,7 @@ export const NavegacaoPrincipal = () => {
     });
   };
 
-  const getUserApplications = () => DATABASE.applications.filter(app => app.adopterId === currentUser?.id);
+  const getUserApplications = () => adopterApplications;
 
   const handleSaveProfile = (updatedData) => {
     const updatedUser = { ...currentUser, ...updatedData };
@@ -297,7 +430,7 @@ export const NavegacaoPrincipal = () => {
   const goToManagePets = () => setCurrentScreen('shelter-manage-pets');
   
   const goToAddPet = () => {
-    setPetForm({ nome: '', idade: '', sexo: '', porte: '', descricao: '' });
+    setPetForm({ nome: '', tipo: 'dogs', idade: '', sexo: '', porte: '', descricao: '' });
     setPetPhoto(null);
     setIsEditingPet(false);
     setCurrentScreen('shelter-add-pet');
@@ -308,7 +441,10 @@ export const NavegacaoPrincipal = () => {
     if (pet) {
       setPetForm({
         nome: pet.name,
-        idade: pet.tags.find(t => t.includes('anos'))?.split(' ')[0] || '',
+        tipo: pet.category || 'dogs',
+        idade: pet.ageMonths !== null && pet.ageMonths !== undefined
+          ? String(Math.max(0, Math.round(pet.ageMonths / 12)))
+          : pet.tags.find(t => t.includes('anos'))?.split(' ')[0] || '',
         sexo: pet.tags.includes('Macho') ? 'Macho' : 'Fêmea',
         porte: pet.tags.includes('Pequeno') ? 'Pequeno' : pet.tags.includes('Médio') ? 'Médio' : 'Grande',
         descricao: pet.description
@@ -320,75 +456,72 @@ export const NavegacaoPrincipal = () => {
     }
   };
 
+  const pauseShelterPet = async (petId) => {
+    if (!authToken) return;
+
+    try {
+      await api.updatePet(authToken, petId, { status: 'PAUSED' });
+      await loadShelterData();
+      await loadAvailablePets({ silent: true });
+      notify('Sucesso', 'Pet removido da listagem pública.');
+    } catch (error) {
+      notify('Erro', error.message);
+    }
+  };
+
   const deleteShelterPet = (petId) => {
     if (typeof window !== 'undefined' && window.confirm) {
-      const confirm = window.confirm('Tem certeza que deseja deletar este pet?');
+      const confirm = window.confirm('Tem certeza que deseja remover este pet da listagem?');
       if (confirm) {
-        DATABASE.pets = DATABASE.pets.filter(p => p.id !== petId);
-        setShelterPets(shelterPets.filter(p => p.id !== petId));
+        pauseShelterPet(petId);
       }
     } else {
-      Alert.alert('Confirmar exclusão', 'Tem certeza que deseja deletar este pet?', [
+      Alert.alert('Confirmar remoção', 'Tem certeza que deseja remover este pet da listagem?', [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Deletar',
+          text: 'Remover',
           style: 'destructive',
-          onPress: () => {
-            DATABASE.pets = DATABASE.pets.filter(p => p.id !== petId);
-            setShelterPets(shelterPets.filter(p => p.id !== petId));
-          }
+          onPress: () => pauseShelterPet(petId)
         }
       ]);
     }
   };
 
-  const saveShelterPet = () => {
-    const { nome, idade, sexo, porte, descricao } = petForm;
-    if (!nome || !idade || !sexo || !porte || !descricao) {
-      if (typeof window !== 'undefined') window.alert('Preencha todos os campos!');
-      else Alert.alert('Erro', 'Preencha todos os campos!');
+  const saveShelterPet = async () => {
+    const { nome, tipo, idade, sexo, porte, descricao } = petForm;
+    if (!nome || !tipo || !idade || !sexo || !porte || !descricao) {
+      notify('Erro', 'Preencha todos os campos!');
       return;
     }
 
-    const tags = [sexo, `${idade} anos`, porte];
-
-    if (isEditingPet && selectedShelterPet) {
-      const updatedPets = DATABASE.pets.map(pet => {
-        if (pet.id === selectedShelterPet.id) {
-          return { ...pet, name: nome, tags, description: descricao, image: petPhoto || pet.image };
-        }
-        return pet;
-      });
-      DATABASE.pets = updatedPets;
-      setShelterPets(shelterPets.map(pet => 
-        pet.id === selectedShelterPet.id ? { ...pet, name: nome, tags, description: descricao, image: petPhoto || pet.image } : pet
-      ));
-    } else {
-      const newPet = {
-        id: 'pet' + Date.now(),
-        name: nome,
-        category: porte === 'Pequeno' ? 'dogs' : porte === 'Médio' ? 'dogs' : 'dogs',
-        location: currentUser?.address || 'Centro, Vitória da Conquista - BA',
-        neighborhood: 'Centro',
-        city: 'Vitória da Conquista',
-        state: 'BA',
-        image: petPhoto || require('../assets/default-pet.png'),
-        tags,
-        description: descricao,
-        shelterId: currentUser.id,
-        shelter: currentUser.name,
-        shelterLocation: currentUser.address,
-        shelterPhone: currentUser.phone,
-        gallery: [petPhoto || require('../assets/default-pet.png')],
-        status: 'Disponível'
-      };
-      DATABASE.pets.push(newPet);
-      setShelterPets([...shelterPets, newPet]);
+    if (!authToken) {
+      notify('Erro', 'Faça login como abrigo para salvar pets.');
+      return;
     }
 
-    if (typeof window !== 'undefined') window.alert('Pet salvo com sucesso!');
-    else Alert.alert('Sucesso', 'Pet salvo com sucesso!');
-    setCurrentScreen('shelter-manage-pets');
+    const payload = {
+        name: nome,
+        species: categoryToSpecies(tipo),
+        sex: sexo,
+        ageMonths: Number(idade) * 12,
+        size: porte,
+        description: descricao
+    };
+
+    try {
+      if (isEditingPet && selectedShelterPet) {
+        await api.updatePet(authToken, selectedShelterPet.id, payload);
+      } else {
+        await api.createPet(authToken, payload);
+      }
+
+      await loadShelterData();
+      await loadAvailablePets({ silent: true });
+      notify('Sucesso', 'Pet salvo com sucesso!');
+      setCurrentScreen('shelter-manage-pets');
+    } catch (error) {
+      notify('Erro ao salvar pet', error.message);
+    }
   };
 
   const goToShelterApplications = () => setCurrentScreen('shelter-applications');
@@ -401,53 +534,32 @@ export const NavegacaoPrincipal = () => {
     }
   };
 
-  const approveApplication = () => {
-    if (!selectedApplication) return;
+  const approveApplication = async () => {
+    if (!selectedApplication || !authToken) return;
 
-    const appIndex = DATABASE.applications.findIndex(a => a.id === selectedApplication.id);
-    if (appIndex !== -1) DATABASE.applications[appIndex].status = 'Aprovada';
-
-    const petIndex = DATABASE.pets.findIndex(p => p.id === selectedApplication.petId);
-    if (petIndex !== -1) DATABASE.pets[petIndex].status = 'Adotado';
-
-    const newAdoption = {
-      id: 'ad' + Date.now(),
-      petId: selectedApplication.petId,
-      petName: selectedApplication.petName,
-      shelterId: currentUser.id,
-      adopterId: selectedApplication.adopterId,
-      adopterName: selectedApplication.adopterName,
-      date: new Date().toISOString(),
-      daysSinceAdoption: '0 dias'
-    };
-    DATABASE.adoptions.push(newAdoption);
-
-    setShelterApplications(shelterApplications.map(a => 
-      a.id === selectedApplication.id ? { ...a, status: 'Aprovada' } : a
-    ));
-    setShelterPets(shelterPets.map(p => 
-      p.id === selectedApplication.petId ? { ...p, status: 'Adotado' } : p
-    ));
-    setShelterAdoptions([...shelterAdoptions, newAdoption]);
-
-    if (typeof window !== 'undefined') window.alert('Solicitação aprovada!');
-    else Alert.alert('Sucesso', 'Solicitação aprovada!');
-    setCurrentScreen('shelter-applications');
+    try {
+      await api.approveRequest(authToken, selectedApplication.id, { followUpDays: 30 });
+      await loadShelterData();
+      await loadAvailablePets({ silent: true });
+      notify('Sucesso', 'Solicitação aprovada!');
+      setCurrentScreen('shelter-applications');
+    } catch (error) {
+      notify('Erro ao aprovar solicitação', error.message);
+    }
   };
 
-  const rejectApplication = () => {
-    if (!selectedApplication) return;
+  const rejectApplication = async () => {
+    if (!selectedApplication || !authToken) return;
 
-    const appIndex = DATABASE.applications.findIndex(a => a.id === selectedApplication.id);
-    if (appIndex !== -1) DATABASE.applications[appIndex].status = 'Recusada';
-
-    setShelterApplications(shelterApplications.map(a => 
-      a.id === selectedApplication.id ? { ...a, status: 'Recusada' } : a
-    ));
-    setShowRejectConfirm(false);
-    if (typeof window !== 'undefined') window.alert('Solicitação recusada');
-    else Alert.alert('Sucesso', 'Solicitação recusada');
-    setCurrentScreen('shelter-applications');
+    try {
+      await api.rejectRequest(authToken, selectedApplication.id);
+      await loadShelterData();
+      setShowRejectConfirm(false);
+      notify('Sucesso', 'Solicitação recusada');
+      setCurrentScreen('shelter-applications');
+    } catch (error) {
+      notify('Erro ao recusar solicitação', error.message);
+    }
   };
 
   const goToShelterAdoptions = () => setCurrentScreen('shelter-adoptions');
@@ -468,42 +580,42 @@ export const NavegacaoPrincipal = () => {
 
   const goToShelterProfile = () => setCurrentScreen('shelter-profile');
 
-  const openChat = (partnerId, partnerName, petName) => {
-    const chatId = partnerId;
-    
-    if (!DATABASE.chats[chatId]) {
-      DATABASE.chats[chatId] = [];
+  const openChat = async (threadId, partnerName, petName) => {
+    if (!threadId || !authToken) {
+      notify('Chat indisponível', 'O chat fica disponível após a solicitação ser aprovada.');
+      return;
     }
-    
-    setCurrentChatId(chatId);
-    setChatMessages(DATABASE.chats[chatId]);
-    setChatPartner({ name: partnerName, petName });
-    
-    if (userType === 'adopter') {
-      setCurrentScreen('chat');
-    } else {
-      setCurrentScreen('shelter-chat');
+
+    try {
+      const result = await api.listMessages(authToken, threadId);
+
+      setCurrentChatId(threadId);
+      setChatMessages(result.messages.map(mapApiMessageToViewModel));
+      setChatPartner({ name: partnerName, petName });
+
+      if (userType === 'adopter') {
+        setCurrentScreen('chat');
+      } else {
+        setCurrentScreen('shelter-chat');
+      }
+    } catch (error) {
+      notify('Erro ao abrir chat', error.message);
     }
   };
 
-  const sendChatMessage = () => {
+  const sendChatMessage = async () => {
     if (!chatMessage.trim() || !currentChatId) return;
-    
-    const newMessage = {
-      id: Date.now().toString(),
-      sender: userType === 'adopter' ? 'adopter' : 'shelter',
-      text: chatMessage,
-      timestamp: new Date().toISOString(),
-      senderName: currentUser?.name || (userType === 'adopter' ? 'Adotante' : 'Abrigo')
-    };
-    
-    if (!DATABASE.chats[currentChatId]) {
-      DATABASE.chats[currentChatId] = [];
-    }
-    DATABASE.chats[currentChatId].push(newMessage);
-    
-    setChatMessages([...DATABASE.chats[currentChatId]]);
+
+    const message = chatMessage.trim();
     setChatMessage('');
+
+    try {
+      const result = await api.sendMessage(authToken, currentChatId, message);
+      setChatMessages(prev => [...prev, mapApiMessageToViewModel(result.message)]);
+    } catch (error) {
+      setChatMessage(message);
+      notify('Erro ao enviar mensagem', error.message);
+    }
   };
 
   const handleBottomNav = (tab) => {
@@ -530,14 +642,17 @@ export const NavegacaoPrincipal = () => {
         return <TelaEscolhaPerfil onSelectPerfil={selectUserType} />;
       
       case 'login':
-        return <TelaLogin onLogin={handleLogin} onRegistrar={goToRegister} />;
+        return <TelaLogin onLogin={handleLogin} onRegistrar={goToRegister} isLoading={isLoading} />;
       
       case 'register':
-        return <TelaCadastro userType={userType} onCadastrar={() => {
-          if (typeof window !== 'undefined') window.alert(`Cadastro de ${userType === 'adopter' ? 'adotante' : 'abrigo'} realizado com sucesso!`);
-          else Alert.alert('Sucesso', `Cadastro de ${userType === 'adopter' ? 'adotante' : 'abrigo'} realizado com sucesso!`);
-          navigateTo('home');
-        }} onVoltarLogin={() => navigateTo('login')} />;
+        return (
+          <TelaCadastro
+            userType={userType}
+            onCadastrar={handleRegister}
+            onVoltarLogin={() => navigateTo('login')}
+            isLoading={isLoading}
+          />
+        );
       
       case 'home':
         if (userType === 'adopter') {
@@ -553,11 +668,11 @@ export const NavegacaoPrincipal = () => {
                 onShowPetDetails={showPetDetails}
                 onToggleFavorite={toggleFavorite}
                 onGoToRequests={goToRequests}
-                onSearch={(text) => console.log('Buscar:', text)}
+                onSearch={handleSearchPets}
               />
             );
           } else if (activeNavTab === 'favorites') {
-            const favoritePets = DATABASE.pets.filter(pet => favorites[pet.id]);
+            const favoritePets = allPets.filter(pet => favorites[pet.id]);
             return (
               <TelaFavoritos
                 favoritePets={favoritePets}
@@ -669,7 +784,7 @@ export const NavegacaoPrincipal = () => {
             onReject={() => setShowRejectConfirm(true)}
             onConfirmReject={rejectApplication}
             onCancelReject={() => setShowRejectConfirm(false)}
-            onOpenChat={() => openChat(selectedApplication.adopterId, selectedApplication.adopterName, selectedApplication.petName)}
+            onOpenChat={() => openChat(selectedApplication.threadId, selectedApplication.adopterName, selectedApplication.petName)}
             onVoltar={goBack}
           />
         );
