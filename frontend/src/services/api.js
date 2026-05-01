@@ -1,15 +1,20 @@
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 const envBaseUrl =
   typeof process !== 'undefined' && process.env
     ? process.env.EXPO_PUBLIC_API_BASE_URL
     : undefined;
 
+const configBaseUrl =
+  Constants.expoConfig?.extra?.apiBaseUrl ||
+  Constants.manifest?.extra?.apiBaseUrl;
+
 const defaultBaseUrl = Platform.OS === 'android'
   ? 'http://10.0.2.2:3000'
   : 'http://localhost:3000';
 
-export const API_BASE_URL = (envBaseUrl || defaultBaseUrl).replace(/\/+$/, '');
+export const API_BASE_URL = (envBaseUrl || configBaseUrl || defaultBaseUrl).replace(/\/+$/, '');
 
 export const buildApiUrl = (path) => {
   if (!path) return API_BASE_URL;

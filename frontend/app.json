@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Ach Pet",
+    "slug": "ach-pet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/logo_ach_pet_square.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/logo_ach_pet.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "android": {
+      "package": "com.lenilsonsoares.achpet",
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/logo_ach_pet_square.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "extra": {
+      "apiBaseUrl": "https://ach-pet-api.squareweb.app"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
