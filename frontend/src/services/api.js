@@ -59,8 +59,15 @@ export async function apiRequest(path, { method = 'GET', body, token, headers = 
   const data = await parseResponse(response);
 
   if (!response.ok) {
+    const validationMessage = Array.isArray(data?.issues)
+      ? data.issues
+          .map((issue) => issue?.message)
+          .filter(Boolean)
+          .join('\n')
+      : '';
     const message =
       data?.error?.message ||
+      validationMessage ||
       data?.message ||
       `Erro ${response.status} ao chamar a API`;
     const error = new Error(message);

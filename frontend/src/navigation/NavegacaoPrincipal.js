@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import { DATABASE } from '../services/bancoDados';
 import { api } from '../services/api';
@@ -79,7 +80,7 @@ export const NavegacaoPrincipal = () => {
   const [filters, setFilters] = useState({ porte: [], idade: [], sexo: [], tipo: [] });
 
   const notify = (title, message) => {
-    if (typeof window !== 'undefined' && window.alert) window.alert(`${title}: ${message}`);
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.alert) window.alert(`${title}: ${message}`);
     else Alert.alert(title, message);
   };
 
@@ -231,16 +232,38 @@ export const NavegacaoPrincipal = () => {
       return;
     }
 
+    const role = userType === 'shelter' ? 'SHELTER' : 'ADOPTER';
+    const name = (role === 'SHELTER' ? formData.orgName || formData.name : formData.name).trim();
+    const email = formData.email.trim();
+    const phone = formData.phone ? formData.phone.replace(/\D/g, '') : undefined;
+
+    if (name.length < 2) {
+      notify('Erro no cadastro', 'Informe um nome com pelo menos 2 caracteres.');
+      return;
+    }
+
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      notify('Erro no cadastro', 'Informe um e-mail válido.');
+      return;
+    }
+
+    if (phone && (phone.length < 10 || phone.length > 15)) {
+      notify('Erro no cadastro', 'Informe um telefone com DDD.');
+      return;
+    }
+
+    if (!formData.password || formData.password.length < 6) {
+      notify('Erro no cadastro', 'A senha precisa ter pelo menos 6 caracteres.');
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const role = userType === 'shelter' ? 'SHELTER' : 'ADOPTER';
-      const name = role === 'SHELTER' ? formData.orgName || formData.name : formData.name;
-      const phone = formData.phone ? formData.phone.replace(/\D/g, '') : undefined;
 
       const result = await api.register({
         role,
         name,
-        email: formData.email,
+        email,
         password: formData.password,
         phone,
         orgName: role === 'SHELTER' ? formData.orgName || name : undefined
