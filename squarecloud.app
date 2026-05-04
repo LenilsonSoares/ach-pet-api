@@ -1,8 +1,7 @@
-MAIN=src/server.ts
-DISPLAY_NAME=Ach Pet API
-DESCRIPTION=API do Ach Pet para adocao de pets
-MEMORY=1024
+MAIN=dist/server.js
+MEMORY=512
 VERSION=recommended
-SUBDOMAIN=ach-pet-api
-START=npx prisma generate && npm run build && npm start
-AUTORESTART=true
+DISPLAY_NAME=ach-pet-api
+# O comando START deve garantir o migrate
+START=npx prisma migrate deploy && node dist/server.js
+
