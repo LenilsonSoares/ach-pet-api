@@ -1,7 +1,10 @@
-MAIN=dist/server.js
-MEMORY=512
+MAIN=src/server.ts
+MEMORY=1024
 VERSION=recommended
 DISPLAY_NAME=ach-pet-api
-# O comando START deve garantir o migrate
-START=npx prisma migrate deploy && node dist/server.js
+DESCRIPTION=API Ach Pet
+SUBDOMAIN=ach-pet-api
+AUTORESTART=true
+# Gera Prisma Client, compila TypeScript, aplica migrations e inicia a API
+START=npx prisma generate && npm run build && npm start
 

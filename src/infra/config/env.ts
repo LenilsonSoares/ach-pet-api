@@ -16,4 +16,17 @@ const envSchema = z.object({
   UPLOADS_DIR: z.string().default("uploads"),
 });
 
-export const env = envSchema.parse(process.env);
+const parsedEnv = envSchema.parse(process.env);
+
+if (parsedEnv.NODE_ENV === "production") {
+  const missing: string[] = [];
+
+  if (!process.env.DATABASE_URL) missing.push("DATABASE_URL");
+  if (!process.env.JWT_SECRET || parsedEnv.JWT_SECRET === "testsecret") missing.push("JWT_SECRET");
+
+  if (missing.length > 0) {
+    throw new Error(`Missing required production env vars: ${missing.join(", ")}`);
+  }
+}
+
+export const env = parsedEnv;

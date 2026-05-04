@@ -14,6 +14,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+ach-pet-api-squarecloud.zip
 .codex-tunnel-logs/
 .expo/
 **/.expo/
@@ -26,6 +27,8 @@ Thumbs.db
 
 # Prisma
 prisma/dev.db*
+prisma/certs/*
+!prisma/certs/.gitkeep
 
 # uploads (local files)
 uploads/*
