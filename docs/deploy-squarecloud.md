@@ -34,6 +34,14 @@ Depois ajuste a URL no painel da aplicacao:
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/squarecloud?schema=public&sslidentity=./certs/client-identity.p12&sslpassword=SENHA_DO_P12
 ```
 
+Se a Square nao repassar `DATABASE_URL` para o Prisma, configure tambem `DATABASE_URL_BASE64` com a mesma URL convertida para Base64. O script de start cria um `.env` temporario antes de rodar `prisma generate` e `prisma migrate deploy`.
+
+No PowerShell:
+
+```powershell
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("postgresql://USER:PASSWORD@HOST:PORT/squarecloud?schema=public&sslidentity=./certs/client-identity.p12&sslpassword=SENHA_DO_P12"))
+```
+
 Se o deploy for pelo GitHub, nao envie o `.p12` no repositorio. Converta o arquivo para Base64 e configure o conteudo em `PRISMA_CLIENT_IDENTITY_P12_BASE64` nas variaveis da aplicacao. O `START` executa `scripts/write-prisma-cert.js` e recria o arquivo antes do Prisma rodar.
 
 No PowerShell:
