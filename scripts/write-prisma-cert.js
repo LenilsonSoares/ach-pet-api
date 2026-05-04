@@ -7,7 +7,11 @@ const decodeBase64Env = (value) => {
   return Buffer.from(value, "base64").toString("utf8").trim();
 };
 
-const databaseUrl = process.env.DATABASE_URL || decodeBase64Env(process.env.DATABASE_URL_BASE64);
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  process.env.ACH_PET_DB_URL ||
+  decodeBase64Env(process.env.DATABASE_URL_BASE64) ||
+  decodeBase64Env(process.env.ACH_PET_DB_URL_BASE64);
 const certBase64 = process.env.PRISMA_CLIENT_IDENTITY_P12_BASE64;
 
 if (databaseUrl) {
@@ -30,7 +34,7 @@ if (databaseUrl) {
   writeFileSync(resolve(".env"), `${envLines.join("\n")}\n`);
   console.log(`[ach-pet-api] Runtime .env file written with keys: ${Object.keys(runtimeEnv).filter((key) => runtimeEnv[key] !== undefined).join(", ")}`);
 } else {
-  console.log("[ach-pet-api] DATABASE_URL/DATABASE_URL_BASE64 not set; skipping runtime .env file.");
+  console.log("[ach-pet-api] Database URL env not set; expected DATABASE_URL, ACH_PET_DB_URL, DATABASE_URL_BASE64, or ACH_PET_DB_URL_BASE64.");
 }
 
 if (certBase64) {

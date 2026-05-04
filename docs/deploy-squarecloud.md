@@ -34,7 +34,7 @@ Depois ajuste a URL no painel da aplicacao:
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/squarecloud?schema=public&sslidentity=./certs/client-identity.p12&sslpassword=SENHA_DO_P12
 ```
 
-Se a Square nao repassar `DATABASE_URL` para o Prisma, configure tambem `DATABASE_URL_BASE64` com a mesma URL convertida para Base64. O script de start cria um `.env` temporario antes de rodar `prisma generate` e `prisma migrate deploy`.
+Se a Square nao repassar `DATABASE_URL` para o Prisma, configure tambem `ACH_PET_DB_URL_BASE64` com a mesma URL convertida para Base64. O script de start cria um `.env` temporario antes de rodar `prisma generate` e `prisma migrate deploy`.
 
 No PowerShell:
 
