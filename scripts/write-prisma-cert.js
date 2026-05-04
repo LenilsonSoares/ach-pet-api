@@ -7,6 +7,15 @@ const decodeBase64Env = (value) => {
   return Buffer.from(value, "base64").toString("utf8").trim();
 };
 
+const formatEnvValue = (value) => {
+  const escaped = String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/"/g, '\\"');
+
+  return `"${escaped}"`;
+};
+
 const databaseUrl =
   process.env.DATABASE_URL ||
   process.env.ACH_PET_DB_URL ||
@@ -29,7 +38,7 @@ if (databaseUrl) {
 
   const envLines = Object.entries(runtimeEnv)
     .filter(([, value]) => value !== undefined)
-    .map(([key, value]) => `${key}=${value}`);
+    .map(([key, value]) => `${key}=${formatEnvValue(value)}`);
 
   writeFileSync(resolve(".env"), `${envLines.join("\n")}\n`);
   console.log(`[ach-pet-api] Runtime .env file written with keys: ${Object.keys(runtimeEnv).filter((key) => runtimeEnv[key] !== undefined).join(", ")}`);

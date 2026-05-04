@@ -61,9 +61,12 @@ model ShelterProfile {
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   orgName   String
+  cnpj      String?
+  responsible String?
   address   String?
   city      String?
   state     String?
+  site      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -72,6 +75,9 @@ model AdopterProfile {
   id        String   @id @default(cuid())
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cpf       String?
+  birthDate String?
+  address   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

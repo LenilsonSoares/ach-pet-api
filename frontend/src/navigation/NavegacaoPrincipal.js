@@ -83,6 +83,10 @@ export const NavegacaoPrincipal = () => {
     if (Platform.OS === 'web' && typeof window !== 'undefined' && window.alert) window.alert(`${title}: ${message}`);
     else Alert.alert(title, message);
   };
+  const optionalField = (value) => {
+    const trimmed = typeof value === 'string' ? value.trim() : '';
+    return trimmed || undefined;
+  };
 
   const getPetAgeYears = (pet) => {
     const ageTag = pet.tags?.find(tag => tag.includes('ano') || tag.includes('mes'));
@@ -266,7 +270,13 @@ export const NavegacaoPrincipal = () => {
         email,
         password: formData.password,
         phone,
-        orgName: role === 'SHELTER' ? formData.orgName || name : undefined
+        orgName: role === 'SHELTER' ? optionalField(formData.orgName) || name : undefined,
+        cpf: role === 'ADOPTER' ? optionalField(formData.cpf) : undefined,
+        birthDate: role === 'ADOPTER' ? optionalField(formData.birthDate) : undefined,
+        address: optionalField(formData.address),
+        cnpj: role === 'SHELTER' ? optionalField(formData.cnpj) : undefined,
+        responsible: role === 'SHELTER' ? optionalField(formData.responsible) : undefined,
+        site: role === 'SHELTER' ? optionalField(formData.site) : undefined
       });
 
       setAuthToken(result.token);
@@ -431,17 +441,33 @@ export const NavegacaoPrincipal = () => {
 
   const getUserApplications = () => adopterApplications;
 
-  const handleSaveProfile = (updatedData) => {
-    const updatedUser = { ...currentUser, ...updatedData };
-    setCurrentUser(updatedUser);
-    if (userType === 'adopter') {
-      const userIndex = DATABASE.adopters.findIndex(u => u.id === currentUser.id);
-      if (userIndex !== -1) {
-        DATABASE.adopters[userIndex] = { ...DATABASE.adopters[userIndex], ...updatedData };
+  const handleSaveProfile = async (updatedData) => {
+    const payload = {
+      name: optionalField(updatedData.name),
+      email: optionalField(updatedData.email),
+      phone: optionalField(updatedData.phone),
+      cpf: optionalField(updatedData.cpf),
+      birthDate: optionalField(updatedData.birthDate),
+      address: optionalField(updatedData.address)
+    };
+
+    try {
+      const result = authToken
+        ? await api.updateMe(authToken, payload)
+        : { user: { ...currentUser, ...payload } };
+      const updatedUser = mapApiUserToViewModel(result.user);
+      setCurrentUser(updatedUser);
+      if (userType === 'adopter') {
+        const userIndex = DATABASE.adopters.findIndex(u => u.id === currentUser.id);
+        if (userIndex !== -1) {
+          DATABASE.adopters[userIndex] = { ...DATABASE.adopters[userIndex], ...updatedUser };
+        }
       }
+      setIsEditingProfile(false);
+    } catch (error) {
+      notify('Erro ao salvar perfil', error.message);
+      throw error;
     }
-    
-    setIsEditingProfile(false);
   };
 
   const getShelterStats = () => ({

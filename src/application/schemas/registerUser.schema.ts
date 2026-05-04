@@ -7,6 +7,12 @@ export const registerUserSchema = z.object({
   phone: z.string().optional(),
   role: z.enum(['ADOPTER', 'SHELTER']),
   orgName: z.string().optional(),
+  cpf: z.string().optional(),
+  birthDate: z.string().optional(),
+  address: z.string().optional(),
+  cnpj: z.string().optional(),
+  responsible: z.string().optional(),
+  site: z.string().optional(),
 });
 
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;

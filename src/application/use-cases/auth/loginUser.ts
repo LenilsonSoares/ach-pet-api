@@ -38,7 +38,20 @@ export async function loginUser(deps: {
     const token = deps.tokenService.signAccessToken({ sub: user.id, role: user.role });
     logger.info({ userId: user.id, email: user.email, role: user.role }, "Login bem-sucedido");
     return {
-      user: { id: user.id, role: user.role, name: user.name, email: user.email },
+      user: {
+        id: user.id,
+        role: user.role,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        orgName: user.orgName,
+        cpf: user.cpf,
+        birthDate: user.birthDate,
+        address: user.address,
+        cnpj: user.cnpj,
+        responsible: user.responsible,
+        site: user.site,
+      },
       token,
     };
   };

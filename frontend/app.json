@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ach Pet",
     "slug": "ach-pet",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./src/assets/logo_ach_pet_square.png",
     "userInterfaceStyle": "light",

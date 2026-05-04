@@ -16,12 +16,12 @@ import { logo } from '../utils/constantes';
 
 export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
   const [formData, setFormData] = useState({
-    name: currentUser?.name || 'João Silva',
-    email: currentUser?.email || 'joao@email.com',
-    phone: currentUser?.phone || '(77) 99999-8888',
-    cpf: currentUser?.cpf || '123.456.789-00',
-    birthDate: currentUser?.birthDate || '10/05/1990',
-    address: currentUser?.address || 'Rua das Flores, 123 - Centro',
+    name: currentUser?.name || '',
+    email: currentUser?.email || '',
+    phone: currentUser?.phone || '',
+    cpf: currentUser?.cpf || '',
+    birthDate: currentUser?.birthDate || '',
+    address: currentUser?.address || '',
     city: 'Vitória da Conquista',
     state: 'BA',
     cep: '45000-000'
@@ -57,16 +57,17 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
     return true;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (validateForm()) {
-      setIsLoading(true);
-      
-      // Simula um delay de salvamento
-      setTimeout(() => {
-        setIsLoading(false);
-        onSave(formData);
+      try {
+        setIsLoading(true);
+        await onSave(formData);
         Alert.alert('Sucesso', 'Perfil atualizado com sucesso!');
-      }, 1000);
+      } catch {
+        // A tela principal já mostra a mensagem detalhada da API.
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

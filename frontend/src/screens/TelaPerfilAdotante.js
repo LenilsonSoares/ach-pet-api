@@ -4,14 +4,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { logo } from '../utils/constantes';
 
 export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEditProfile }) => {
-  const user = currentUser || {
-    name: 'João Silva',
-    email: 'joao@email.com',
-    phone: '(77) 99999-8888',
-    address: 'Rua das Flores, 123 - Centro',
-    cpf: '123.456.789-00',
-    birthDate: '10/05/1990'
+  const user = {
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    cpf: '',
+    birthDate: '',
+    ...currentUser
   };
+  const show = (value) => value || 'Não informado';
 
   const stats = {
     total: applications?.length || 0,
@@ -119,7 +121,7 @@ export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEdit
             <Text style={{ fontSize: 12, color: '#999', marginBottom: 2 }}>Telefone</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Ionicons name="call-outline" size={16} color="#666" />
-              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8 }}>{user.phone}</Text>
+              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8 }}>{show(user.phone)}</Text>
             </View>
           </View>
           
@@ -127,7 +129,7 @@ export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEdit
             <Text style={{ fontSize: 12, color: '#999', marginBottom: 2 }}>CPF</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Ionicons name="card-outline" size={16} color="#666" />
-              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8 }}>{user.cpf}</Text>
+              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8 }}>{show(user.cpf)}</Text>
             </View>
           </View>
           
@@ -135,7 +137,7 @@ export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEdit
             <Text style={{ fontSize: 12, color: '#999', marginBottom: 2 }}>Data de Nascimento</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Ionicons name="calendar-outline" size={16} color="#666" />
-              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8 }}>{user.birthDate}</Text>
+              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8 }}>{show(user.birthDate)}</Text>
             </View>
           </View>
           
@@ -143,7 +145,7 @@ export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEdit
             <Text style={{ fontSize: 12, color: '#999', marginBottom: 2 }}>Endereço</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Ionicons name="home-outline" size={16} color="#666" />
-              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8, flex: 1 }}>{user.address}</Text>
+              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8, flex: 1 }}>{show(user.address)}</Text>
             </View>
           </View>
         </View>

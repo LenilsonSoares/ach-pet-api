@@ -11,6 +11,12 @@ export type RegisterUserRequest = {
   password: string;
   phone?: string;
   orgName?: string;
+  cpf?: string;
+  birthDate?: string;
+  address?: string;
+  cnpj?: string;
+  responsible?: string;
+  site?: string;
 };
 
 export type RegisterUserResponse = {
@@ -63,6 +69,12 @@ export async function registerUser(deps: {
       passwordHash,
       phone: req.phone,
       orgName: req.orgName,
+      cpf: req.cpf,
+      birthDate: req.birthDate,
+      address: req.address,
+      cnpj: req.cnpj,
+      responsible: req.responsible,
+      site: req.site,
     };
 
     const user = await deps.authRepo.createUser(input);

@@ -82,6 +82,8 @@ export async function apiRequest(path, { method = 'GET', body, token, headers = 
 export const api = {
   login: (input) => apiRequest('/auth/login', { method: 'POST', body: input }),
   register: (input) => apiRequest('/auth/register', { method: 'POST', body: input }),
+  getMe: (token) => apiRequest('/auth/me', { token }),
+  updateMe: (token, input) => apiRequest('/auth/me', { method: 'PATCH', token, body: input }),
 
   listPets: (params = {}) => {
     const query = new URLSearchParams();

@@ -69,9 +69,13 @@ export const mapApiUserToViewModel = (user) => ({
   email: user.email,
   phone: user.phone || '',
   role: user.role,
-  address: '',
-  responsible: user.name || '',
-  cnpj: '',
+  address: user.address || '',
+  cpf: user.cpf || '',
+  birthDate: user.birthDate || '',
+  orgName: user.orgName || '',
+  responsible: user.responsible || user.name || '',
+  cnpj: user.cnpj || '',
+  site: user.site || '',
   stats: { totalPets: 0, totalAdoptions: 0, successRate: 0 }
 });
 
