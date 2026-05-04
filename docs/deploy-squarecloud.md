@@ -34,6 +34,14 @@ Depois ajuste a URL no painel da aplicacao:
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/squarecloud?schema=public&sslidentity=./certs/client-identity.p12&sslpassword=SENHA_DO_P12
 ```
 
+Se o deploy for pelo GitHub, nao envie o `.p12` no repositorio. Converta o arquivo para Base64 e configure o conteudo em `PRISMA_CLIENT_IDENTITY_P12_BASE64` nas variaveis da aplicacao. O `START` executa `scripts/write-prisma-cert.js` e recria o arquivo antes do Prisma rodar.
+
+No PowerShell:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("prisma/certs/client-identity.p12"))
+```
+
 Arquivos dentro de `prisma/certs/` ficam ignorados pelo Git porque podem conter segredo.
 
 ## Variaveis opcionais para upload em nuvem
