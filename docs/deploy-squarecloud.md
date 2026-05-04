@@ -2,7 +2,7 @@
 
 ## O que falta criar fora do projeto
 
-Crie um banco PostgreSQL acessivel pela internet. Pode ser na Square Cloud, Neon, Supabase, Railway ou outro provedor.
+Crie um banco PostgreSQL na Square Cloud.
 
 Depois copie a connection string PostgreSQL e configure no painel da Square Cloud como `DATABASE_URL`.
 
@@ -16,9 +16,18 @@ DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public
 JWT_SECRET=troque-por-uma-chave-grande-e-segura
 JWT_EXPIRES_IN=7d
 UPLOADS_DIR=uploads
+```
+
+## Variaveis opcionais para upload em nuvem
+
+Se quiser salvar as fotos no Cloudinary, configure tambem:
+
+```env
 CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 CLOUDINARY_FOLDER=ach-pet-api
 ```
+
+Se `CLOUDINARY_URL` nao estiver configurada, a API usa upload local em `/uploads`, suficiente para teste e apresentacao.
 
 ## Configuracao do app
 
