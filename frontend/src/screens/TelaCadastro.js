@@ -7,7 +7,8 @@ const inputStyle = {
   backgroundColor: '#F5F5F5',
   borderRadius: 12,
   padding: 12,
-  fontSize: 14
+  fontSize: 14,
+  color: '#1E1E1E'
 };
 
 export const TelaCadastro = ({ userType, onCadastrar, onVoltarLogin, isLoading }) => {

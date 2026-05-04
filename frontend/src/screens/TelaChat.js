@@ -64,7 +64,7 @@ export const TelaChat = ({
 
         <View style={{ flexDirection: 'row', padding: 12, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#DDD', gap: 8 }}>
           <TextInput 
-            style={{ flex: 1, backgroundColor: '#F5F5F5', borderRadius: 20, padding: 10, fontSize: 13 }} 
+            style={{ flex: 1, backgroundColor: '#F5F5F5', borderRadius: 20, padding: 10, fontSize: 13, color: '#1E1E1E' }} 
             placeholder="Digite sua mensagem..." 
             placeholderTextColor="#999"
             value={chatMessage}

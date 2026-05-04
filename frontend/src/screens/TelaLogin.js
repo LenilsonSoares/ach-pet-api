@@ -4,6 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoArredondado } from '../components/CabecalhoArredondado';
 import { logo, cores } from '../utils/constantes';
 
+const inputStyle = {
+  backgroundColor: '#F5F5F5',
+  borderRadius: 12,
+  padding: 12,
+  fontSize: 14,
+  color: '#1E1E1E'
+};
+
 export const TelaLogin = ({ onLogin, onRegistrar, isLoading }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +26,7 @@ export const TelaLogin = ({ onLogin, onRegistrar, isLoading }) => {
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: cores.preto, marginBottom: 8 }}>E-mail</Text>
           <TextInput
-            style={{ backgroundColor: '#F5F5F5', borderRadius: 12, padding: 12, fontSize: 14 }}
+            style={inputStyle}
             placeholder="seu@email.com"
             placeholderTextColor="#999"
             keyboardType="email-address"
@@ -31,7 +39,7 @@ export const TelaLogin = ({ onLogin, onRegistrar, isLoading }) => {
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: cores.preto, marginBottom: 8 }}>Senha</Text>
           <TextInput
-            style={{ backgroundColor: '#F5F5F5', borderRadius: 12, padding: 12, fontSize: 14 }}
+            style={inputStyle}
             placeholder="••••••••"
             placeholderTextColor="#999"
             secureTextEntry

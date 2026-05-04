@@ -190,6 +190,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 14,
+                color: '#1E1E1E',
                 borderWidth: 1,
                 borderColor: '#E0E0E0'
               }}
@@ -210,6 +211,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 14,
+                color: '#1E1E1E',
                 borderWidth: 1,
                 borderColor: '#E0E0E0'
               }}
@@ -232,6 +234,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 14,
+                color: '#1E1E1E',
                 borderWidth: 1,
                 borderColor: '#E0E0E0'
               }}
@@ -254,6 +257,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 14,
+                color: '#1E1E1E',
                 borderWidth: 1,
                 borderColor: '#E0E0E0'
               }}
@@ -276,6 +280,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 14,
+                color: '#1E1E1E',
                 borderWidth: 1,
                 borderColor: '#E0E0E0'
               }}
@@ -302,6 +307,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 14,
+                color: '#1E1E1E',
                 borderWidth: 1,
                 borderColor: '#E0E0E0'
               }}
@@ -323,6 +329,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                   borderRadius: 8,
                   padding: 12,
                   fontSize: 14,
+                  color: '#1E1E1E',
                   borderWidth: 1,
                   borderColor: '#E0E0E0'
                 }}
@@ -341,6 +348,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                   borderRadius: 8,
                   padding: 12,
                   fontSize: 14,
+                  color: '#1E1E1E',
                   borderWidth: 1,
                   borderColor: '#E0E0E0'
                 }}
@@ -363,6 +371,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderRadius: 8,
                 padding: 12,
                 fontSize: 14,
+                color: '#1E1E1E',
                 borderWidth: 1,
                 borderColor: '#E0E0E0'
               }}

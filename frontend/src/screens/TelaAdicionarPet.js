@@ -3,6 +3,14 @@ import { View, Text, Image, TextInput, TouchableOpacity, ScrollView } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoAbrigo } from '../components/CabecalhoAbrigo';
 
+const inputStyle = {
+  backgroundColor: 'white',
+  borderRadius: 8,
+  padding: 12,
+  fontSize: 13,
+  color: '#1E1E1E'
+};
+
 export const TelaAdicionarPet = ({
   isEditing,
   petForm,
@@ -34,8 +42,9 @@ export const TelaAdicionarPet = ({
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: '#333', marginBottom: 6 }}>Nome do Pet *</Text>
           <TextInput 
-            style={{ backgroundColor: 'white', borderRadius: 8, padding: 12, fontSize: 13 }} 
+            style={inputStyle} 
             placeholder="Ex: Rex" 
+            placeholderTextColor="#999"
             value={petForm.nome} 
             onChangeText={(text) => onFormChange('nome', text)} 
           />
@@ -44,8 +53,9 @@ export const TelaAdicionarPet = ({
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: '#333', marginBottom: 6 }}>Idade (anos) *</Text>
           <TextInput 
-            style={{ backgroundColor: 'white', borderRadius: 8, padding: 12, fontSize: 13 }} 
+            style={inputStyle} 
             placeholder="2" 
+            placeholderTextColor="#999"
             keyboardType="numeric" 
             value={petForm.idade} 
             onChangeText={(text) => onFormChange('idade', text)} 
@@ -101,8 +111,9 @@ export const TelaAdicionarPet = ({
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: '#333', marginBottom: 6 }}>Descrição *</Text>
           <TextInput 
-            style={{ backgroundColor: 'white', borderRadius: 8, padding: 12, fontSize: 13, minHeight: 80, textAlignVertical: 'top' }} 
+            style={[inputStyle, { minHeight: 80, textAlignVertical: 'top' }]} 
             placeholder="Descreva o pet..." 
+            placeholderTextColor="#999"
             multiline 
             value={petForm.descricao} 
             onChangeText={(text) => onFormChange('descricao', text)} 

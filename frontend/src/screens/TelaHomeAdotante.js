@@ -45,7 +45,7 @@ export const TelaHomeAdotante = ({
         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 20, paddingHorizontal: 12 }}>
           <Ionicons name="search-outline" size={18} color="#999" />
           <TextInput 
-            style={{ flex: 1, padding: 10, fontSize: 13 }} 
+            style={{ flex: 1, padding: 10, fontSize: 13, color: '#1E1E1E' }} 
             placeholder="Buscar pets..." 
             placeholderTextColor="#999"
             onChangeText={onSearch}
