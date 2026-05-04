@@ -6,5 +6,5 @@ DESCRIPTION=API Ach Pet
 SUBDOMAIN=ach-pet-api
 AUTORESTART=true
 # Gera Prisma Client, compila TypeScript, aplica migrations e inicia a API
-START=npx prisma generate && npm run build && npm start
+START=npm install --include=dev --no-audit --no-fund && npx prisma generate && npm run build && npm start
 
