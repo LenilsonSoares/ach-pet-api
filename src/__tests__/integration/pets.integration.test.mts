@@ -28,7 +28,15 @@ describe('Pets (integração)', () => {
     const password = '123456';
     await request(app)
       .post('/auth/register')
-      .send({ name: 'Pet Test', email, password, role: 'SHELTER' });
+      .send({
+        name: 'Pet Test',
+        email,
+        password,
+        role: 'SHELTER',
+        orgName: 'Abrigo Pet Test',
+        cnpj: '19.131.243/0001-97',
+        address: 'Rua do Abrigo, 123',
+      });
     const login = await request(app)
       .post('/auth/login')
       .send({ email, password });

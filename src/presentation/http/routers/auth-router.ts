@@ -3,6 +3,10 @@ import { z } from "zod";
 
 import { registerUser } from "../../../application/use-cases/auth/registerUser.js";
 import { loginUser } from "../../../application/use-cases/auth/loginUser.js";
+import { changePassword } from "../../../application/use-cases/auth/changePassword.js";
+import { requestPasswordReset } from "../../../application/use-cases/auth/requestPasswordReset.js";
+import { resetPassword } from "../../../application/use-cases/auth/resetPassword.js";
+import { normalizeUpdateProfileInput } from "../../../application/use-cases/auth/profileValidation.js";
 import type { AuthRepository } from "../../../application/ports/AuthRepository.js";
 import type { PasswordHasher } from "../../../application/ports/PasswordHasher.js";
 import type { TokenService } from "../../../application/ports/TokenService.js";
@@ -56,13 +60,29 @@ export function createAuthRouter(deps: {
     site: optionalTrimmed,
   });
 
+  const changePasswordSchema = z.object({
+    currentPassword: z.string().min(1),
+    newPassword: z.string().min(6),
+    confirmPassword: z.string().min(1),
+  });
+
+  const forgotPasswordSchema = z.object({
+    email: z.string().trim().email(),
+  });
+
+  const resetPasswordSchema = z.object({
+    token: z.string().trim().min(1),
+    newPassword: z.string().min(6),
+    confirmPassword: z.string().min(1),
+  });
+
   router.post(
     "/register",
     asyncHandler(async (req, res) => {
-    const body = registerSchema.parse(req.body);
-    const handlerFactory = await registerUser(deps);
-    const result = await handlerFactory(body);
-    return res.status(201).json(result);
+      const body = registerSchema.parse(req.body);
+      const handlerFactory = await registerUser(deps);
+      const result = await handlerFactory(body);
+      return res.status(201).json(result);
     }),
   );
 
@@ -81,12 +101,41 @@ export function createAuthRouter(deps: {
     }),
   );
 
+  router.post(
+    "/forgot-password",
+    asyncHandler(async (req, res) => {
+      const body = forgotPasswordSchema.parse(req.body);
+      const handlerFactory = await requestPasswordReset({
+        authRepo: deps.authRepo,
+        exposeResetToken: process.env.NODE_ENV === "test",
+      });
+      const result = await handlerFactory(body);
+
+      return res.status(200).json(result);
+    }),
+  );
+
+  router.post(
+    "/reset-password",
+    asyncHandler(async (req, res) => {
+      const body = resetPasswordSchema.parse(req.body);
+      const handlerFactory = await resetPassword({
+        authRepo: deps.authRepo,
+        passwordHasher: deps.passwordHasher,
+      });
+      const result = await handlerFactory(body);
+
+      return res.status(200).json(result);
+    }),
+  );
+
   router.get(
     "/me",
     auth.requireAuth,
     asyncHandler(async (req, res) => {
-      const userId = (req as AuthenticatedRequest).user?.id;
-      if (!userId) throw new AppError(401, "Sem autorização");
+      const authUser = (req as AuthenticatedRequest).user;
+      const userId = authUser?.id;
+      if (!userId || !authUser) throw new AppError(401, "Sem autorização");
 
       const user = await deps.authRepo.findById(userId);
       if (!user) throw new AppError(404, "Usuário não encontrado");
@@ -99,14 +148,34 @@ export function createAuthRouter(deps: {
     "/me",
     auth.requireAuth,
     asyncHandler(async (req, res) => {
-      const userId = (req as AuthenticatedRequest).user?.id;
-      if (!userId) throw new AppError(401, "Sem autorização");
+      const authUser = (req as AuthenticatedRequest).user;
+      const userId = authUser?.id;
+      if (!userId || !authUser) throw new AppError(401, "Sem autorização");
 
       const body = updateProfileSchema.parse(req.body);
-      const user = await deps.authRepo.updateUser(userId, body);
+      const user = await deps.authRepo.updateUser(userId, normalizeUpdateProfileInput(authUser.role, body));
       if (!user) throw new AppError(404, "Usuário não encontrado");
 
       return res.status(200).json({ user });
+    }),
+  );
+
+  router.patch(
+    "/me/password",
+    auth.requireAuth,
+    asyncHandler(async (req, res) => {
+      const authUser = (req as AuthenticatedRequest).user;
+      const userId = authUser?.id;
+      if (!userId || !authUser) throw new AppError(401, "Sem autorizacao");
+
+      const body = changePasswordSchema.parse(req.body);
+      const handlerFactory = await changePassword({
+        authRepo: deps.authRepo,
+        passwordHasher: deps.passwordHasher,
+      });
+      const result = await handlerFactory({ userId, ...body });
+
+      return res.status(200).json(result);
     }),
   );
 

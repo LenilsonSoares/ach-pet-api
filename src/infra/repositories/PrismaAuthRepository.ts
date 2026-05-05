@@ -1,6 +1,8 @@
 import type {
   AuthRepository,
   AuthUser,
+  CreatePasswordResetTokenInput,
+  PasswordResetTokenRecord,
   PublicUser,
   RegisterInput,
   UpdateUserInput,
@@ -49,6 +51,43 @@ export class PrismaAuthRepository implements AuthRepository {
   async findByEmail(email: string): Promise<AuthUser | null> {
     const user = await prisma.user.findUnique({
       where: { email },
+      select: {
+        id: true,
+        role: true,
+        name: true,
+        email: true,
+        phone: true,
+        passwordHash: true,
+        shelterProfile: {
+          select: {
+            orgName: true,
+            cnpj: true,
+            responsible: true,
+            address: true,
+            site: true,
+          },
+        },
+        adopterProfile: {
+          select: {
+            cpf: true,
+            birthDate: true,
+            address: true,
+          },
+        },
+      },
+    });
+
+    if (!user) return null;
+
+    return {
+      ...toPublicUser(user),
+      passwordHash: user.passwordHash,
+    };
+  }
+
+  async findAuthById(id: string): Promise<AuthUser | null> {
+    const user = await prisma.user.findUnique({
+      where: { id },
       select: {
         id: true,
         role: true,
@@ -255,5 +294,46 @@ export class PrismaAuthRepository implements AuthRepository {
     });
 
     return toPublicUser(user);
+  }
+
+  async updatePasswordHash(id: string, passwordHash: string): Promise<void> {
+    await prisma.user.update({
+      where: { id },
+      data: { passwordHash },
+      select: { id: true },
+    });
+  }
+
+  async createPasswordResetToken(input: CreatePasswordResetTokenInput): Promise<void> {
+    await prisma.passwordResetToken.create({
+      data: {
+        userId: input.userId,
+        tokenHash: input.tokenHash,
+        expiresAt: input.expiresAt,
+      },
+      select: { id: true },
+    });
+  }
+
+  async findPasswordResetTokenByHash(tokenHash: string): Promise<PasswordResetTokenRecord | null> {
+    return prisma.passwordResetToken.findUnique({
+      where: { tokenHash },
+      select: {
+        id: true,
+        userId: true,
+        tokenHash: true,
+        expiresAt: true,
+        usedAt: true,
+        createdAt: true,
+      },
+    });
+  }
+
+  async markPasswordResetTokenUsed(id: string, usedAt: Date): Promise<void> {
+    await prisma.passwordResetToken.update({
+      where: { id },
+      data: { usedAt },
+      select: { id: true },
+    });
   }
 }

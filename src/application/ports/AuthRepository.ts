@@ -59,9 +59,29 @@ export type UpdateUserInput = {
   site?: string;
 };
 
+export type PasswordResetTokenRecord = {
+  id: string;
+  userId: string;
+  tokenHash: string;
+  expiresAt: Date;
+  usedAt?: Date | null;
+  createdAt: Date;
+};
+
+export type CreatePasswordResetTokenInput = {
+  userId: string;
+  tokenHash: string;
+  expiresAt: Date;
+};
+
 export type AuthRepository = {
   findByEmail(email: string): Promise<AuthUser | null>;
+  findAuthById(id: string): Promise<AuthUser | null>;
   findById(id: string): Promise<PublicUser | null>;
   createUser(input: RegisterInput): Promise<PublicUser>;
   updateUser(id: string, input: UpdateUserInput): Promise<PublicUser | null>;
+  updatePasswordHash(id: string, passwordHash: string): Promise<void>;
+  createPasswordResetToken(input: CreatePasswordResetTokenInput): Promise<void>;
+  findPasswordResetTokenByHash(tokenHash: string): Promise<PasswordResetTokenRecord | null>;
+  markPasswordResetTokenUsed(id: string, usedAt: Date): Promise<void>;
 };

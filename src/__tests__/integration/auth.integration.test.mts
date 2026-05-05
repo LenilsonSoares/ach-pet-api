@@ -14,7 +14,16 @@ describe('Auth (integração)', () => {
     // Registro
     const reg = await request(app)
       .post('/auth/register')
-      .send({ name: 'Teste', email, password, role: 'ADOPTER' });
+      .send({
+        name: 'Teste',
+        email,
+        password,
+        role: 'ADOPTER',
+        phone: '(77) 99999-9999',
+        cpf: '529.982.247-25',
+        birthDate: '10/05/1990',
+        address: 'Rua Teste, 123',
+      });
     if (reg.status !== 201) {
       // eslint-disable-next-line no-console
       console.error('auth.register status:', reg.status, 'body:', reg.body);
@@ -41,7 +50,16 @@ describe('Auth (integração)', () => {
     // Registro
     await request(app)
       .post('/auth/register')
-      .send({ name: 'Teste', email, password, role: 'ADOPTER' });
+      .send({
+        name: 'Teste',
+        email,
+        password,
+        role: 'ADOPTER',
+        phone: '(77) 99999-9999',
+        cpf: '529.982.247-25',
+        birthDate: '10/05/1990',
+        address: 'Rua Teste, 123',
+      });
     // Login com senha errada
     const login = await request(app)
       .post('/auth/login')

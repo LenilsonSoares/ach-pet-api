@@ -41,6 +41,8 @@ import { TelaChat } from '../screens/TelaChat';
 
 import { MenuInferior } from '../components/MenuInferior';
 import { ModalFiltros } from '../components/ModalFiltros';
+import { ModalAlterarSenha } from '../components/ModalAlterarSenha';
+import { ModalRecuperarSenha } from '../components/ModalRecuperarSenha';
 
 export const NavegacaoPrincipal = () => {
   const [currentScreen, setCurrentScreen] = useState('splash');
@@ -52,6 +54,10 @@ export const NavegacaoPrincipal = () => {
   const [activeNavTab, setActiveNavTab] = useState('home');
   const [activeRequestTab, setActiveRequestTab] = useState('analyzing');
   const [filtersModalVisible, setFiltersModalVisible] = useState(false);
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+  const [resetPasswordModalVisible, setResetPasswordModalVisible] = useState(false);
+  const [isResetPasswordLoading, setIsResetPasswordLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
   const [favorites, setFavorites] = useState({});
@@ -377,6 +383,10 @@ export const NavegacaoPrincipal = () => {
     setShelterAdoptions([]);
     setShelterPets([]);
     setIsEditingProfile(false);
+    setPasswordModalVisible(false);
+    setIsPasswordLoading(false);
+    setResetPasswordModalVisible(false);
+    setIsResetPasswordLoading(false);
   };
 
   const goBack = () => {
@@ -467,6 +477,41 @@ export const NavegacaoPrincipal = () => {
     } catch (error) {
       notify('Erro ao salvar perfil', error.message);
       throw error;
+    }
+  };
+
+  const handleChangePassword = async (payload) => {
+    if (!authToken) {
+      throw new Error('Faca login novamente para alterar a senha.');
+    }
+
+    try {
+      setIsPasswordLoading(true);
+      await api.changePassword(authToken, payload);
+      setPasswordModalVisible(false);
+      notify('Sucesso', 'Senha alterada com sucesso.');
+    } finally {
+      setIsPasswordLoading(false);
+    }
+  };
+
+  const handleRequestPasswordReset = async (payload) => {
+    try {
+      setIsResetPasswordLoading(true);
+      return await api.forgotPassword(payload);
+    } finally {
+      setIsResetPasswordLoading(false);
+    }
+  };
+
+  const handleConfirmPasswordReset = async (payload) => {
+    try {
+      setIsResetPasswordLoading(true);
+      await api.resetPassword(payload);
+      setResetPasswordModalVisible(false);
+      notify('Sucesso', 'Senha redefinida com sucesso.');
+    } finally {
+      setIsResetPasswordLoading(false);
     }
   };
 
@@ -691,7 +736,14 @@ export const NavegacaoPrincipal = () => {
         return <TelaEscolhaPerfil onSelectPerfil={selectUserType} />;
       
       case 'login':
-        return <TelaLogin onLogin={handleLogin} onRegistrar={goToRegister} isLoading={isLoading} />;
+        return (
+          <TelaLogin
+            onLogin={handleLogin}
+            onRegistrar={goToRegister}
+            onForgotPassword={() => setResetPasswordModalVisible(true)}
+            isLoading={isLoading}
+          />
+        );
       
       case 'register':
         return (
@@ -754,6 +806,7 @@ export const NavegacaoPrincipal = () => {
                 applications={getUserApplications()}
                 onLogout={logout}
                 onEditProfile={() => setIsEditingProfile(true)}
+                onChangePassword={() => setPasswordModalVisible(true)}
               />
             );
           }
@@ -867,6 +920,7 @@ export const NavegacaoPrincipal = () => {
               : 0}
             onLogout={logout}
             onVoltar={goBack}
+            onChangePassword={() => setPasswordModalVisible(true)}
           />
         );
       
@@ -928,6 +982,23 @@ export const NavegacaoPrincipal = () => {
           onClear={clearFilters}
         />
       )}
+
+      {currentUser && (
+        <ModalAlterarSenha
+          visible={passwordModalVisible}
+          onClose={() => setPasswordModalVisible(false)}
+          onSubmit={handleChangePassword}
+          isLoading={isPasswordLoading}
+        />
+      )}
+
+      <ModalRecuperarSenha
+        visible={resetPasswordModalVisible}
+        onClose={() => setResetPasswordModalVisible(false)}
+        onRequestReset={handleRequestPasswordReset}
+        onConfirmReset={handleConfirmPasswordReset}
+        isLoading={isResetPasswordLoading}
+      />
     </SafeAreaView>
   );
 };

@@ -3,6 +3,7 @@ import type { AuthRepository, PublicUser, RegisterInput, UserRole } from "../../
 import { logger } from "../../../infra/observability/logger.js";
 import type { PasswordHasher } from "../../ports/PasswordHasher.js";
 import type { TokenService } from "../../ports/TokenService.js";
+import { normalizeRegisterProfile } from "./profileValidation.js";
 
 export type RegisterUserRequest = {
   role: UserRole;
@@ -32,7 +33,6 @@ export async function registerUser(deps: {
   // Importa value objects
   const { Email } = await import("../../../domain/entities/Email.js");
   const { Password } = await import("../../../domain/entities/Password.js");
-  const { Phone } = await import("../../../domain/entities/Phone.js");
   return async (req: RegisterUserRequest): Promise<RegisterUserResponse> => {
     // Validação de campos obrigatórios
     if (!req.role || !["ADOPTER", "SHELTER"].includes(req.role)) {
@@ -51,30 +51,31 @@ export async function registerUser(deps: {
     try {
       new Email(req.email);
       new Password(req.password);
-      if (req.phone) new Phone(req.phone);
     } catch (err) {
       const error = err as Error;
       throw new AppError(400, error.message);
     }
 
-    const exists = await deps.authRepo.findByEmail(req.email);
+    const profile = normalizeRegisterProfile(req);
+
+    const exists = await deps.authRepo.findByEmail(profile.email ?? req.email);
     if (exists) throw new AppError(409, "E-mail já cadastrado");
 
     const passwordHash = await deps.passwordHasher.hash(req.password);
 
     const input: RegisterInput = {
       role: req.role,
-      name: req.name,
-      email: req.email,
+      name: profile.name ?? req.name.trim(),
+      email: profile.email ?? req.email.trim(),
       passwordHash,
-      phone: req.phone,
-      orgName: req.orgName,
-      cpf: req.cpf,
-      birthDate: req.birthDate,
-      address: req.address,
-      cnpj: req.cnpj,
-      responsible: req.responsible,
-      site: req.site,
+      phone: profile.phone,
+      orgName: profile.orgName,
+      cpf: profile.cpf,
+      birthDate: profile.birthDate,
+      address: profile.address,
+      cnpj: profile.cnpj,
+      responsible: profile.responsible,
+      site: profile.site,
     };
 
     const user = await deps.authRepo.createUser(input);

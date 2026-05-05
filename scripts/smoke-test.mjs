@@ -76,6 +76,8 @@ async function main() {
       email: shelterEmail,
       password: "123456",
       orgName: "Ach Pet ONG",
+      cnpj: "19.131.243/0001-97",
+      address: "Rua do Abrigo, 123",
     },
   });
   ok();
@@ -88,6 +90,10 @@ async function main() {
       name: "Adotante Teste",
       email: adopterEmail,
       password: "123456",
+      phone: "(77) 99999-9999",
+      cpf: "529.982.247-25",
+      birthDate: "10/05/1990",
+      address: "Rua do Adotante, 456",
     },
   });
   ok();

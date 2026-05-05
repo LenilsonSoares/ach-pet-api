@@ -182,6 +182,116 @@ export const openapiSpec = {
         },
       },
     },
+    "/auth/me/password": {
+      patch: {
+        tags: ["Auth"],
+        summary: "Alterar senha do usuario autenticado",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  currentPassword: { type: "string" },
+                  newPassword: { type: "string", minLength: 6 },
+                  confirmPassword: { type: "string" },
+                },
+                required: ["currentPassword", "newPassword", "confirmPassword"],
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Senha alterada",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: { ok: { type: "boolean" } },
+                  required: ["ok"],
+                },
+              },
+            },
+          },
+          "400": { description: "Erro de validacao", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorResponse" } } } },
+          "401": { description: "Nao autenticado ou senha atual invalida", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorResponse" } } } },
+        },
+      },
+    },
+    "/auth/forgot-password": {
+      post: {
+        tags: ["Auth"],
+        summary: "Solicitar recuperacao de senha",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  email: { type: "string", format: "email" },
+                },
+                required: ["email"],
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Solicitacao recebida",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: { message: { type: "string" } },
+                  required: ["message"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/auth/reset-password": {
+      post: {
+        tags: ["Auth"],
+        summary: "Confirmar recuperacao de senha com token",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  token: { type: "string" },
+                  newPassword: { type: "string", minLength: 6 },
+                  confirmPassword: { type: "string" },
+                },
+                required: ["token", "newPassword", "confirmPassword"],
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Senha redefinida",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: { ok: { type: "boolean" } },
+                  required: ["ok"],
+                },
+              },
+            },
+          },
+          "400": { description: "Token invalido, expirado ou dados invalidos", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorResponse" } } } },
+        },
+      },
+    },
     "/pets": {
       get: {
         tags: ["Pets"],

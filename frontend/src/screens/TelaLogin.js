@@ -12,7 +12,7 @@ const inputStyle = {
   color: '#1E1E1E'
 };
 
-export const TelaLogin = ({ onLogin, onRegistrar, isLoading }) => {
+export const TelaLogin = ({ onLogin, onRegistrar, onForgotPassword = () => {}, isLoading }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -47,6 +47,12 @@ export const TelaLogin = ({ onLogin, onRegistrar, isLoading }) => {
             onChangeText={setPassword}
           />
         </View>
+
+        <TouchableOpacity onPress={onForgotPassword} style={{ alignSelf: 'flex-end', marginBottom: 10 }}>
+          <Text style={{ fontSize: 13, color: cores.marrom, fontWeight: '600' }}>
+            Esqueci minha senha
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={{ backgroundColor: isLoading ? '#A97863' : cores.marrom, paddingVertical: 14, borderRadius: 50, shadowColor: cores.marrom, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 15, elevation: 5, marginTop: 10 }}

@@ -3,7 +3,14 @@ import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoAbrigo } from '../components/CabecalhoAbrigo';
 
-export const TelaPerfilAbrigo = ({ currentUser, stats, successRate, onLogout, onVoltar }) => {
+export const TelaPerfilAbrigo = ({
+  currentUser,
+  stats,
+  successRate,
+  onLogout,
+  onVoltar,
+  onChangePassword = () => {}
+}) => {
   return (
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
       <CabecalhoAbrigo title="Perfil" onBack={onVoltar} />
@@ -54,7 +61,7 @@ export const TelaPerfilAbrigo = ({ currentUser, stats, successRate, onLogout, on
         </View>
 
         <View style={{ gap: 10 }}>
-          <TouchableOpacity onPress={() => Alert.alert('Função', 'Alterar senha')} style={{ backgroundColor: '#F4A51C', paddingVertical: 14, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
+          <TouchableOpacity onPress={onChangePassword} style={{ backgroundColor: '#F4A51C', paddingVertical: 14, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
             <Ionicons name="lock-closed-outline" size={20} color="white" />
             <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Alterar Senha</Text>
           </TouchableOpacity>

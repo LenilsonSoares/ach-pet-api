@@ -3,7 +3,13 @@ import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import { logo } from '../utils/constantes';
 
-export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEditProfile }) => {
+export const TelaPerfilAdotante = ({
+  currentUser,
+  applications,
+  onLogout,
+  onEditProfile,
+  onChangePassword = () => {}
+}) => {
   const user = {
     name: '',
     email: '',
@@ -20,10 +26,6 @@ export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEdit
     approved: applications?.filter(a => a.status === 'Aprovada').length || 0,
     pending: applications?.filter(a => a.status === 'Pendente').length || 0,
     rejected: applications?.filter(a => a.status === 'Recusada').length || 0
-  };
-
-  const handleChangePassword = () => {
-    Alert.alert('Função', 'Alterar senha será implementado em breve!');
   };
 
   const handleNotifications = () => {
@@ -233,7 +235,7 @@ export const TelaPerfilAdotante = ({ currentUser, applications, onLogout, onEdit
 
         <View style={{ gap: 10, marginBottom: 20 }}>
           <TouchableOpacity 
-            onPress={handleChangePassword}
+            onPress={onChangePassword}
             style={{ 
               backgroundColor: 'white', 
               paddingVertical: 14, 

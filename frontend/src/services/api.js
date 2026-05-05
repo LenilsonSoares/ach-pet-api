@@ -84,6 +84,10 @@ export const api = {
   register: (input) => apiRequest('/auth/register', { method: 'POST', body: input }),
   getMe: (token) => apiRequest('/auth/me', { token }),
   updateMe: (token, input) => apiRequest('/auth/me', { method: 'PATCH', token, body: input }),
+  changePassword: (token, input) =>
+    apiRequest('/auth/me/password', { method: 'PATCH', token, body: input }),
+  forgotPassword: (input) => apiRequest('/auth/forgot-password', { method: 'POST', body: input }),
+  resetPassword: (input) => apiRequest('/auth/reset-password', { method: 'POST', body: input }),
 
   listPets: (params = {}) => {
     const query = new URLSearchParams();
