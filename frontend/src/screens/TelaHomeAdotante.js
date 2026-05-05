@@ -34,9 +34,9 @@ export const TelaHomeAdotante = ({
       <View style={{ backgroundColor: '#F4A51C', paddingTop: 40, paddingHorizontal: 20, paddingBottom: 15 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <Image source={logo} style={{ width: 50, height: 50 }} resizeMode="contain" />
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', minWidth: 0, marginHorizontal: 8 }}>
             <Ionicons name="location-outline" size={16} color="#1E1E1E" />
-            <Text style={{ fontSize: 13, fontWeight: '600', color: '#1E1E1E', marginLeft: 4 }}>Vitória da Conquista, BA</Text>
+            <Text numberOfLines={1} style={{ flex: 1, fontSize: 13, fontWeight: '600', color: '#1E1E1E', marginLeft: 4, textAlign: 'center' }}>Vitória da Conquista, BA</Text>
           </View>
           <TouchableOpacity>
             <Ionicons name="notifications-outline" size={20} color="#1E1E1E" />
@@ -53,11 +53,17 @@ export const TelaHomeAdotante = ({
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1, padding: 20 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 28 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+      >
         {showSuccessMessage && <MensagemSucesso onAcompanhar={onGoToRequests} />}
         <BannerMotivacional />
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }} contentContainerStyle={{ paddingRight: 4 }}>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             {[
               { label: 'Cães', icon: 'dog', family: 'FontAwesome5', category: 'dogs' },
@@ -88,11 +94,11 @@ export const TelaHomeAdotante = ({
               onPress={() => onShowPetDetails(pet)}
             >
               <Image source={pet.image} style={{ width: 70, height: 70, borderRadius: 12, backgroundColor: '#F5F5F5' }} resizeMode="cover" />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E' }}>{pet.name}</Text>
+              <View style={{ flex: 1, paddingRight: 28, minWidth: 0 }}>
+                <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E' }}>{pet.name}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
                   <Ionicons name="location-outline" size={12} color="#555" />
-                  <Text style={{ fontSize: 12, color: '#555', marginLeft: 2 }}>{pet.neighborhood}, {pet.city}</Text>
+                  <Text numberOfLines={1} style={{ flex: 1, fontSize: 12, color: '#555', marginLeft: 2 }}>{pet.neighborhood}, {pet.city}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                   {pet.tags.slice(0, 3).map((tag, i) => (

@@ -82,6 +82,7 @@ export const NavegacaoPrincipal = () => {
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [chatPartner, setChatPartner] = useState({ name: '', petName: '' });
+  const [chatReturnScreen, setChatReturnScreen] = useState(null);
 
   const [filters, setFilters] = useState({ porte: [], idade: [], sexo: [], tipo: [] });
 
@@ -382,6 +383,7 @@ export const NavegacaoPrincipal = () => {
     setShelterApplications([]);
     setShelterAdoptions([]);
     setShelterPets([]);
+    setChatReturnScreen(null);
     setIsEditingProfile(false);
     setPasswordModalVisible(false);
     setIsPasswordLoading(false);
@@ -403,16 +405,16 @@ export const NavegacaoPrincipal = () => {
         setCurrentScreen('home');
       }
     } else {
-      if (currentScreen === 'shelter-manage-pets' || 
-          currentScreen === 'shelter-add-pet' || 
-          currentScreen === 'shelter-applications' ||
-          currentScreen === 'shelter-application-detail' ||
-          currentScreen === 'shelter-adoptions' ||
-          currentScreen === 'shelter-adoption-detail' ||
-          currentScreen === 'shelter-profile' ||
-          currentScreen === 'shelter-chat') {
-        setCurrentScreen('home');
-      }
+      if (currentScreen === 'shelter-add-pet') setCurrentScreen('shelter-manage-pets');
+      else if (currentScreen === 'shelter-application-detail') setCurrentScreen('shelter-applications');
+      else if (currentScreen === 'shelter-adoption-detail') setCurrentScreen('shelter-adoptions');
+      else if (currentScreen === 'shelter-chat') setCurrentScreen(chatReturnScreen || 'home');
+      else if (
+        currentScreen === 'shelter-manage-pets' ||
+        currentScreen === 'shelter-applications' ||
+        currentScreen === 'shelter-adoptions' ||
+        currentScreen === 'shelter-profile'
+      ) setCurrentScreen('home');
     }
   };
 
@@ -688,8 +690,10 @@ export const NavegacaoPrincipal = () => {
       setChatPartner({ name: partnerName, petName });
 
       if (userType === 'adopter') {
+        setChatReturnScreen('home');
         setCurrentScreen('chat');
       } else {
+        setChatReturnScreen(currentScreen);
         setCurrentScreen('shelter-chat');
       }
     } catch (error) {
@@ -858,8 +862,7 @@ export const NavegacaoPrincipal = () => {
             petPhoto={petPhoto}
             onFormChange={(field, value) => setPetForm({...petForm, [field]: value})}
             onPhotoChange={() => {
-              if (typeof window !== 'undefined') window.alert('Função: Selecionar foto da galeria');
-              else Alert.alert('Função', 'Selecionar foto da galeria');
+              notify('Foto do pet', 'Seleção de foto ainda não está disponível.');
             }}
             onSave={saveShelterPet}
             onCancel={() => setCurrentScreen('shelter-manage-pets')}

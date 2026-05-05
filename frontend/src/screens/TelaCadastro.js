@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { CabecalhoArredondado } from '../components/CabecalhoArredondado';
 import { logo, cores } from '../utils/constantes';
 
@@ -53,7 +53,17 @@ export const TelaCadastro = ({ userType, onCadastrar, onVoltarLogin, isLoading }
         <Image source={logo} style={{ width: 100, height: 100 }} resizeMode="contain" />
       </CabecalhoArredondado>
 
-      <ScrollView style={{ flex: 1, padding: 20 }} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={{ fontSize: 18, fontWeight: '700', color: cores.preto, marginBottom: 20 }}>
           {userType === 'adopter' ? 'Cadastro de Adotante' : 'Cadastro de Abrigo/ONG'}
         </Text>
@@ -157,6 +167,7 @@ export const TelaCadastro = ({ userType, onCadastrar, onVoltarLogin, isLoading }
           </TouchableOpacity>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };

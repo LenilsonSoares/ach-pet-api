@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CabecalhoArredondado } from '../components/CabecalhoArredondado';
 import { CabecalhoAbrigo } from '../components/CabecalhoAbrigo';
 
@@ -14,11 +15,13 @@ export const TelaChat = ({
   onVoltar 
 }) => {
   const ChatHeader = userType === 'adopter' ? CabecalhoArredondado : CabecalhoAbrigo;
+  const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, 8);
 
   return (
     <KeyboardAvoidingView 
       style={{ flex: 1, backgroundColor: '#EDEDED' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <ChatHeader title={chatPartner.name} onBack={onVoltar} showBack={true} />
@@ -26,7 +29,8 @@ export const TelaChat = ({
       <View style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <ScrollView 
           style={{ flex: 1, padding: 20 }} 
-          contentContainerStyle={{ gap: 12 }}
+          contentContainerStyle={{ gap: 12, paddingBottom: 12 }}
+          keyboardShouldPersistTaps="handled"
           ref={ref => {
             if (ref) {
               setTimeout(() => ref.scrollToEnd({ animated: true }), 100);
@@ -62,16 +66,16 @@ export const TelaChat = ({
           })}
         </ScrollView>
 
-        <View style={{ flexDirection: 'row', padding: 12, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#DDD', gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 12, paddingTop: 12, paddingBottom: bottomInset, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#DDD', gap: 8 }}>
           <TextInput 
-            style={{ flex: 1, backgroundColor: '#F5F5F5', borderRadius: 20, padding: 10, fontSize: 13, color: '#1E1E1E' }} 
+            style={{ flex: 1, backgroundColor: '#F5F5F5', borderRadius: 20, padding: 10, fontSize: 13, color: '#1E1E1E', maxHeight: 110 }} 
             placeholder="Digite sua mensagem..." 
             placeholderTextColor="#999"
             value={chatMessage}
             onChangeText={onChangeMessage}
             multiline
           />
-          <TouchableOpacity onPress={onSendMessage} style={{ width: 36, height: 36, backgroundColor: '#F4A51C', borderRadius: 18, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity onPress={onSendMessage} style={{ width: 36, height: 36, backgroundColor: '#F4A51C', borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 2 }}>
             <Ionicons name="send" size={18} color="white" />
           </TouchableOpacity>
         </View>

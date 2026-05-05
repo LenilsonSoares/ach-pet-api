@@ -104,12 +104,18 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
   return (
     <KeyboardAvoidingView 
       style={{ flex: 1, backgroundColor: '#EDEDED' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <CabecalhoAbrigo title="Editar Perfil" onBack={onVoltar} />
 
-      <ScrollView style={{ flex: 1, padding: 20 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+      >
         {/* Foto do perfil */}
         <View style={{ 
           backgroundColor: 'white', 
@@ -151,7 +157,7 @@ export const TelaEditarPerfilAdotante = ({ currentUser, onSave, onVoltar }) => {
                 borderWidth: 2,
                 borderColor: 'white'
               }}
-              onPress={() => Alert.alert('Função', 'Alterar foto será implementado em breve!')}
+              onPress={() => Alert.alert('Foto do perfil', 'Alteração de foto ainda não está disponível.')}
             >
               <Ionicons name="camera" size={20} color="white" />
             </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoAbrigo } from '../components/CabecalhoAbrigo';
 
@@ -22,10 +22,19 @@ export const TelaAdicionarPet = ({
   onVoltar
 }) => {
   return (
-    <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#EDEDED' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <CabecalhoAbrigo title={isEditing ? "Editar Pet" : "Novo Pet"} onBack={onVoltar} />
 
-      <ScrollView style={{ flex: 1, padding: 20, paddingBottom: 70 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 48 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ marginBottom: 16 }}>
           <View style={{ width: '100%', height: 150, backgroundColor: 'white', borderRadius: 12, marginBottom: 12, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
             {petPhoto ? (
@@ -128,6 +137,6 @@ export const TelaAdicionarPet = ({
           <Text style={{ color: '#8B2E0F', fontSize: 14, fontWeight: '600' }}>Cancelar</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };

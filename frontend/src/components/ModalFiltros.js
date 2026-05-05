@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const ModalFiltros = ({ 
   visible, 
@@ -10,6 +11,9 @@ export const ModalFiltros = ({
   onApply, 
   onClear 
 }) => {
+  const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, 12);
+
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
       <TouchableOpacity 
@@ -17,7 +21,10 @@ export const ModalFiltros = ({
         activeOpacity={1} 
         onPress={onClose}
       >
-        <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, maxHeight: '80%' }}>
+        <View
+          onStartShouldSetResponder={() => true}
+          style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingTop: 20, paddingBottom: bottomInset, maxHeight: '80%' }}
+        >
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E' }}>Filtros</Text>
             <TouchableOpacity onPress={onClose}>
@@ -25,7 +32,7 @@ export const ModalFiltros = ({
             </TouchableOpacity>
           </View>
 
-          <ScrollView>
+          <ScrollView contentContainerStyle={{ paddingBottom: 4 }} showsVerticalScrollIndicator={false}>
             <View style={{ marginBottom: 20 }}>
               <Text style={{ fontSize: 13, fontWeight: '700', color: '#1E1E1E', marginBottom: 10 }}>Porte</Text>
               <View style={{ gap: 8 }}>

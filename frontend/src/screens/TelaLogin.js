@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoArredondado } from '../components/CabecalhoArredondado';
 import { logo, cores } from '../utils/constantes';
@@ -22,7 +22,17 @@ export const TelaLogin = ({ onLogin, onRegistrar, onForgotPassword = () => {}, i
         <Image source={logo} style={{ width: 100, height: 100 }} resizeMode="contain" />
       </CabecalhoArredondado>
 
-      <ScrollView style={{ flex: 1, padding: 20 }} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: cores.preto, marginBottom: 8 }}>E-mail</Text>
           <TextInput
@@ -87,6 +97,7 @@ export const TelaLogin = ({ onLogin, onRegistrar, onForgotPassword = () => {}, i
           </TouchableOpacity>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };

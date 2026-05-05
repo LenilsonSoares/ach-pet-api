@@ -41,7 +41,7 @@ export const TelaSolicitacoesAdotante = ({
         </View>
       </View>
 
-      <View style={{ flex: 1, padding: 20 }}>
+      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
         {/* Abas de navegação */}
         <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#DDD', marginBottom: 20 }}>
           {[
@@ -72,7 +72,7 @@ export const TelaSolicitacoesAdotante = ({
         </View>
 
         {/* Lista de solicitações */}
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
           <View style={{ gap: 12 }}>
             {filteredApps.length > 0 ? (
               filteredApps.map((app) => {
@@ -92,9 +92,9 @@ export const TelaSolicitacoesAdotante = ({
                       elevation: 3
                     }}
                   >
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E', marginBottom: 4 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+                      <View style={{ flex: 1, minWidth: 0 }}>
+                        <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E', marginBottom: 4 }}>
                           {app.petName}
                         </Text>
                         <Text style={{ fontSize: 12, color: '#666', marginBottom: 8 }}>
@@ -103,13 +103,13 @@ export const TelaSolicitacoesAdotante = ({
                         
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                           <Ionicons name="person-outline" size={12} color="#666" />
-                          <Text style={{ fontSize: 12, color: '#666', marginLeft: 4 }}>
+                          <Text numberOfLines={1} style={{ flex: 1, fontSize: 12, color: '#666', marginLeft: 4 }}>
                             Abrigo: {app.shelter || 'Abrigo'}
                           </Text>
                         </View>
                       </View>
                       
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                         {app.threadId && (
                           <TouchableOpacity 
                             onPress={() => onOpenChat(app.threadId, app.shelter || 'Abrigo', app.petName)} 

@@ -13,18 +13,18 @@ export const TelaFavoritos = ({ favoritePets, onShowPetDetails, onToggleFavorite
       </View>
     </View>
 
-    <ScrollView style={{ flex: 1, padding: 20 }}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingBottom: 28 }}>
       {favoritePets.length > 0 ? (
         favoritePets.map((pet) => (
           <TouchableOpacity key={pet.id} style={{ backgroundColor: 'white', borderRadius: 16, padding: 16, flexDirection: 'row', gap: 12, marginBottom: 16 }} onPress={() => onShowPetDetails(pet)}>
             <Image source={pet.image} style={{ width: 70, height: 70, borderRadius: 12, backgroundColor: '#F5F5F5' }} resizeMode="cover" />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E' }}>{pet.name}</Text>
+            <View style={{ flex: 1, paddingRight: 28, minWidth: 0 }}>
+              <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E' }}>{pet.name}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
                 <Ionicons name="location-outline" size={12} color="#555" />
-                <Text style={{ fontSize: 12, color: '#555', marginLeft: 2 }}>{pet.neighborhood}</Text>
+                <Text numberOfLines={1} style={{ flex: 1, fontSize: 12, color: '#555', marginLeft: 2 }}>{pet.neighborhood}</Text>
               </View>
-              <View style={{ flexDirection: 'row', gap: 8 }}>
+              <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                 {pet.tags.slice(0, 2).map((tag, i) => (
                   <View key={i} style={{ backgroundColor: '#F5F5F5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
                     <Text style={{ fontSize: 11, fontWeight: '600', color: '#555' }}>{tag}</Text>

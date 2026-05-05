@@ -16,11 +16,11 @@ export const TelaGerenciarPets = ({ shelterPets, onAddPet, onEditPet, onDeletePe
 
     return shelterPets.map(pet => (
       <View key={pet.id} style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
-        <View style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
+        <View style={{ flex: 1, flexDirection: 'row', gap: 12, minWidth: 0 }}>
           <Image source={pet.image} style={{ width: 60, height: 60, borderRadius: 8 }} resizeMode="cover" />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E' }}>{pet.name}</Text>
-            <Text style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>{pet.tags.find(t => t.includes('anos'))} • {pet.tags.find(t => t === 'Pequeno' || t === 'Médio' || t === 'Grande')}</Text>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E' }}>{pet.name}</Text>
+            <Text numberOfLines={1} style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>{pet.tags.find(t => t.includes('anos'))} • {pet.tags.find(t => t === 'Pequeno' || t === 'Médio' || t === 'Grande')}</Text>
             <View style={{ backgroundColor: pet.status === 'Disponível' ? '#E8F5E9' : '#FFF3E0', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' }}>
               <Text style={{ fontSize: 12, fontWeight: '600', color: pet.status === 'Disponível' ? '#2E7D32' : '#E65100' }}>{pet.status}</Text>
             </View>
@@ -42,7 +42,7 @@ export const TelaGerenciarPets = ({ shelterPets, onAddPet, onEditPet, onDeletePe
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
       <CabecalhoAbrigo title="Gerenciar Pets" onBack={onVoltar} />
 
-      <View style={{ flex: 1, padding: 20, paddingBottom: 70 }}>
+      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <Text style={{ fontSize: 18, fontWeight: '700', color: '#1E1E1E' }}>Meus Pets</Text>
           <TouchableOpacity onPress={onAddPet} style={{ backgroundColor: '#8B2E0F', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, flexDirection: 'row', alignItems: 'center' }}>
@@ -51,7 +51,7 @@ export const TelaGerenciarPets = ({ shelterPets, onAddPet, onEditPet, onDeletePe
           </TouchableOpacity>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
           {renderShelterPetsList()}
         </ScrollView>
       </View>

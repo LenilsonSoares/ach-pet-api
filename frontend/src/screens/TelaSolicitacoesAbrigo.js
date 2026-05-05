@@ -20,8 +20,8 @@ export const TelaSolicitacoesAbrigo = ({ applications, onViewDetail, onOpenChat,
 
       return (
         <TouchableOpacity key={app.id} style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }} onPress={() => onViewDetail(app.id)}>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E', marginBottom: 8 }}>{app.adopterName}</Text>
-          <Text style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>Pet: <Text style={{ fontWeight: '600' }}>{app.petName}</Text></Text>
+          <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E', marginBottom: 8 }}>{app.adopterName}</Text>
+          <Text numberOfLines={1} style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>Pet: <Text style={{ fontWeight: '600' }}>{app.petName}</Text></Text>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <View style={{ backgroundColor: statusColor, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, alignSelf: 'flex-start' }}>
               <Text style={{ fontSize: 12, fontWeight: '600', color: statusTextColor }}>{app.status}</Text>
@@ -41,10 +41,10 @@ export const TelaSolicitacoesAbrigo = ({ applications, onViewDetail, onOpenChat,
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
       <CabecalhoAbrigo title="Solicitações" onBack={onVoltar} />
 
-      <View style={{ flex: 1, padding: 20, paddingBottom: 70 }}>
+      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
         <Text style={{ fontSize: 18, fontWeight: '700', color: '#1E1E1E', marginBottom: 20 }}>Solicitações de Adoção</Text>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
           {renderShelterApplicationsList()}
         </ScrollView>
       </View>

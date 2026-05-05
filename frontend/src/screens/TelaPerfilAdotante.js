@@ -29,7 +29,7 @@ export const TelaPerfilAdotante = ({
   };
 
   const handleNotifications = () => {
-    Alert.alert('Função', 'Configurações de notificação serão implementadas em breve!');
+    Alert.alert('Notificações', 'Preferências de notificação ainda não estão disponíveis.');
   };
 
   const handleDeleteAccount = () => {
@@ -59,7 +59,11 @@ export const TelaPerfilAdotante = ({
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1, padding: 20 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 28 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ 
           backgroundColor: 'white', 
           borderRadius: 16, 

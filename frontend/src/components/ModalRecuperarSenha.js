@@ -4,12 +4,14 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cores } from '../utils/constantes';
 
 const initialState = {
@@ -30,6 +32,7 @@ export const ModalRecuperarSenha = ({
   isLoading
 }) => {
   const [state, setState] = useState(initialState);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!visible) setState(initialState);
@@ -101,14 +104,22 @@ export const ModalRecuperarSenha = ({
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{
           flex: 1,
-          justifyContent: 'center',
-          padding: 20,
           backgroundColor: 'rgba(0,0,0,0.35)'
         }}
       >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: 20,
+            paddingTop: Math.max(insets.top, 20),
+            paddingBottom: Math.max(insets.bottom, 20)
+          }}
+        >
         <View
           style={{
             backgroundColor: cores.branco,
@@ -240,7 +251,7 @@ export const ModalRecuperarSenha = ({
                 opacity: isLoading ? 0.6 : 1
               }}
             >
-              <Text style={{ color: '#666', fontWeight: '700' }}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: '#666', fontWeight: '700' }}>
                 {state.step === 'request' ? 'Cancelar' : 'Voltar'}
               </Text>
             </TouchableOpacity>
@@ -262,13 +273,14 @@ export const ModalRecuperarSenha = ({
               {isLoading ? (
                 <ActivityIndicator color={cores.branco} />
               ) : (
-                <Text style={{ color: cores.branco, fontWeight: '700' }}>
+                <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: cores.branco, fontWeight: '700' }}>
                   {state.step === 'request' ? 'Enviar' : 'Redefinir'}
                 </Text>
               )}
             </TouchableOpacity>
           </View>
         </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );

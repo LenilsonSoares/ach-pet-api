@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { width } from '../utils/constantes';
 
 export const TelaDetalhesPet = ({
@@ -15,6 +16,8 @@ export const TelaDetalhesPet = ({
   onOpenChat
 }) => {
   const isFavorite = favorites[pet?.id] || false;
+  const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, 10);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
@@ -53,11 +56,11 @@ export const TelaDetalhesPet = ({
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={{ flex: 1, padding: 20 }}>
-        <Text style={{ fontSize: 24, fontWeight: '700', color: '#1E1E1E' }}>{pet?.name}</Text>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+        <Text numberOfLines={1} style={{ fontSize: 24, fontWeight: '700', color: '#1E1E1E' }}>{pet?.name}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
           <Ionicons name="location-outline" size={16} color="#555" />
-          <Text style={{ fontSize: 13, color: '#555', marginLeft: 4 }}>{pet?.location}</Text>
+          <Text numberOfLines={1} style={{ flex: 1, fontSize: 13, color: '#555', marginLeft: 4 }}>{pet?.location}</Text>
         </View>
 
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
@@ -80,15 +83,15 @@ export const TelaDetalhesPet = ({
               <Ionicons name="business" size={30} color="#1E1E1E" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#1E1E1E' }}>{pet?.shelter}</Text>
-              <Text style={{ fontSize: 12, color: '#555' }}>{pet?.shelterLocation}</Text>
-              <Text style={{ fontSize: 12, color: '#555', marginTop: 2 }}>📞 {pet?.shelterPhone}</Text>
+              <Text numberOfLines={1} style={{ fontSize: 14, fontWeight: '700', color: '#1E1E1E' }}>{pet?.shelter}</Text>
+              <Text numberOfLines={1} style={{ fontSize: 12, color: '#555' }}>{pet?.shelterLocation}</Text>
+              <Text numberOfLines={1} style={{ fontSize: 12, color: '#555', marginTop: 2 }}>Telefone: {pet?.shelterPhone || 'Não informado'}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
 
-      <View style={{ padding: 16, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#DDD' }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: bottomInset, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#DDD' }}>
         <TouchableOpacity 
           style={{ backgroundColor: '#8B2E0F', paddingVertical: 14, borderRadius: 50, shadowColor: '#8B2E0F', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 15, elevation: 5 }} 
           onPress={onAdotar}

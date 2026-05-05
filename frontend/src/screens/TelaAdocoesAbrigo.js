@@ -16,14 +16,14 @@ export const TelaAdocoesAbrigo = ({ adoptions, onViewDetail, onOpenChat, onVolta
 
     return adoptions.map(adoption => (
       <View key={adoption.id} style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
-        <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E', marginBottom: 5 }}>{adoption.petName}</Text>
-        <Text style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>Adotante: <Text style={{ fontWeight: '600' }}>{adoption.adopterName}</Text></Text>
+        <Text numberOfLines={1} style={{ fontSize: 16, fontWeight: '700', color: '#1E1E1E', marginBottom: 5 }}>{adoption.petName}</Text>
+        <Text numberOfLines={1} style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>Adotante: <Text style={{ fontWeight: '600' }}>{adoption.adopterName}</Text></Text>
         <Text style={{ fontSize: 12, color: '#999', marginBottom: 12 }}>Adoção há {adoption.daysSinceAdoption}</Text>
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
           <TouchableOpacity onPress={() => onViewDetail(adoption.id)} style={{ flex: 1, backgroundColor: '#8B2E0F', paddingVertical: 10, borderRadius: 50, alignItems: 'center' }}>
-            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Ver Detalhes</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Ver Detalhes</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onOpenChat(adoption.threadId, adoption.adopterName, adoption.petName)} style={{ flex: 1, backgroundColor: '#66BB6A', paddingVertical: 10, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+          <TouchableOpacity disabled={!adoption.threadId} onPress={() => onOpenChat(adoption.threadId, adoption.adopterName, adoption.petName)} style={{ flex: 1, backgroundColor: adoption.threadId ? '#66BB6A' : '#CCC', paddingVertical: 10, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
             <Ionicons name="chatbubble-outline" size={16} color="white" />
             <Text style={{ color: 'white', fontSize: 14, fontWeight: '600', marginLeft: 4 }}>Chat</Text>
           </TouchableOpacity>
@@ -36,10 +36,10 @@ export const TelaAdocoesAbrigo = ({ adoptions, onViewDetail, onOpenChat, onVolta
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
       <CabecalhoAbrigo title="Acompanhamento" onBack={onVoltar} />
 
-      <View style={{ flex: 1, padding: 20, paddingBottom: 70 }}>
+      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
         <Text style={{ fontSize: 18, fontWeight: '700', color: '#1E1E1E', marginBottom: 20 }}>Adoções em Acompanhamento</Text>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
           {renderShelterAdoptionsList()}
         </ScrollView>
       </View>

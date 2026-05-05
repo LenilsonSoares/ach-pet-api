@@ -13,29 +13,32 @@ export const TelaDetalheSolicitacao = ({
   onOpenChat,
   onVoltar
 }) => {
+  const canOpenChat = application?.status === 'Aprovada' && !!application?.threadId;
+  const canReview = application?.status === 'Pendente';
+
   return (
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
       <CabecalhoAbrigo title="Detalhes" onBack={onVoltar} />
 
-      <ScrollView style={{ flex: 1, padding: 20 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
           <Text style={{ fontSize: 12, fontWeight: '600', color: '#999', marginBottom: 4 }}>Nome do Adotante</Text>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.adopterName}</Text>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.adopterName || 'Não informado'}</Text>
         </View>
 
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
           <Text style={{ fontSize: 12, fontWeight: '600', color: '#999', marginBottom: 4 }}>E-mail</Text>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.adopterEmail}</Text>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.adopterEmail || 'Não informado'}</Text>
         </View>
 
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
           <Text style={{ fontSize: 12, fontWeight: '600', color: '#999', marginBottom: 4 }}>Telefone</Text>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.adopterPhone}</Text>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.adopterPhone || 'Não informado'}</Text>
         </View>
 
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
           <Text style={{ fontSize: 12, fontWeight: '600', color: '#999', marginBottom: 4 }}>Pet Solicitado</Text>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.petName}</Text>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: '#1E1E1E' }}>{application?.petName || 'Não informado'}</Text>
         </View>
 
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
@@ -47,19 +50,19 @@ export const TelaDetalheSolicitacao = ({
 
         {!showRejectConfirm ? (
           <View>
-            <TouchableOpacity onPress={onApprove} style={{ backgroundColor: '#8B2E0F', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 15, flexDirection: 'row', justifyContent: 'center' }}>
-              <Ionicons name="checkmark-outline" size={20} color="white" />
-              <Text style={{ color: 'white', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>Aprovar</Text>
+            <TouchableOpacity disabled={!canReview} onPress={onApprove} style={{ backgroundColor: canReview ? '#8B2E0F' : '#CCC', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 15, flexDirection: 'row', justifyContent: 'center' }}>
+              <Ionicons name="checkmark-outline" size={20} color={canReview ? 'white' : '#666'} />
+              <Text style={{ color: canReview ? 'white' : '#666', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>Aprovar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={onReject} style={{ backgroundColor: '#CCC', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 10, flexDirection: 'row', justifyContent: 'center' }}>
-              <Ionicons name="close-outline" size={20} color="#333" />
-              <Text style={{ color: '#333', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>Recusar</Text>
+            <TouchableOpacity disabled={!canReview} onPress={onReject} style={{ backgroundColor: '#CCC', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 10, flexDirection: 'row', justifyContent: 'center' }}>
+              <Ionicons name="close-outline" size={20} color={canReview ? '#333' : '#777'} />
+              <Text style={{ color: canReview ? '#333' : '#777', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>Recusar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={onOpenChat} style={{ backgroundColor: '#66BB6A', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 10, flexDirection: 'row', justifyContent: 'center' }}>
-              <Ionicons name="chatbubble-outline" size={20} color="white" />
-              <Text style={{ color: 'white', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>Conversar</Text>
+            <TouchableOpacity disabled={!canOpenChat} onPress={onOpenChat} style={{ backgroundColor: canOpenChat ? '#66BB6A' : '#CCC', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 10, flexDirection: 'row', justifyContent: 'center' }}>
+              <Ionicons name="chatbubble-outline" size={20} color={canOpenChat ? 'white' : '#666'} />
+              <Text style={{ color: canOpenChat ? 'white' : '#666', fontSize: 16, fontWeight: '600', marginLeft: 8 }}>Conversar</Text>
             </TouchableOpacity>
           </View>
         ) : (

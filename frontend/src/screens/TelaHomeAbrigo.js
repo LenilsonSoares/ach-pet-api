@@ -11,11 +11,21 @@ export const TelaHomeAbrigo = ({
   onAdoptions, 
   onAddPet 
 }) => {
+  const fittingTextProps = {
+    numberOfLines: 1,
+    adjustsFontSizeToFit: true,
+    minimumFontScale: 0.78
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
       <CabecalhoAbrigo showBack={false} />
 
-      <ScrollView style={{ flex: 1, padding: 20 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 28 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={{ marginBottom: 24 }}>
           <Text style={{ fontSize: 28, fontWeight: '700', color: '#1E1E1E' }}>
             Bem-vindo, 👋
@@ -51,7 +61,7 @@ export const TelaHomeAbrigo = ({
               <Ionicons name="paw" size={24} color="#8B2E0F" />
             </View>
             <Text style={{ fontSize: 24, fontWeight: '700', color: '#8B2E0F' }}>{stats.pets}</Text>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: '#666', marginTop: 4 }}>Pets</Text>
+            <Text {...fittingTextProps} style={{ fontSize: 12, fontWeight: '600', color: '#666', marginTop: 4, textAlign: 'center', width: '100%' }}>Pets</Text>
           </View>
 
           <View style={{ 
@@ -79,7 +89,7 @@ export const TelaHomeAbrigo = ({
               <Ionicons name="chatbubble" size={24} color="#8B2E0F" />
             </View>
             <Text style={{ fontSize: 24, fontWeight: '700', color: '#8B2E0F' }}>{stats.applications}</Text>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: '#666', marginTop: 4 }}>Solicitações</Text>
+            <Text {...fittingTextProps} style={{ fontSize: 12, fontWeight: '600', color: '#666', marginTop: 4, textAlign: 'center', width: '100%' }}>Solicitações</Text>
           </View>
 
           <View style={{ 
@@ -107,7 +117,7 @@ export const TelaHomeAbrigo = ({
               <Ionicons name="heart" size={24} color="#8B2E0F" />
             </View>
             <Text style={{ fontSize: 24, fontWeight: '700', color: '#8B2E0F' }}>{stats.adoptions}</Text>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: '#666', marginTop: 4 }}>Adoções</Text>
+            <Text {...fittingTextProps} style={{ fontSize: 12, fontWeight: '600', color: '#666', marginTop: 4, textAlign: 'center', width: '100%' }}>Adoções</Text>
           </View>
         </View>
 
@@ -143,7 +153,7 @@ export const TelaHomeAbrigo = ({
             }}>
               <Ionicons name="paw-outline" size={28} color="white" />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#1E1E1E', marginBottom: 4 }}>Gerenciar Pets</Text>
+            <Text {...fittingTextProps} style={{ fontSize: 16, fontWeight: '600', color: '#1E1E1E', marginBottom: 4, textAlign: 'center', width: '100%' }}>Gerenciar Pets</Text>
             <Text style={{ fontSize: 12, color: '#999', textAlign: 'center' }}>Cadastre e edite seus pets</Text>
           </TouchableOpacity>
 
@@ -174,7 +184,7 @@ export const TelaHomeAbrigo = ({
             }}>
               <Ionicons name="chatbubble-outline" size={28} color="white" />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#1E1E1E', marginBottom: 4 }}>Solicitações</Text>
+            <Text {...fittingTextProps} style={{ fontSize: 16, fontWeight: '600', color: '#1E1E1E', marginBottom: 4, textAlign: 'center', width: '100%' }}>Solicitações</Text>
             <Text style={{ fontSize: 12, color: '#999', textAlign: 'center' }}>{stats.applications} pendentes</Text>
           </TouchableOpacity>
 
@@ -205,7 +215,7 @@ export const TelaHomeAbrigo = ({
             }}>
               <Ionicons name="heart-outline" size={28} color="white" />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#1E1E1E', marginBottom: 4 }}>Acompanhamento</Text>
+            <Text {...fittingTextProps} style={{ fontSize: 16, fontWeight: '600', color: '#1E1E1E', marginBottom: 4, textAlign: 'center', width: '100%' }}>Acompanhamento</Text>
             <Text style={{ fontSize: 12, color: '#999', textAlign: 'center' }}>{stats.adoptions} adoções ativas</Text>
           </TouchableOpacity>
 
@@ -236,7 +246,7 @@ export const TelaHomeAbrigo = ({
             }}>
               <Ionicons name="add-outline" size={32} color="white" />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: 'white', marginBottom: 4 }}>Cadastrar Pet</Text>
+            <Text {...fittingTextProps} style={{ fontSize: 16, fontWeight: '600', color: 'white', marginBottom: 4, textAlign: 'center', width: '100%' }}>Cadastrar Pet</Text>
             <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', textAlign: 'center' }}>Adicione um novo pet</Text>
           </TouchableOpacity>
         </View>
