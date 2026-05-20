@@ -154,7 +154,98 @@ Outra diferenca foi a decisao de infraestrutura. O planejamento inicial ainda na
 - **Testes / Qualidade:** Alice Aragao.
 - **Apoio da equipe:** revisao de requisitos, validacao dos fluxos e acompanhamento das tarefas.
 
-## 8. Consideracoes Finais
+## 8. Evidencias dos Testes Realizados
+
+Espaco reservado para inserir as evidencias dos testes realizados no aplicativo, na API, no banco de dados ou no terminal.
+
+### Print 1 - Execucao da API no terminal
+
+Evidencia da API do Ach Pet rodando em ambiente de desenvolvimento por meio do comando `npm run dev`.
+
+### Print 2 - Banco de dados PostgreSQL/Docker ativo
+
+Evidencia do banco de dados em execucao pelo Docker, usando `docker compose up -d`.
+
+### Print 3 - Migracoes do Prisma executadas
+
+Evidencia da geracao do Prisma Client e aplicacao das migracoes com os comandos `npm run prisma:generate` e `npm run prisma:migrate`.
+
+### Print 4 - Testes automatizados aprovados
+
+Evidencia da execucao do comando `npm run test`, demonstrando os testes unitarios/integrados aprovados.
+
+### Print 5 - Teste de integracao da API
+
+Evidencia da execucao de `npm run test:integration` ou `npm run test:integration:src:all`, validando autenticacao, pets, adocoes, chat e acompanhamento.
+
+### Print 5.1 - Teste E2E com Cypress
+
+Evidencia da execucao de `npm run test:e2e`, validando o fluxo completo de cadastro de abrigo, cadastro de adotante, criacao de pet, solicitacao de adocao, aprovacao, chat, acompanhamento pos-adocao e intervencao.
+
+Resultado observado no terminal:
+
+```text
+Tests:        1
+Passing:      1
+Failing:      0
+Screenshots:  0
+Video:        false
+Spec Ran:     register-login-adoption.cy.js
+
+All specs passed!
+```
+
+O print evidencia que o teste E2E foi executado com sucesso no Cypress, com 1 teste aprovado e nenhuma falha.
+
+### Print 6 - Documentacao Swagger/OpenAPI
+
+Evidencia da documentacao da API aberta no navegador, mostrando os endpoints disponiveis.
+
+### Print 7 - Teste no Postman
+
+Evidencia de uma requisicao no Postman, como cadastro de usuario, login, listagem de pets ou solicitacao de adocao.
+
+### Print 8 - Aplicativo mobile
+
+Evidencia das telas principais do app: login, cadastro, listagem de pets, detalhes do pet, favoritos e solicitacao de adocao.
+
+### Print 9 - Banco/Prisma Studio
+
+Evidencia dos dados cadastrados no banco, usando Prisma Studio ou consulta no terminal.
+
+### Print 10 - Upload de imagem
+
+Evidencia do teste de upload de imagem do pet ou do acompanhamento pos-adocao, quando finalizado.
+
+Esses prints batem com o repositorio, porque o README mostra uso de Docker Compose, Prisma, `npm run dev`, Swagger/OpenAPI e Postman, alem da stack com PostgreSQL, Prisma, JWT, Cloudinary e observabilidade.
+
+Tambem bate com o `package.json`, que tem scripts como `npm run dev`, `npm run test`, `npm run test:integration`, `npm run prisma:generate`, `npm run prisma:migrate`, `npm run smoke`, `npm run build` e `npm run prisma:studio`.
+
+Os comandos principais para rodar e tirar print sao:
+
+```bash
+docker compose up -d
+npm install
+npm run prisma:generate
+npm run prisma:migrate
+npm run dev
+npm run test
+npm run test:integration
+npm run test:e2e
+npm run smoke
+npm run prisma:studio
+```
+
+Para nao ficar grande demais, recomenda-se colocar 5 prints no minimo:
+
+- API rodando.
+- `npm run test` aprovado.
+- `npm run test:e2e` aprovado no Cypress.
+- Swagger ou Postman.
+- App mobile.
+- Prisma Studio ou banco de dados.
+
+## 9. Consideracoes Finais
 
 A Sprint 2 foi importante porque consolidou a base tecnica do AchPet. O sistema passou a ter uma estrutura mais proxima de uma aplicacao real, com backend organizado, banco de dados relacional, autenticacao, regras de negocio e telas mobile em processo de integracao.
 

@@ -30,6 +30,9 @@ Thumbs.db
 prisma/dev.db*
 prisma/certs/*
 !prisma/certs/.gitkeep
+certificate.pem
+*.pem
+*.p12
 
 # uploads (local files)
 uploads/*

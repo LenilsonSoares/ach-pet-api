@@ -23,6 +23,8 @@
     "lint:e2e": "eslint e2e/**/*.cy.js",
     "lint:fix": "eslint . --fix",
     "format": "prettier -w .",
+    "test:e2e": "node scripts/run-cypress.mjs run --e2e",
+    "test:e2e:open": "node scripts/run-cypress.mjs open --e2e",
     "test": "vitest run src/__tests__/domain src/__tests__/application src/__tests__/infra/uploads src/__tests__/exemplo.test.ts",
     "test:integration": "cross-env DATABASE_URL=postgresql://postgres:postgres@localhost:5432/achpet?schema=public JWT_SECRET=testsecret NODE_ENV=test vitest run src/__tests__/integration",
     "test:watch": "vitest",
