@@ -5,11 +5,26 @@ import { StorageProvider } from "../../application/ports/StorageProvider.js";
 
 export class CloudinaryStorageProvider implements StorageProvider {
   constructor() {
-    if (!process.env.CLOUDINARY_URL) {
-      throw new Error("Variavel de ambiente CLOUDINARY_URL nao definida.");
+    const cloudinaryUrl = process.env.CLOUDINARY_URL;
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    if (cloudinaryUrl) {
+      cloudinary.config({ url: cloudinaryUrl });
+      return;
     }
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      throw new Error(
+        "Configure CLOUDINARY_URL ou CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY e CLOUDINARY_API_SECRET.",
+      );
+    }
+
     cloudinary.config({
-      url: process.env.CLOUDINARY_URL,
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
     });
   }
 

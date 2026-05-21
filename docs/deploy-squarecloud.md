@@ -61,7 +61,16 @@ CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 CLOUDINARY_FOLDER=ach-pet-api
 ```
 
-Se `CLOUDINARY_URL` nao estiver configurada, a API usa upload local em `/uploads`, suficiente para teste e apresentacao.
+Ou, se preferir cadastrar separado no painel da Square Cloud:
+
+```env
+CLOUDINARY_CLOUD_NAME=CLOUD_NAME
+CLOUDINARY_API_KEY=API_KEY
+CLOUDINARY_API_SECRET=API_SECRET
+CLOUDINARY_FOLDER=ach-pet-api
+```
+
+Se nem `CLOUDINARY_URL` nem as tres variaveis separadas estiverem configuradas, a API usa upload local em `/uploads`, suficiente para teste e apresentacao.
 
 ## Configuracao do app
 
