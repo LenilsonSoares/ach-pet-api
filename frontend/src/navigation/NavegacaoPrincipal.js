@@ -6,7 +6,6 @@ import {
   Platform
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { DATABASE } from '../services/bancoDados';
 import { api } from '../services/api';
 import {
   categoryToSpecies,
@@ -239,9 +238,8 @@ export const NavegacaoPrincipal = () => {
       setAllPets(pets);
       setFilteredPets(applyPetFiltersToList(pets));
     } catch (error) {
-      const fallbackPets = DATABASE.pets.filter(p => p.status === 'Disponível');
-      setAllPets(fallbackPets);
-      setFilteredPets(applyPetFiltersToList(fallbackPets));
+      setAllPets([]);
+      setFilteredPets([]);
       if (!silent) notify('API indisponível', error.message);
     }
   };
@@ -580,6 +578,10 @@ export const NavegacaoPrincipal = () => {
   const getUserApplications = () => adopterApplications;
 
   const handleSaveProfile = async (updatedData) => {
+    if (!authToken) {
+      throw new Error('Faça login novamente para atualizar o perfil.');
+    }
+
     const payload = {
       name: optionalField(updatedData.name),
       email: optionalField(updatedData.email),
@@ -590,17 +592,9 @@ export const NavegacaoPrincipal = () => {
     };
 
     try {
-      const result = authToken
-        ? await api.updateMe(authToken, payload)
-        : { user: { ...currentUser, ...payload } };
+      const result = await api.updateMe(authToken, payload);
       const updatedUser = mapApiUserToViewModel(result.user);
       setCurrentUser(updatedUser);
-      if (userType === 'adopter') {
-        const userIndex = DATABASE.adopters.findIndex(u => u.id === currentUser.id);
-        if (userIndex !== -1) {
-          DATABASE.adopters[userIndex] = { ...DATABASE.adopters[userIndex], ...updatedUser };
-        }
-      }
       setIsEditingProfile(false);
     } catch (error) {
       notify('Erro ao salvar perfil', error.message);

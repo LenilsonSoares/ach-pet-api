@@ -156,7 +156,7 @@ Scripts utilitários para automação e produtividade. Todos podem ser executado
 | smoke            | Executa smoke test básico (scripts/smoke-test.mjs)                      |
 | prisma:generate  | Gera client do Prisma                                                   |
 | prisma:migrate   | Aplica migrações do banco                                               |
-| prisma:seed      | Popula banco com dados de exemplo                                       |
+| prisma:seed      | Verifica o banco sem criar dados de demonstração                        |
 | prisma:studio    | Abre interface visual do Prisma Studio                                  |
 
 ### Exemplos de uso de scripts
@@ -237,15 +237,14 @@ MIT
 
 Veja o guia de implementação do app em [docs/mobile-expo-handoff.md](docs/mobile-expo-handoff.md).
 
-## Seed (dados de teste) — para o BD (Kayky)
+## Seed
 
-Com o banco rodando e migrado, você pode popular dados básicos:
+O projeto não cria mais dados de demonstração automaticamente, para preservar bancos reais.
+Com o banco rodando e migrado, o comando abaixo apenas valida a conexão e mostra contagens:
 
 ```powershell
 npm run prisma:seed
 ```
-
-O seed cria 1 abrigo e 1 adotante (senha `123456`) e uma solicitação pendente.
 
 ## Postman — para a Alice
 

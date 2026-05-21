@@ -1,4 +1,4 @@
-import { demoPetImages, petImages } from '../utils/constantes';
+import { petImages } from '../utils/constantes';
 import { API_BASE_URL } from './api';
 
 export const requestStatusToLabel = {
@@ -84,7 +84,6 @@ export const mapApiPetToViewModel = (pet) => {
   const gallery = photos.length > 0
     ? photos.map((photo) => buildPhotoSource(photo.url || photo))
     : [petImages.default];
-  const demoImage = demoPetImages[pet.name];
 
   const sex = formatSex(pet.sex);
   const age = formatAge(pet.ageMonths);
@@ -102,14 +101,14 @@ export const mapApiPetToViewModel = (pet) => {
     neighborhood: pet.shelter?.name || 'Abrigo',
     city: 'Vitória da Conquista',
     state: 'BA',
-    image: demoImage || gallery[0],
+    image: gallery[0],
     tags,
     description: pet.description || 'Sem descrição informada.',
     shelterId: pet.shelterId,
     shelter: pet.shelter?.name || 'Abrigo',
     shelterLocation: pet.shelter?.name || 'Abrigo cadastrado',
     shelterPhone: '',
-    gallery: demoImage ? [demoImage, ...gallery] : gallery,
+    gallery,
     status: petStatusToLabel[pet.status] || pet.status || 'Disponível',
     apiStatus: pet.status,
     createdAt: pet.createdAt
