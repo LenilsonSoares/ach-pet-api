@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -84,8 +84,12 @@ export const NavegacaoPrincipal = () => {
   const [currentChatId, setCurrentChatId] = useState(null);
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
+  const [isChatPartnerTyping, setIsChatPartnerTyping] = useState(false);
   const [chatPartner, setChatPartner] = useState({ name: '', petName: '' });
   const [chatReturnScreen, setChatReturnScreen] = useState(null);
+  const typingStopTimerRef = useRef(null);
+  const isTypingRef = useRef(false);
+  const lastTypingSentAtRef = useRef(0);
 
   const [filters, setFilters] = useState({ porte: [], idade: [], sexo: [], tipo: [] });
 
@@ -120,6 +124,59 @@ export const NavegacaoPrincipal = () => {
     }
 
     return formData;
+  };
+
+  const updateChatMessages = (messages) => {
+    const nextMessages = messages.map(mapApiMessageToViewModel);
+
+    setChatMessages((previousMessages) => {
+      const previousKey = previousMessages.map((message) => `${message.id}:${message.timestamp}`).join('|');
+      const nextKey = nextMessages.map((message) => `${message.id}:${message.timestamp}`).join('|');
+      return previousKey === nextKey ? previousMessages : nextMessages;
+    });
+  };
+
+  const sendTypingStatus = (isTyping) => {
+    if (!authToken || !currentChatId) return;
+    api.setChatTyping(authToken, currentChatId, isTyping).catch(() => {});
+  };
+
+  const stopChatTyping = () => {
+    if (typingStopTimerRef.current) {
+      clearTimeout(typingStopTimerRef.current);
+      typingStopTimerRef.current = null;
+    }
+
+    if (isTypingRef.current) {
+      isTypingRef.current = false;
+      sendTypingStatus(false);
+    }
+  };
+
+  const handleChangeChatMessage = (text) => {
+    setChatMessage(text);
+
+    if (!authToken || !currentChatId) return;
+
+    const isTyping = text.trim().length > 0;
+    if (!isTyping) {
+      stopChatTyping();
+      return;
+    }
+
+    const now = Date.now();
+    if (!isTypingRef.current || now - lastTypingSentAtRef.current > 1_500) {
+      isTypingRef.current = true;
+      lastTypingSentAtRef.current = now;
+      sendTypingStatus(true);
+    }
+
+    if (typingStopTimerRef.current) clearTimeout(typingStopTimerRef.current);
+    typingStopTimerRef.current = setTimeout(() => {
+      isTypingRef.current = false;
+      typingStopTimerRef.current = null;
+      sendTypingStatus(false);
+    }, 1_800);
   };
 
   const getPetAgeYears = (pet) => {
@@ -237,6 +294,44 @@ export const NavegacaoPrincipal = () => {
       loadMyApplications().catch(error => notify('Erro', error.message));
     }
   }, [userType, currentUser, authToken]);
+
+  useEffect(() => {
+    const isChatScreen = currentScreen === 'chat' || currentScreen === 'shelter-chat';
+    if (!isChatScreen || !authToken || !currentChatId) return;
+
+    let isActive = true;
+
+    const refreshChat = async () => {
+      try {
+        const [messagesResult, typingResult] = await Promise.all([
+          api.listMessages(authToken, currentChatId),
+          api.getChatTyping(authToken, currentChatId)
+        ]);
+
+        if (!isActive) return;
+        updateChatMessages(messagesResult.messages);
+        setIsChatPartnerTyping(Boolean(typingResult?.isTyping));
+      } catch {
+        if (isActive) setIsChatPartnerTyping(false);
+      }
+    };
+
+    refreshChat();
+    const intervalId = setInterval(refreshChat, 2_500);
+
+    return () => {
+      isActive = false;
+      clearInterval(intervalId);
+    };
+  }, [currentScreen, currentChatId, authToken]);
+
+  useEffect(() => {
+    const isChatScreen = currentScreen === 'chat' || currentScreen === 'shelter-chat';
+    if (isChatScreen) return;
+
+    stopChatTyping();
+    setIsChatPartnerTyping(false);
+  }, [currentScreen]);
 
   const navigateTo = (screen) => setCurrentScreen(screen);
   
@@ -410,7 +505,11 @@ export const NavegacaoPrincipal = () => {
     setShelterApplications([]);
     setShelterAdoptions([]);
     setShelterPets([]);
+    setCurrentChatId(null);
+    setChatMessage('');
+    setChatMessages([]);
     setChatReturnScreen(null);
+    setIsChatPartnerTyping(false);
     setIsEditingProfile(false);
     setPasswordModalVisible(false);
     setIsPasswordLoading(false);
@@ -774,8 +873,9 @@ export const NavegacaoPrincipal = () => {
       const result = await api.listMessages(authToken, threadId);
 
       setCurrentChatId(threadId);
-      setChatMessages(result.messages.map(mapApiMessageToViewModel));
+      updateChatMessages(result.messages);
       setChatPartner({ name: partnerName, petName });
+      setIsChatPartnerTyping(false);
 
       if (userType === 'adopter') {
         setChatReturnScreen('home');
@@ -794,6 +894,7 @@ export const NavegacaoPrincipal = () => {
 
     const message = chatMessage.trim();
     setChatMessage('');
+    stopChatTyping();
 
     try {
       const result = await api.sendMessage(authToken, currentChatId, message);
@@ -1022,8 +1123,9 @@ export const NavegacaoPrincipal = () => {
             chatPartner={chatPartner}
             messages={chatMessages}
             chatMessage={chatMessage}
+            isPartnerTyping={isChatPartnerTyping}
             onSendMessage={sendChatMessage}
-            onChangeMessage={setChatMessage}
+            onChangeMessage={handleChangeChatMessage}
             onVoltar={goBack}
           />
         );

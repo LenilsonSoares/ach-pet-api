@@ -123,5 +123,12 @@ export const api = {
       method: 'POST',
       token,
       body: { content }
-    })
+    }),
+  setChatTyping: (token, threadId, isTyping) =>
+    apiRequest(`/chat/threads/${threadId}/typing`, {
+      method: 'POST',
+      token,
+      body: { isTyping }
+    }),
+  getChatTyping: (token, threadId) => apiRequest(`/chat/threads/${threadId}/typing`, { token })
 };

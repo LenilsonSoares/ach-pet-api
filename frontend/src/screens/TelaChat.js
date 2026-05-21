@@ -10,6 +10,7 @@ export const TelaChat = ({
   chatPartner, 
   messages, 
   chatMessage, 
+  isPartnerTyping = false,
   onSendMessage, 
   onChangeMessage, 
   onVoltar 
@@ -64,6 +65,27 @@ export const TelaChat = ({
               </View>
             );
           })}
+
+          {isPartnerTyping && (
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+              <View style={{
+                backgroundColor: 'white',
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 18,
+                borderBottomLeftRadius: 4,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.08,
+                shadowRadius: 2,
+                elevation: 2
+              }}>
+                <Text style={{ fontSize: 12, color: '#777' }}>
+                  {chatPartner.name ? `${chatPartner.name} está digitando...` : 'Digitando...'}
+                </Text>
+              </View>
+            </View>
+          )}
         </ScrollView>
 
         <View style={{ flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 12, paddingTop: 12, paddingBottom: bottomInset, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#DDD', gap: 8 }}>
