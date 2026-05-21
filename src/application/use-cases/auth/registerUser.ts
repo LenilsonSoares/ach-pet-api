@@ -15,6 +15,15 @@ export type RegisterUserRequest = {
   cpf?: string;
   birthDate?: string;
   address?: string;
+  cep?: string;
+  street?: string;
+  addressNumber?: string;
+  addressComplement?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  latitude?: number;
+  longitude?: number;
   cnpj?: string;
   responsible?: string;
   site?: string;
@@ -73,6 +82,15 @@ export async function registerUser(deps: {
       cpf: profile.cpf,
       birthDate: profile.birthDate,
       address: profile.address,
+      cep: profile.cep,
+      street: profile.street,
+      addressNumber: profile.addressNumber,
+      addressComplement: profile.addressComplement,
+      neighborhood: profile.neighborhood,
+      city: profile.city,
+      state: profile.state,
+      latitude: profile.latitude,
+      longitude: profile.longitude,
       cnpj: profile.cnpj,
       responsible: profile.responsible,
       site: profile.site,

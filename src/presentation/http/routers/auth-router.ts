@@ -8,6 +8,7 @@ import { requestPasswordReset } from "../../../application/use-cases/auth/reques
 import { resetPassword } from "../../../application/use-cases/auth/resetPassword.js";
 import { normalizeUpdateProfileInput } from "../../../application/use-cases/auth/profileValidation.js";
 import type { AuthRepository } from "../../../application/ports/AuthRepository.js";
+import type { PushNotificationRepository } from "../../../application/ports/PushNotifications.js";
 import type { PasswordHasher } from "../../../application/ports/PasswordHasher.js";
 import type { TokenService } from "../../../application/ports/TokenService.js";
 import { asyncHandler } from "../async-handler.js";
@@ -23,6 +24,7 @@ export function createAuthRouter(deps: {
   authRepo: AuthRepository;
   passwordHasher: PasswordHasher;
   tokenService: TokenService;
+  pushNotificationsRepo?: PushNotificationRepository;
 }) {
   const router = Router();
   const auth = buildAuthMiddlewares(deps.tokenService);
@@ -42,6 +44,15 @@ export function createAuthRouter(deps: {
     cpf: optionalTrimmed,
     birthDate: optionalTrimmed,
     address: optionalTrimmed,
+    cep: optionalTrimmed,
+    street: optionalTrimmed,
+    addressNumber: optionalTrimmed,
+    addressComplement: optionalTrimmed,
+    neighborhood: optionalTrimmed,
+    city: optionalTrimmed,
+    state: optionalTrimmed,
+    latitude: z.coerce.number().min(-90).max(90).optional(),
+    longitude: z.coerce.number().min(-180).max(180).optional(),
     cnpj: optionalTrimmed,
     responsible: optionalTrimmed,
     site: optionalTrimmed,
@@ -55,6 +66,15 @@ export function createAuthRouter(deps: {
     cpf: optionalTrimmed,
     birthDate: optionalTrimmed,
     address: optionalTrimmed,
+    cep: optionalTrimmed,
+    street: optionalTrimmed,
+    addressNumber: optionalTrimmed,
+    addressComplement: optionalTrimmed,
+    neighborhood: optionalTrimmed,
+    city: optionalTrimmed,
+    state: optionalTrimmed,
+    latitude: z.coerce.number().min(-90).max(90).optional(),
+    longitude: z.coerce.number().min(-180).max(180).optional(),
     cnpj: optionalTrimmed,
     responsible: optionalTrimmed,
     site: optionalTrimmed,
@@ -75,6 +95,21 @@ export function createAuthRouter(deps: {
     newPassword: z.string().min(6),
     confirmPassword: z.string().min(1),
   });
+
+  const pushTokenSchema = z.object({
+    token: z.string().trim().min(10).max(300),
+    platform: optionalTrimmed,
+    deviceName: optionalTrimmed,
+  });
+
+  const notificationPreferencesSchema = z
+    .object({
+      pushChatEnabled: z.boolean().optional(),
+      pushAdoptionEnabled: z.boolean().optional(),
+    })
+    .refine((value) => value.pushChatEnabled !== undefined || value.pushAdoptionEnabled !== undefined, {
+      message: "Informe ao menos uma preferencia",
+    });
 
   router.post(
     "/register",
@@ -157,6 +192,46 @@ export function createAuthRouter(deps: {
       if (!user) throw new AppError(404, "Usuário não encontrado");
 
       return res.status(200).json({ user });
+    }),
+  );
+
+  router.post(
+    "/me/push-tokens",
+    auth.requireAuth,
+    asyncHandler(async (req, res) => {
+      if (!deps.pushNotificationsRepo) throw new AppError(503, "Notificações indisponíveis");
+
+      const authUser = (req as AuthenticatedRequest).user;
+      const userId = authUser?.id;
+      if (!userId) throw new AppError(401, "Sem autorização");
+
+      const body = pushTokenSchema.parse(req.body);
+      await deps.pushNotificationsRepo.upsertToken({
+        userId,
+        token: body.token,
+        platform: body.platform,
+        deviceName: body.deviceName,
+      });
+
+      return res.status(201).json({ ok: true });
+    }),
+  );
+
+  router.patch(
+    "/me/notification-preferences",
+    auth.requireAuth,
+    asyncHandler(async (req, res) => {
+      if (!deps.pushNotificationsRepo) throw new AppError(503, "Notificações indisponíveis");
+
+      const authUser = (req as AuthenticatedRequest).user;
+      const userId = authUser?.id;
+      if (!userId) throw new AppError(401, "Sem autorização");
+
+      const body = notificationPreferencesSchema.parse(req.body);
+      const preferences = await deps.pushNotificationsRepo.updatePreferences(userId, body);
+      if (!preferences) throw new AppError(404, "Usuário não encontrado");
+
+      return res.status(200).json({ preferences });
     }),
   );
 

@@ -12,7 +12,21 @@ export type PetListItem = {
   description: string | null;
   status: PetStatus;
   photos: { id: string; url: string }[];
-  shelter: { id: string; name: string };
+  shelter: {
+    id: string;
+    name: string;
+    phone: string | null;
+    shelterProfile: {
+      orgName: string;
+      address: string | null;
+      cep: string | null;
+      street: string | null;
+      addressNumber: string | null;
+      neighborhood: string | null;
+      city: string | null;
+      state: string | null;
+    } | null;
+  };
   createdAt: Date;
 };
 

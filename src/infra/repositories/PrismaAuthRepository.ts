@@ -15,18 +15,38 @@ type PrismaAuthRecord = {
   name: string;
   email: string;
   phone: string | null;
+  pushChatEnabled: boolean;
+  pushAdoptionEnabled: boolean;
   passwordHash: string;
   shelterProfile: {
     orgName: string;
     cnpj: string | null;
     responsible: string | null;
     address: string | null;
+    cep: string | null;
+    street: string | null;
+    addressNumber: string | null;
+    addressComplement: string | null;
+    neighborhood: string | null;
+    city: string | null;
+    state: string | null;
+    latitude: number | null;
+    longitude: number | null;
     site: string | null;
   } | null;
   adopterProfile: {
     cpf: string | null;
     birthDate: string | null;
     address: string | null;
+    cep: string | null;
+    street: string | null;
+    addressNumber: string | null;
+    addressComplement: string | null;
+    neighborhood: string | null;
+    city: string | null;
+    state: string | null;
+    latitude: number | null;
+    longitude: number | null;
   } | null;
 };
 
@@ -37,10 +57,21 @@ function toPublicUser(user: PrismaAuthRecord): PublicUser {
     name: user.name,
     email: user.email,
     phone: user.phone,
+    pushChatEnabled: user.pushChatEnabled,
+    pushAdoptionEnabled: user.pushAdoptionEnabled,
     orgName: user.shelterProfile?.orgName ?? null,
     cpf: user.adopterProfile?.cpf ?? null,
     birthDate: user.adopterProfile?.birthDate ?? null,
     address: user.adopterProfile?.address ?? user.shelterProfile?.address ?? null,
+    cep: user.adopterProfile?.cep ?? user.shelterProfile?.cep ?? null,
+    street: user.adopterProfile?.street ?? user.shelterProfile?.street ?? null,
+    addressNumber: user.adopterProfile?.addressNumber ?? user.shelterProfile?.addressNumber ?? null,
+    addressComplement: user.adopterProfile?.addressComplement ?? user.shelterProfile?.addressComplement ?? null,
+    neighborhood: user.adopterProfile?.neighborhood ?? user.shelterProfile?.neighborhood ?? null,
+    city: user.adopterProfile?.city ?? user.shelterProfile?.city ?? null,
+    state: user.adopterProfile?.state ?? user.shelterProfile?.state ?? null,
+    latitude: user.adopterProfile?.latitude ?? user.shelterProfile?.latitude ?? null,
+    longitude: user.adopterProfile?.longitude ?? user.shelterProfile?.longitude ?? null,
     cnpj: user.shelterProfile?.cnpj ?? null,
     responsible: user.shelterProfile?.responsible ?? null,
     site: user.shelterProfile?.site ?? null,
@@ -57,6 +88,8 @@ export class PrismaAuthRepository implements AuthRepository {
         name: true,
         email: true,
         phone: true,
+        pushChatEnabled: true,
+        pushAdoptionEnabled: true,
         passwordHash: true,
         shelterProfile: {
           select: {
@@ -64,6 +97,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cnpj: true,
             responsible: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
             site: true,
           },
         },
@@ -72,6 +114,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cpf: true,
             birthDate: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },
@@ -94,6 +145,8 @@ export class PrismaAuthRepository implements AuthRepository {
         name: true,
         email: true,
         phone: true,
+        pushChatEnabled: true,
+        pushAdoptionEnabled: true,
         passwordHash: true,
         shelterProfile: {
           select: {
@@ -101,6 +154,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cnpj: true,
             responsible: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
             site: true,
           },
         },
@@ -109,6 +171,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cpf: true,
             birthDate: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },
@@ -131,6 +202,8 @@ export class PrismaAuthRepository implements AuthRepository {
         name: true,
         email: true,
         phone: true,
+        pushChatEnabled: true,
+        pushAdoptionEnabled: true,
         passwordHash: true,
         shelterProfile: {
           select: {
@@ -138,6 +211,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cnpj: true,
             responsible: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
             site: true,
           },
         },
@@ -146,6 +228,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cpf: true,
             birthDate: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },
@@ -170,6 +261,15 @@ export class PrismaAuthRepository implements AuthRepository {
                   cnpj: input.cnpj,
                   responsible: input.responsible,
                   address: input.address,
+                  cep: input.cep,
+                  street: input.street,
+                  addressNumber: input.addressNumber,
+                  addressComplement: input.addressComplement,
+                  neighborhood: input.neighborhood,
+                  city: input.city,
+                  state: input.state,
+                  latitude: input.latitude,
+                  longitude: input.longitude,
                   site: input.site,
                 },
               }
@@ -181,6 +281,15 @@ export class PrismaAuthRepository implements AuthRepository {
                   cpf: input.cpf,
                   birthDate: input.birthDate,
                   address: input.address,
+                  cep: input.cep,
+                  street: input.street,
+                  addressNumber: input.addressNumber,
+                  addressComplement: input.addressComplement,
+                  neighborhood: input.neighborhood,
+                  city: input.city,
+                  state: input.state,
+                  latitude: input.latitude,
+                  longitude: input.longitude,
                 },
               }
             : undefined,
@@ -191,6 +300,8 @@ export class PrismaAuthRepository implements AuthRepository {
         name: true,
         email: true,
         phone: true,
+        pushChatEnabled: true,
+        pushAdoptionEnabled: true,
         passwordHash: true,
         shelterProfile: {
           select: {
@@ -198,6 +309,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cnpj: true,
             responsible: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
             site: true,
           },
         },
@@ -206,6 +326,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cpf: true,
             birthDate: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },
@@ -237,6 +366,15 @@ export class PrismaAuthRepository implements AuthRepository {
                     cnpj: input.cnpj,
                     responsible: input.responsible,
                     address: input.address,
+                    cep: input.cep,
+                    street: input.street,
+                    addressNumber: input.addressNumber,
+                    addressComplement: input.addressComplement,
+                    neighborhood: input.neighborhood,
+                    city: input.city,
+                    state: input.state,
+                    latitude: input.latitude,
+                    longitude: input.longitude,
                     site: input.site,
                   },
                   update: {
@@ -244,6 +382,15 @@ export class PrismaAuthRepository implements AuthRepository {
                     cnpj: input.cnpj,
                     responsible: input.responsible,
                     address: input.address,
+                    cep: input.cep,
+                    street: input.street,
+                    addressNumber: input.addressNumber,
+                    addressComplement: input.addressComplement,
+                    neighborhood: input.neighborhood,
+                    city: input.city,
+                    state: input.state,
+                    latitude: input.latitude,
+                    longitude: input.longitude,
                     site: input.site,
                   },
                 },
@@ -257,11 +404,29 @@ export class PrismaAuthRepository implements AuthRepository {
                     cpf: input.cpf,
                     birthDate: input.birthDate,
                     address: input.address,
+                    cep: input.cep,
+                    street: input.street,
+                    addressNumber: input.addressNumber,
+                    addressComplement: input.addressComplement,
+                    neighborhood: input.neighborhood,
+                    city: input.city,
+                    state: input.state,
+                    latitude: input.latitude,
+                    longitude: input.longitude,
                   },
                   update: {
                     cpf: input.cpf,
                     birthDate: input.birthDate,
                     address: input.address,
+                    cep: input.cep,
+                    street: input.street,
+                    addressNumber: input.addressNumber,
+                    addressComplement: input.addressComplement,
+                    neighborhood: input.neighborhood,
+                    city: input.city,
+                    state: input.state,
+                    latitude: input.latitude,
+                    longitude: input.longitude,
                   },
                 },
               }
@@ -273,6 +438,8 @@ export class PrismaAuthRepository implements AuthRepository {
         name: true,
         email: true,
         phone: true,
+        pushChatEnabled: true,
+        pushAdoptionEnabled: true,
         passwordHash: true,
         shelterProfile: {
           select: {
@@ -280,6 +447,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cnpj: true,
             responsible: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
             site: true,
           },
         },
@@ -288,6 +464,15 @@ export class PrismaAuthRepository implements AuthRepository {
             cpf: true,
             birthDate: true,
             address: true,
+            cep: true,
+            street: true,
+            addressNumber: true,
+            addressComplement: true,
+            neighborhood: true,
+            city: true,
+            state: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },

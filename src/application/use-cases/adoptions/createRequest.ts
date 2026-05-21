@@ -1,8 +1,14 @@
 import { AppError } from "../../../domain/errors/AppError.js";
 import type { AdoptionsRepository } from "../../ports/AdoptionsRepository.js";
+import type { PushNotificationRepository, PushNotificationService } from "../../ports/PushNotifications.js";
 import { logger } from "../../../infra/observability/logger.js";
+import { notifyUser } from "../notifications/notifyUser.js";
 
-export function createAdoptionRequest(deps: { adoptionsRepo: AdoptionsRepository }) {
+export function createAdoptionRequest(deps: {
+  adoptionsRepo: AdoptionsRepository;
+  pushNotificationsRepo?: PushNotificationRepository;
+  pushNotificationService?: PushNotificationService;
+}) {
   return async (params: { adopterId: string; petId: string; message?: string }) => {
     const pet = await deps.adoptionsRepo.getPetSnapshot(params.petId);
     if (!pet) throw new AppError(404, "Pet não encontrado");
@@ -18,6 +24,15 @@ export function createAdoptionRequest(deps: { adoptionsRepo: AdoptionsRepository
       message: params.message,
     });
     logger.info({ adopterId: params.adopterId, petId: params.petId }, "Solicitação de adoção criada");
+    void notifyUser(deps)({
+      userId: pet.shelterId,
+      category: "ADOPTION",
+      message: {
+        title: "Nova solicitação de adoção",
+        body: `Um adotante quer conhecer ${pet.name}.`,
+        data: { type: "adoption_request", requestId: request.id, petId: pet.id },
+      },
+    });
     return { request };
   };
 }

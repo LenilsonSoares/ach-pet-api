@@ -11,7 +11,7 @@ import { prisma } from "../db/prisma.js";
 
 export class PrismaAdoptionsRepository implements AdoptionsRepository {
   async getPetSnapshot(petId: string): Promise<PetSnapshot | null> {
-    return prisma.pet.findUnique({ where: { id: petId }, select: { id: true, status: true, shelterId: true } });
+    return prisma.pet.findUnique({ where: { id: petId }, select: { id: true, name: true, status: true, shelterId: true } });
   }
 
   async findExistingRequest(petId: string, adopterId: string): Promise<AdoptionRequest | null> {
@@ -77,10 +77,27 @@ export class PrismaAdoptionsRepository implements AdoptionsRepository {
   }
 
   async getRequestForDecision(requestId: string) {
-    return prisma.adoptionRequest.findUnique({
+    const request = await prisma.adoptionRequest.findUnique({
       where: { id: requestId },
-      select: { id: true, status: true, shelterId: true, petId: true },
+      select: {
+        id: true,
+        status: true,
+        shelterId: true,
+        adopterId: true,
+        petId: true,
+        pet: { select: { name: true } },
+      },
     });
+
+    if (!request) return null;
+    return {
+      id: request.id,
+      status: request.status,
+      shelterId: request.shelterId,
+      adopterId: request.adopterId,
+      petId: request.petId,
+      petName: request.pet.name,
+    };
   }
 
   async approveRequest(requestId: string, followUpDays: number) {

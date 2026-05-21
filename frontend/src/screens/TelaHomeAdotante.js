@@ -6,6 +6,7 @@ import { MensagemSucesso } from '../components/MensagemSucesso';
 import { logo } from '../utils/constantes';
 
 export const TelaHomeAdotante = ({
+  currentUser,
   showSuccessMessage,
   activeCategory,
   filteredPets,
@@ -15,8 +16,11 @@ export const TelaHomeAdotante = ({
   onShowPetDetails,
   onToggleFavorite,
   onGoToRequests,
-  onSearch
+  onSearch,
+  onToggleNotifications
 }) => {
+  const locationLabel = [currentUser?.city, currentUser?.state].filter(Boolean).join(', ') || 'Localização não informada';
+
   const BannerMotivacional = () => (
     <View style={{ backgroundColor: '#F4A51C', borderRadius: 16, padding: 20, marginBottom: 20, borderBottomWidth: 3, borderBottomColor: '#8B2E0F' }}>
       <Text style={{ fontSize: 18, fontWeight: '700', color: 'white', textAlign: 'center' }}>Encontre seu novo amigo!</Text>
@@ -36,9 +40,9 @@ export const TelaHomeAdotante = ({
           <Image source={logo} style={{ width: 50, height: 50 }} resizeMode="contain" />
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', minWidth: 0, marginHorizontal: 8 }}>
             <Ionicons name="location-outline" size={16} color="#1E1E1E" />
-            <Text numberOfLines={1} style={{ flex: 1, fontSize: 13, fontWeight: '600', color: '#1E1E1E', marginLeft: 4, textAlign: 'center' }}>Vitória da Conquista, BA</Text>
+            <Text numberOfLines={1} style={{ flex: 1, fontSize: 13, fontWeight: '600', color: '#1E1E1E', marginLeft: 4, textAlign: 'center' }}>{locationLabel}</Text>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onToggleNotifications}>
             <Ionicons name="notifications-outline" size={20} color="#1E1E1E" />
           </TouchableOpacity>
         </View>

@@ -8,28 +8,32 @@ export const TelaPerfilAdotante = ({
   applications,
   onLogout,
   onEditProfile,
-  onChangePassword = () => {}
+  onChangePassword = () => {},
+  onToggleNotifications = () => {}
 }) => {
   const user = {
     name: '',
     email: '',
     phone: '',
     address: '',
+    cep: '',
+    city: '',
+    state: '',
     cpf: '',
     birthDate: '',
+    pushChatEnabled: true,
+    pushAdoptionEnabled: true,
     ...currentUser
   };
   const show = (value) => value || 'Não informado';
+  const locationLabel = [user.city, user.state].filter(Boolean).join(', ') || 'Localização não informada';
+  const notificationsEnabled = user.pushChatEnabled !== false || user.pushAdoptionEnabled !== false;
 
   const stats = {
     total: applications?.length || 0,
     approved: applications?.filter(a => a.status === 'Aprovada').length || 0,
     pending: applications?.filter(a => a.status === 'Pendente').length || 0,
     rejected: applications?.filter(a => a.status === 'Recusada').length || 0
-  };
-
-  const handleNotifications = () => {
-    Alert.alert('Notificações', 'Preferências de notificação ainda não estão disponíveis.');
   };
 
   const handleDeleteAccount = () => {
@@ -95,7 +99,7 @@ export const TelaPerfilAdotante = ({
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Ionicons name="location-outline" size={16} color="#666" />
             <Text style={{ fontSize: 14, color: '#666', marginLeft: 4 }}>
-              Vitória da Conquista, BA
+              {locationLabel}
             </Text>
           </View>
         </View>
@@ -152,6 +156,14 @@ export const TelaPerfilAdotante = ({
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Ionicons name="home-outline" size={16} color="#666" />
               <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8, flex: 1 }}>{show(user.address)}</Text>
+            </View>
+          </View>
+
+          <View style={{ marginTop: 12 }}>
+            <Text style={{ fontSize: 12, color: '#999', marginBottom: 2 }}>CEP</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="map-outline" size={16} color="#666" />
+              <Text style={{ fontSize: 14, color: '#1E1E1E', marginLeft: 8 }}>{show(user.cep)}</Text>
             </View>
           </View>
         </View>
@@ -262,7 +274,7 @@ export const TelaPerfilAdotante = ({
           </TouchableOpacity>
           
           <TouchableOpacity 
-            onPress={handleNotifications}
+            onPress={onToggleNotifications}
             style={{ 
               backgroundColor: 'white', 
               paddingVertical: 14, 
@@ -279,7 +291,7 @@ export const TelaPerfilAdotante = ({
           >
             <Ionicons name="notifications-outline" size={20} color="#8B2E0F" />
             <Text style={{ color: '#1E1E1E', fontSize: 14, fontWeight: '600', marginLeft: 12, flex: 1 }}>
-              Notificações
+              {notificationsEnabled ? 'Notificações ativadas' : 'Notificações desativadas'}
             </Text>
             <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>

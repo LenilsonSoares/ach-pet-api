@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ach Pet",
     "slug": "ach-pet",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./src/assets/logo_ach_pet_square.png",
     "userInterfaceStyle": "light",
@@ -13,6 +13,12 @@
     },
     "android": {
       "package": "com.lenilsonsoares.achpet",
+      "versionCode": 5,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/logo_ach_pet_square.png",
         "backgroundColor": "#FFFFFF"
@@ -22,7 +28,14 @@
       "apiBaseUrl": "https://ach-pet-api.squareweb.app"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/logo_ach_pet_square.png",
+          "color": "#F4A51C"
+        }
+      ]
     ]
   }
 }

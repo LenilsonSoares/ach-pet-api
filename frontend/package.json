@@ -1,6 +1,6 @@
 {
   "name": "ach-pet-frontend",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,8 +18,11 @@
     "@expo/vector-icons": "^15.1.1",
     "expo": "~54.0.34",
     "expo-constants": "~18.0.13",
+    "expo-device": "~8.0.10",
     "expo-font": "~14.0.11",
     "expo-image-picker": "~17.0.11",
+    "expo-location": "~19.0.8",
+    "expo-notifications": "~0.32.17",
     "react": "^19.1.0",
     "react-dom": "19.1.0",
     "react-native": "^0.81.5",

@@ -18,6 +18,15 @@ describe('profileValidation (unit)', () => {
       cpf: '52998224725',
       birthDate: '10/05/1990',
       address: 'Rua Atualizada, 100',
+      cep: undefined,
+      street: undefined,
+      addressNumber: undefined,
+      addressComplement: undefined,
+      neighborhood: undefined,
+      city: undefined,
+      state: undefined,
+      latitude: undefined,
+      longitude: undefined,
     });
   });
 
@@ -41,8 +50,35 @@ describe('profileValidation (unit)', () => {
       cnpj: '19131243000197',
       responsible: undefined,
       address: 'Rua do Abrigo, 200',
+      cep: undefined,
+      street: undefined,
+      addressNumber: undefined,
+      addressComplement: undefined,
+      neighborhood: undefined,
+      city: undefined,
+      state: undefined,
+      latitude: undefined,
+      longitude: undefined,
       site: undefined,
     });
+  });
+
+  it('deve normalizar CEP, UF e coordenadas validas', () => {
+    const result = normalizeUpdateProfileInput('ADOPTER', {
+      cep: '45.000-000',
+      city: 'Vitória da Conquista',
+      state: 'ba',
+      latitude: -14.8619,
+      longitude: -40.8445,
+    });
+
+    expect(result).toEqual(expect.objectContaining({
+      cep: '45000000',
+      city: 'Vitória da Conquista',
+      state: 'BA',
+      latitude: -14.8619,
+      longitude: -40.8445,
+    }));
   });
 
   it('deve rejeitar endereco muito curto na edicao de perfil', () => {

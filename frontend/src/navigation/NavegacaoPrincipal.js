@@ -7,6 +7,8 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { api } from '../services/api';
+import { obterExpoPushToken } from '../services/notificacoes';
+import { onlyDigits } from '../utils/documentos';
 import {
   categoryToSpecies,
   mapApiMessageToViewModel,
@@ -90,6 +92,7 @@ export const NavegacaoPrincipal = () => {
   const typingStopTimerRef = useRef(null);
   const isTypingRef = useRef(false);
   const lastTypingSentAtRef = useRef(0);
+  const lastRegisteredPushTokenRef = useRef(null);
 
   const [filters, setFilters] = useState({ porte: [], idade: [], sexo: [], tipo: [] });
 
@@ -101,6 +104,9 @@ export const NavegacaoPrincipal = () => {
     const trimmed = typeof value === 'string' ? value.trim() : '';
     return trimmed || undefined;
   };
+
+  const optionalNumber = (value) =>
+    typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 
   const buildPetPhotoFormData = async (asset) => {
     const formData = new FormData();
@@ -295,6 +301,27 @@ export const NavegacaoPrincipal = () => {
   }, [userType, currentUser, authToken]);
 
   useEffect(() => {
+    if (!currentUser || !authToken) return;
+
+    let isActive = true;
+
+    obterExpoPushToken()
+      .then((pushToken) => {
+        if (!isActive || !pushToken || lastRegisteredPushTokenRef.current === pushToken) return;
+        lastRegisteredPushTokenRef.current = pushToken;
+        return api.registerPushToken(authToken, {
+          token: pushToken,
+          platform: Platform.OS
+        });
+      })
+      .catch(() => {});
+
+    return () => {
+      isActive = false;
+    };
+  }, [currentUser, authToken]);
+
+  useEffect(() => {
     const isChatScreen = currentScreen === 'chat' || currentScreen === 'shelter-chat';
     if (!isChatScreen || !authToken || !currentChatId) return;
 
@@ -367,7 +394,7 @@ export const NavegacaoPrincipal = () => {
     const role = userType === 'shelter' ? 'SHELTER' : 'ADOPTER';
     const name = (role === 'SHELTER' ? formData.orgName || formData.name : formData.name).trim();
     const email = formData.email.trim();
-    const phone = formData.phone ? formData.phone.replace(/\D/g, '') : undefined;
+    const phone = formData.phone ? onlyDigits(formData.phone) : undefined;
 
     if (name.length < 2) {
       notify('Erro no cadastro', 'Informe um nome com pelo menos 2 caracteres.');
@@ -402,6 +429,15 @@ export const NavegacaoPrincipal = () => {
         cpf: role === 'ADOPTER' ? optionalField(formData.cpf) : undefined,
         birthDate: role === 'ADOPTER' ? optionalField(formData.birthDate) : undefined,
         address: optionalField(formData.address),
+        cep: optionalField(formData.cep),
+        street: optionalField(formData.street),
+        addressNumber: optionalField(formData.addressNumber),
+        addressComplement: optionalField(formData.addressComplement),
+        neighborhood: optionalField(formData.neighborhood),
+        city: optionalField(formData.city),
+        state: optionalField(formData.state),
+        latitude: optionalNumber(formData.latitude),
+        longitude: optionalNumber(formData.longitude),
         cnpj: role === 'SHELTER' ? optionalField(formData.cnpj) : undefined,
         responsible: role === 'SHELTER' ? optionalField(formData.responsible) : undefined,
         site: role === 'SHELTER' ? optionalField(formData.site) : undefined
@@ -516,6 +552,7 @@ export const NavegacaoPrincipal = () => {
     setIsPasswordLoading(false);
     setResetPasswordModalVisible(false);
     setIsResetPasswordLoading(false);
+    lastRegisteredPushTokenRef.current = null;
   };
 
   const goBack = () => {
@@ -595,7 +632,16 @@ export const NavegacaoPrincipal = () => {
       phone: optionalField(updatedData.phone),
       cpf: optionalField(updatedData.cpf),
       birthDate: optionalField(updatedData.birthDate),
-      address: optionalField(updatedData.address)
+      address: optionalField(updatedData.address),
+      cep: optionalField(updatedData.cep),
+      street: optionalField(updatedData.street),
+      addressNumber: optionalField(updatedData.addressNumber),
+      addressComplement: optionalField(updatedData.addressComplement),
+      neighborhood: optionalField(updatedData.neighborhood),
+      city: optionalField(updatedData.city),
+      state: optionalField(updatedData.state),
+      latitude: optionalNumber(updatedData.latitude),
+      longitude: optionalNumber(updatedData.longitude)
     };
 
     try {
@@ -678,6 +724,30 @@ export const NavegacaoPrincipal = () => {
       setIsEditingPet(true);
       setSelectedShelterPet(pet);
       setCurrentScreen('shelter-add-pet');
+    }
+  };
+
+  const handleToggleNotificationPreferences = async () => {
+    if (!authToken || !currentUser) return;
+
+    const enabled = currentUser.pushChatEnabled !== false || currentUser.pushAdoptionEnabled !== false;
+    const nextPreferences = {
+      pushChatEnabled: !enabled,
+      pushAdoptionEnabled: !enabled
+    };
+
+    try {
+      const result = await api.updateNotificationPreferences(authToken, nextPreferences);
+      setCurrentUser(prev => ({
+        ...prev,
+        ...(result.preferences || nextPreferences)
+      }));
+      notify(
+        'Notificações',
+        !enabled ? 'Notificações ativadas para chat e adoções.' : 'Notificações desativadas neste perfil.'
+      );
+    } catch (error) {
+      notify('Erro nas notificações', error.message);
     }
   };
 
@@ -975,6 +1045,7 @@ export const NavegacaoPrincipal = () => {
           if (activeNavTab === 'home') {
             return (
               <TelaHomeAdotante
+                currentUser={currentUser}
                 showSuccessMessage={showSuccessMessage}
                 activeCategory={activeCategory}
                 filteredPets={filteredPets}
@@ -985,6 +1056,7 @@ export const NavegacaoPrincipal = () => {
                 onToggleFavorite={toggleFavorite}
                 onGoToRequests={goToRequests}
                 onSearch={handleSearchPets}
+                onToggleNotifications={handleToggleNotificationPreferences}
               />
             );
           } else if (activeNavTab === 'favorites') {
@@ -1022,6 +1094,7 @@ export const NavegacaoPrincipal = () => {
                 onLogout={logout}
                 onEditProfile={() => setIsEditingProfile(true)}
                 onChangePassword={() => setPasswordModalVisible(true)}
+                onToggleNotifications={handleToggleNotificationPreferences}
               />
             );
           }
@@ -1136,6 +1209,7 @@ export const NavegacaoPrincipal = () => {
             onLogout={logout}
             onVoltar={goBack}
             onChangePassword={() => setPasswordModalVisible(true)}
+            onToggleNotifications={handleToggleNotificationPreferences}
           />
         );
       

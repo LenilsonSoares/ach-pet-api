@@ -17,6 +17,7 @@ import { createPetsModule } from "./modules/pets/index.js";
 import { createAdoptionsModule } from "./modules/adoptions/index.js";
 import { createChatModule } from "./modules/chat/index.js";
 import { createFollowupModule } from "./modules/followup/index.js";
+import { createNotificationsModule } from "./modules/notifications/index.js";
 
 import {
   metricsMiddleware,
@@ -134,11 +135,12 @@ const petsModule = createPetsModule();
 const adoptionsModule = createAdoptionsModule();
 const chatModule = createChatModule();
 const followupModule = createFollowupModule();
+const notificationsModule = createNotificationsModule();
 
 const auth = buildAuthMiddlewares(authModule.tokenService);
 
 // Routers HTTP
-app.use("/auth", createAuthRouter(authModule));
+app.use("/auth", createAuthRouter({ ...authModule, ...notificationsModule }));
 
 app.use(
   "/pets",
@@ -150,8 +152,8 @@ app.use(
   }),
 );
 
-app.use("/adoptions", createAdoptionsRouter({ ...adoptionsModule, auth }));
-app.use("/chat", createChatRouter({ ...chatModule, auth }));
+app.use("/adoptions", createAdoptionsRouter({ ...adoptionsModule, ...notificationsModule, auth }));
+app.use("/chat", createChatRouter({ ...chatModule, ...notificationsModule, auth }));
 app.use("/followup", createFollowupRouter({ ...followupModule, auth }));
 
 // Middleware central de erros

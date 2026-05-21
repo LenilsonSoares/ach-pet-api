@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoAbrigo } from '../components/CabecalhoAbrigo';
 
@@ -9,9 +9,12 @@ export const TelaPerfilAbrigo = ({
   successRate,
   onLogout,
   onVoltar,
-  onChangePassword = () => {}
+  onChangePassword = () => {},
+  onToggleNotifications = () => {}
 }) => {
   const show = (value) => value || 'Não informado';
+  const locationLabel = [currentUser?.city, currentUser?.state].filter(Boolean).join(', ') || 'Localização não informada';
+  const notificationsEnabled = currentUser?.pushChatEnabled !== false || currentUser?.pushAdoptionEnabled !== false;
 
   return (
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
@@ -25,7 +28,10 @@ export const TelaPerfilAbrigo = ({
         <View style={{ backgroundColor: '#F4A51C', borderRadius: 16, padding: 24, alignItems: 'center', marginBottom: 20, shadowColor: '#F4A51C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12, elevation: 5 }}>
           <Ionicons name="business" size={56} color="white" />
           <Text style={{ fontSize: 20, fontWeight: '700', color: 'white', marginBottom: 4, marginTop: 12 }}>{currentUser?.name}</Text>
-          <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)' }}>📍 Vitória da Conquista, BA</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Ionicons name="location-outline" size={15} color="rgba(255,255,255,0.9)" />
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)' }}>{locationLabel}</Text>
+          </View>
         </View>
 
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 }}>
@@ -40,10 +46,20 @@ export const TelaPerfilAbrigo = ({
             <Text style={{ fontSize: 13, color: '#666', fontWeight: '600' }}>Telefone</Text>
             <Text style={{ flex: 1, marginLeft: 12, fontSize: 13, color: '#1E1E1E', fontWeight: '500', textAlign: 'right' }}>{show(currentUser?.phone)}</Text>
           </View>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}>
+            <Text style={{ fontSize: 13, color: '#666', fontWeight: '600' }}>CNPJ</Text>
+            <Text style={{ flex: 1, marginLeft: 12, fontSize: 13, color: '#1E1E1E', fontWeight: '500', textAlign: 'right' }}>{show(currentUser?.cnpj)}</Text>
+          </View>
           
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}>
             <Text style={{ fontSize: 13, color: '#666', fontWeight: '600' }}>Endereço</Text>
             <Text style={{ flex: 1, marginLeft: 12, fontSize: 13, color: '#1E1E1E', fontWeight: '500', textAlign: 'right' }}>{show(currentUser?.address)}</Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 }}>
+            <Text style={{ fontSize: 13, color: '#666', fontWeight: '600' }}>CEP</Text>
+            <Text style={{ flex: 1, marginLeft: 12, fontSize: 13, color: '#1E1E1E', fontWeight: '500', textAlign: 'right' }}>{show(currentUser?.cep)}</Text>
           </View>
         </View>
 
@@ -72,9 +88,11 @@ export const TelaPerfilAbrigo = ({
             <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Alterar Senha</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => Alert.alert('Notificações', 'Preferências de notificação ainda não estão disponíveis.')} style={{ backgroundColor: '#F4A51C', paddingVertical: 14, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
+          <TouchableOpacity onPress={onToggleNotifications} style={{ backgroundColor: '#F4A51C', paddingVertical: 14, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
             <Ionicons name="notifications-outline" size={20} color="white" />
-            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Notificações</Text>
+            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>
+              {notificationsEnabled ? 'Notificações ativadas' : 'Notificações desativadas'}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onLogout} style={{ backgroundColor: '#D32F2F', paddingVertical: 14, borderRadius: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}>

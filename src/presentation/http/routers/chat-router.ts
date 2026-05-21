@@ -2,6 +2,10 @@ import { Router } from "express";
 import { z } from "zod";
 
 import type { ChatRepository } from "../../../application/ports/ChatRepository.js";
+import type {
+  PushNotificationRepository,
+  PushNotificationService,
+} from "../../../application/ports/PushNotifications.js";
 import type { AuthenticatedRequest } from "../auth-middleware.js";
 import { AppError } from "../../../domain/errors/AppError.js";
 
@@ -48,6 +52,8 @@ async function assertThreadParticipant(chatRepo: ChatRepository, threadId: strin
  */
 export function createChatRouter(deps: {
   chatRepo: ChatRepository;
+  pushNotificationsRepo?: PushNotificationRepository;
+  pushNotificationService?: PushNotificationService;
   auth: { requireAuth: (req: AuthenticatedRequest, res: any, next: any) => void };
 }) {
   const router = Router();
@@ -69,7 +75,11 @@ export function createChatRouter(deps: {
     deps.auth.requireAuth,
     asyncHandler(async (req: AuthenticatedRequest, res) => {
       const body = sendSchema.parse(req.body);
-      const handler = sendMessage({ chatRepo: deps.chatRepo });
+      const handler = sendMessage({
+        chatRepo: deps.chatRepo,
+        pushNotificationsRepo: deps.pushNotificationsRepo,
+        pushNotificationService: deps.pushNotificationService,
+      });
       const result = await handler({ threadId: req.params.threadId, userId: req.user!.id, content: body.content });
       typingByThread.get(req.params.threadId)?.delete(req.user!.id);
       return res.status(201).json(result);

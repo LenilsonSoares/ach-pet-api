@@ -12,6 +12,15 @@ type ProfileInput = {
   cpf?: string;
   birthDate?: string;
   address?: string;
+  cep?: string;
+  street?: string;
+  addressNumber?: string;
+  addressComplement?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  latitude?: number;
+  longitude?: number;
   cnpj?: string;
   responsible?: string;
   site?: string;
@@ -25,6 +34,15 @@ type NormalizedProfileInput = {
   cpf?: string;
   birthDate?: string;
   address?: string;
+  cep?: string;
+  street?: string;
+  addressNumber?: string;
+  addressComplement?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  latitude?: number;
+  longitude?: number;
   cnpj?: string;
   responsible?: string;
   site?: string;
@@ -105,6 +123,50 @@ function normalizeAddress(value?: string) {
   return address;
 }
 
+function normalizeCep(value?: string) {
+  const cep = optionalDigits(value, "CEP invalido", "INVALID_CEP");
+  if (!cep) return undefined;
+
+  if (!/^\d{8}$/.test(cep)) {
+    throw new AppError(400, "CEP deve conter 8 digitos", "INVALID_CEP");
+  }
+
+  return cep;
+}
+
+function normalizeState(value?: string) {
+  const state = optionalTrim(value)?.toUpperCase();
+  if (!state) return undefined;
+
+  if (!/^[A-Z]{2}$/.test(state)) {
+    throw new AppError(400, "UF deve conter 2 letras", "INVALID_STATE");
+  }
+
+  return state;
+}
+
+function normalizeShortText(value: string | undefined, min: number, message: string, code: string) {
+  const text = optionalTrim(value);
+  if (!text) return undefined;
+
+  if (text.length < min) {
+    throw new AppError(400, message, code);
+  }
+
+  return text;
+}
+
+function normalizeCoordinate(value: unknown, min: number, max: number, message: string, code: string) {
+  if (value === undefined || value === null || value === "") return undefined;
+
+  const numberValue = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numberValue) || numberValue < min || numberValue > max) {
+    throw new AppError(400, message, code);
+  }
+
+  return numberValue;
+}
+
 function calculateAge(date: Date, today = new Date()) {
   let age = today.getFullYear() - date.getUTCFullYear();
   const monthDiff = today.getMonth() - date.getUTCMonth();
@@ -162,6 +224,15 @@ function baseProfile(input: ProfileInput): NormalizedProfileInput {
     cpf: normalizeCpf(input.cpf),
     birthDate: normalizeBirthDate(input.birthDate),
     address: normalizeAddress(input.address),
+    cep: normalizeCep(input.cep),
+    street: normalizeShortText(input.street, 2, "Rua invalida", "INVALID_STREET"),
+    addressNumber: optionalTrim(input.addressNumber),
+    addressComplement: optionalTrim(input.addressComplement),
+    neighborhood: normalizeShortText(input.neighborhood, 2, "Bairro invalido", "INVALID_NEIGHBORHOOD"),
+    city: normalizeShortText(input.city, 2, "Cidade invalida", "INVALID_CITY"),
+    state: normalizeState(input.state),
+    latitude: normalizeCoordinate(input.latitude, -90, 90, "Latitude invalida", "INVALID_LATITUDE"),
+    longitude: normalizeCoordinate(input.longitude, -180, 180, "Longitude invalida", "INVALID_LONGITUDE"),
     cnpj: normalizeCnpj(input.cnpj),
     responsible: optionalTrim(input.responsible),
     site: optionalTrim(input.site),
@@ -212,6 +283,15 @@ export function normalizeUpdateProfileInput(role: UserRole, input: UpdateUserInp
       cpf: normalized.cpf,
       birthDate: normalized.birthDate,
       address: normalized.address,
+      cep: normalized.cep,
+      street: normalized.street,
+      addressNumber: normalized.addressNumber,
+      addressComplement: normalized.addressComplement,
+      neighborhood: normalized.neighborhood,
+      city: normalized.city,
+      state: normalized.state,
+      latitude: normalized.latitude,
+      longitude: normalized.longitude,
     };
   }
 
@@ -223,6 +303,15 @@ export function normalizeUpdateProfileInput(role: UserRole, input: UpdateUserInp
     cnpj: normalized.cnpj,
     responsible: normalized.responsible,
     address: normalized.address,
+    cep: normalized.cep,
+    street: normalized.street,
+    addressNumber: normalized.addressNumber,
+    addressComplement: normalized.addressComplement,
+    neighborhood: normalized.neighborhood,
+    city: normalized.city,
+    state: normalized.state,
+    latitude: normalized.latitude,
+    longitude: normalized.longitude,
     site: normalized.site,
   };
 }

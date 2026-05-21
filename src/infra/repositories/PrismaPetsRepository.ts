@@ -11,6 +11,24 @@ import type {
 import { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 
+const petShelterInclude = {
+  id: true,
+  name: true,
+  phone: true,
+  shelterProfile: {
+    select: {
+      orgName: true,
+      address: true,
+      cep: true,
+      street: true,
+      addressNumber: true,
+      neighborhood: true,
+      city: true,
+      state: true,
+    },
+  },
+} as const;
+
 export class PrismaPetsRepository implements PetsRepository {
   async list(input: ListPetsInput): Promise<PaginatedPets> {
     const page = Math.max(1, input.page);
@@ -32,7 +50,7 @@ export class PrismaPetsRepository implements PetsRepository {
     const [items, total] = await prisma.$transaction([
       prisma.pet.findMany({
         where,
-        include: { photos: true, shelter: { select: { id: true, name: true } } },
+        include: { photos: true, shelter: { select: petShelterInclude } },
         orderBy: { createdAt: input.order },
         skip,
         take: pageSize,
@@ -46,7 +64,7 @@ export class PrismaPetsRepository implements PetsRepository {
   async listMine(shelterId: string): Promise<PetListItem[]> {
     return prisma.pet.findMany({
       where: { shelterId },
-      include: { photos: true, shelter: { select: { id: true, name: true } } },
+      include: { photos: true, shelter: { select: petShelterInclude } },
       orderBy: { createdAt: "desc" },
       take: 100,
     });
@@ -55,7 +73,7 @@ export class PrismaPetsRepository implements PetsRepository {
   async getById(id: string): Promise<PetDetails | null> {
     return prisma.pet.findUnique({
       where: { id },
-      include: { photos: true, shelter: { select: { id: true, name: true } } },
+      include: { photos: true, shelter: { select: petShelterInclude } },
     });
   }
 
@@ -71,7 +89,7 @@ export class PrismaPetsRepository implements PetsRepository {
         size: input.size,
         description: input.description,
       },
-      include: { photos: true, shelter: { select: { id: true, name: true } } },
+      include: { photos: true, shelter: { select: petShelterInclude } },
     });
   }
 
@@ -88,7 +106,7 @@ export class PrismaPetsRepository implements PetsRepository {
         description: input.description,
         status: input.status,
       },
-      include: { photos: true, shelter: { select: { id: true, name: true } } },
+      include: { photos: true, shelter: { select: petShelterInclude } },
     });
   }
 

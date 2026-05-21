@@ -13,6 +13,7 @@ export type AdoptionRequest = {
 
 export type PetSnapshot = {
   id: string;
+  name: string;
   status: "AVAILABLE" | "ADOPTED" | "PAUSED";
   shelterId: string;
 };
@@ -76,7 +77,14 @@ export type AdoptionsRepository = {
   listInbox(shelterId: string): Promise<InboxRequest[]>;
   listMine(adopterId: string): Promise<MineRequest[]>;
 
-  getRequestForDecision(requestId: string): Promise<{ id: string; status: AdoptionRequestStatus; shelterId: string; petId: string } | null>;
+  getRequestForDecision(requestId: string): Promise<{
+    id: string;
+    status: AdoptionRequestStatus;
+    shelterId: string;
+    adopterId: string;
+    petId: string;
+    petName: string;
+  } | null>;
   approveRequest(requestId: string, followUpDays: number): Promise<{ adoption: { id: string; followUpDays: number; thread: { id: string } } }>; 
   rejectRequest(requestId: string, rejectionReason: string): Promise<AdoptionRequest>;
 

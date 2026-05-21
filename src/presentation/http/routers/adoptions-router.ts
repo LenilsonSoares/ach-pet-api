@@ -2,6 +2,10 @@ import { Router } from "express";
 import { z } from "zod";
 
 import type { AdoptionsRepository } from "../../../application/ports/AdoptionsRepository.js";
+import type {
+  PushNotificationRepository,
+  PushNotificationService,
+} from "../../../application/ports/PushNotifications.js";
 import type { AuthenticatedRequest } from "../auth-middleware.js";
 
 import { createAdoptionRequest } from "../../../application/use-cases/adoptions/createRequest.js";
@@ -21,6 +25,8 @@ import { asyncHandler } from "../async-handler.js";
  */
 export function createAdoptionsRouter(deps: {
   adoptionsRepo: AdoptionsRepository;
+  pushNotificationsRepo?: PushNotificationRepository;
+  pushNotificationService?: PushNotificationService;
   auth: {
     requireAuth: (req: AuthenticatedRequest, res: any, next: any) => void;
     requireRole: (role: "ADOPTER" | "SHELTER") => (req: AuthenticatedRequest, res: any, next: any) => void;
@@ -39,7 +45,11 @@ export function createAdoptionsRouter(deps: {
     deps.auth.requireRole("ADOPTER"),
     asyncHandler(async (req: AuthenticatedRequest, res) => {
       const body = createRequestSchema.parse(req.body);
-      const handler = createAdoptionRequest({ adoptionsRepo: deps.adoptionsRepo });
+      const handler = createAdoptionRequest({
+        adoptionsRepo: deps.adoptionsRepo,
+        pushNotificationsRepo: deps.pushNotificationsRepo,
+        pushNotificationService: deps.pushNotificationService,
+      });
       const result = await handler({ adopterId: req.user!.id, petId: body.petId, message: body.message });
       return res.status(201).json(result);
     }),
@@ -77,7 +87,11 @@ export function createAdoptionsRouter(deps: {
     deps.auth.requireRole("SHELTER"),
     asyncHandler(async (req: AuthenticatedRequest, res) => {
       const body = decideSchema.parse(req.body);
-      const handler = approveRequest({ adoptionsRepo: deps.adoptionsRepo });
+      const handler = approveRequest({
+        adoptionsRepo: deps.adoptionsRepo,
+        pushNotificationsRepo: deps.pushNotificationsRepo,
+        pushNotificationService: deps.pushNotificationService,
+      });
       const result = await handler({
         shelterId: req.user!.id,
         requestId: req.params.id,
@@ -97,7 +111,11 @@ export function createAdoptionsRouter(deps: {
     deps.auth.requireRole("SHELTER"),
     asyncHandler(async (req: AuthenticatedRequest, res) => {
       const body = rejectSchema.parse(req.body);
-      const handler = rejectRequest({ adoptionsRepo: deps.adoptionsRepo });
+      const handler = rejectRequest({
+        adoptionsRepo: deps.adoptionsRepo,
+        pushNotificationsRepo: deps.pushNotificationsRepo,
+        pushNotificationService: deps.pushNotificationService,
+      });
       const result = await handler({
         shelterId: req.user!.id,
         requestId: req.params.id,

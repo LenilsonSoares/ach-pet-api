@@ -70,17 +70,37 @@ export const mapApiUserToViewModel = (user) => ({
   phone: user.phone || '',
   role: user.role,
   address: user.address || '',
+  cep: user.cep || '',
+  street: user.street || '',
+  addressNumber: user.addressNumber || '',
+  addressComplement: user.addressComplement || '',
+  neighborhood: user.neighborhood || '',
+  city: user.city || '',
+  state: user.state || '',
+  latitude: user.latitude ?? null,
+  longitude: user.longitude ?? null,
   cpf: user.cpf || '',
   birthDate: user.birthDate || '',
   orgName: user.orgName || '',
   responsible: user.responsible || user.name || '',
   cnpj: user.cnpj || '',
   site: user.site || '',
+  pushChatEnabled: user.pushChatEnabled !== false,
+  pushAdoptionEnabled: user.pushAdoptionEnabled !== false,
   stats: { totalPets: 0, totalAdoptions: 0, successRate: 0 }
 });
 
 export const mapApiPetToViewModel = (pet) => {
   const photos = Array.isArray(pet.photos) ? pet.photos : [];
+  const shelterProfile = pet.shelter?.shelterProfile || {};
+  const shelterName = shelterProfile.orgName || pet.shelter?.name || 'Abrigo';
+  const shelterCity = shelterProfile.city || 'Cidade não informada';
+  const shelterState = shelterProfile.state || '';
+  const shelterNeighborhood = shelterProfile.neighborhood || shelterProfile.street || 'Abrigo';
+  const shelterLocation = [shelterNeighborhood, shelterCity].filter(Boolean).join(', ');
+  const shelterFullLocation = [shelterProfile.address, [shelterCity, shelterState].filter(Boolean).join(' - ')]
+    .filter(Boolean)
+    .join(', ');
   const gallery = photos.length > 0
     ? photos.map((photo) => buildPhotoSource(photo.url || photo))
     : [petImages.default];
@@ -97,17 +117,17 @@ export const mapApiPetToViewModel = (pet) => {
     species: pet.species,
     breed: pet.breed,
     ageMonths: pet.ageMonths,
-    location: pet.shelter?.name || 'Abrigo cadastrado',
-    neighborhood: pet.shelter?.name || 'Abrigo',
-    city: 'Vitória da Conquista',
-    state: 'BA',
+    location: shelterFullLocation || shelterLocation || shelterName,
+    neighborhood: shelterNeighborhood,
+    city: shelterCity,
+    state: shelterState,
     image: gallery[0],
     tags,
     description: pet.description || 'Sem descrição informada.',
     shelterId: pet.shelterId,
-    shelter: pet.shelter?.name || 'Abrigo',
-    shelterLocation: pet.shelter?.name || 'Abrigo cadastrado',
-    shelterPhone: '',
+    shelter: shelterName,
+    shelterLocation: shelterFullLocation || shelterLocation || 'Localização não informada',
+    shelterPhone: pet.shelter?.phone || '',
     gallery,
     status: petStatusToLabel[pet.status] || pet.status || 'Disponível',
     apiStatus: pet.status,
