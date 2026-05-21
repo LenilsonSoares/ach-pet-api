@@ -114,8 +114,12 @@ export const api = {
   listInboxRequests: (token) => apiRequest('/adoptions/requests/inbox', { token }),
   approveRequest: (token, requestId, input = {}) =>
     apiRequest(`/adoptions/requests/${requestId}/approve`, { method: 'POST', token, body: input }),
-  rejectRequest: (token, requestId) =>
-    apiRequest(`/adoptions/requests/${requestId}/reject`, { method: 'POST', token }),
+  rejectRequest: (token, requestId, rejectionReason) =>
+    apiRequest(`/adoptions/requests/${requestId}/reject`, {
+      method: 'POST',
+      token,
+      body: { rejectionReason }
+    }),
 
   listMessages: (token, threadId) => apiRequest(`/chat/threads/${threadId}/messages`, { token }),
   sendMessage: (token, threadId, content) =>

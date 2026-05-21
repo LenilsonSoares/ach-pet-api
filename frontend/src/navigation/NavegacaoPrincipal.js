@@ -75,6 +75,7 @@ export const NavegacaoPrincipal = () => {
   const [selectedShelterPet, setSelectedShelterPet] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
   const [petForm, setPetForm] = useState({ nome: '', tipo: 'dogs', idade: '', sexo: '', porte: '', descricao: '' });
   const [petPhoto, setPetPhoto] = useState(null);
   const [petPhotoAsset, setPetPhotoAsset] = useState(null);
@@ -503,6 +504,8 @@ export const NavegacaoPrincipal = () => {
     setShelterApplications([]);
     setShelterAdoptions([]);
     setShelterPets([]);
+    setShowRejectConfirm(false);
+    setRejectionReason('');
     setCurrentChatId(null);
     setChatMessage('');
     setChatMessages([]);
@@ -530,7 +533,11 @@ export const NavegacaoPrincipal = () => {
       }
     } else {
       if (currentScreen === 'shelter-add-pet') setCurrentScreen('shelter-manage-pets');
-      else if (currentScreen === 'shelter-application-detail') setCurrentScreen('shelter-applications');
+      else if (currentScreen === 'shelter-application-detail') {
+        setShowRejectConfirm(false);
+        setRejectionReason('');
+        setCurrentScreen('shelter-applications');
+      }
       else if (currentScreen === 'shelter-adoption-detail') setCurrentScreen('shelter-adoptions');
       else if (currentScreen === 'shelter-chat') setCurrentScreen(chatReturnScreen || 'home');
       else if (
@@ -807,6 +814,8 @@ export const NavegacaoPrincipal = () => {
     const app = shelterApplications.find(a => a.id === appId);
     if (app) {
       setSelectedApplication(app);
+      setShowRejectConfirm(false);
+      setRejectionReason('');
       setCurrentScreen('shelter-application-detail');
     }
   };
@@ -819,19 +828,38 @@ export const NavegacaoPrincipal = () => {
       await loadShelterData();
       await loadAvailablePets({ silent: true });
       notify('Sucesso', 'Solicitação aprovada!');
+      setShowRejectConfirm(false);
+      setRejectionReason('');
       setCurrentScreen('shelter-applications');
     } catch (error) {
       notify('Erro ao aprovar solicitação', error.message);
     }
   };
 
+  const openRejectConfirm = () => {
+    setRejectionReason('');
+    setShowRejectConfirm(true);
+  };
+
+  const cancelRejectApplication = () => {
+    setShowRejectConfirm(false);
+    setRejectionReason('');
+  };
+
   const rejectApplication = async () => {
     if (!selectedApplication || !authToken) return;
+    const reason = rejectionReason.trim();
+
+    if (reason.length < 3) {
+      notify('Motivo obrigatório', 'Informe o motivo da recusa com pelo menos 3 caracteres.');
+      return;
+    }
 
     try {
-      await api.rejectRequest(authToken, selectedApplication.id);
+      await api.rejectRequest(authToken, selectedApplication.id, reason);
       await loadShelterData();
       setShowRejectConfirm(false);
+      setRejectionReason('');
       notify('Sucesso', 'Solicitação recusada');
       setCurrentScreen('shelter-applications');
     } catch (error) {
@@ -1068,9 +1096,11 @@ export const NavegacaoPrincipal = () => {
             application={selectedApplication}
             showRejectConfirm={showRejectConfirm}
             onApprove={approveApplication}
-            onReject={() => setShowRejectConfirm(true)}
+            onReject={openRejectConfirm}
+            rejectionReason={rejectionReason}
+            onChangeRejectionReason={setRejectionReason}
             onConfirmReject={rejectApplication}
-            onCancelReject={() => setShowRejectConfirm(false)}
+            onCancelReject={cancelRejectApplication}
             onOpenChat={() => openChat(selectedApplication.threadId, selectedApplication.adopterName, selectedApplication.petName)}
             onVoltar={goBack}
           />

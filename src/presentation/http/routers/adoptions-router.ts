@@ -87,13 +87,22 @@ export function createAdoptionsRouter(deps: {
     }),
   );
 
+  const rejectSchema = z.object({
+    rejectionReason: z.string().trim().min(3).max(500),
+  });
+
   router.post(
     "/requests/:id/reject",
     deps.auth.requireAuth,
     deps.auth.requireRole("SHELTER"),
     asyncHandler(async (req: AuthenticatedRequest, res) => {
+      const body = rejectSchema.parse(req.body);
       const handler = rejectRequest({ adoptionsRepo: deps.adoptionsRepo });
-      const result = await handler({ shelterId: req.user!.id, requestId: req.params.id });
+      const result = await handler({
+        shelterId: req.user!.id,
+        requestId: req.params.id,
+        rejectionReason: body.rejectionReason,
+      });
       return res.json(result);
     }),
   );

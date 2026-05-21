@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoAbrigo } from '../components/CabecalhoAbrigo';
 
 export const TelaDetalheSolicitacao = ({
   application,
   showRejectConfirm,
+  rejectionReason = '',
   onApprove,
   onReject,
+  onChangeRejectionReason = () => {},
   onConfirmReject,
   onCancelReject,
   onOpenChat,
@@ -15,6 +17,7 @@ export const TelaDetalheSolicitacao = ({
 }) => {
   const canOpenChat = application?.status === 'Aprovada' && !!application?.threadId;
   const canReview = application?.status === 'Pendente';
+  const canReject = rejectionReason.trim().length >= 3;
 
   return (
     <View style={{ flex: 1, backgroundColor: '#EDEDED' }}>
@@ -48,6 +51,13 @@ export const TelaDetalheSolicitacao = ({
           </View>
         </View>
 
+        {application?.status === 'Recusada' && !!application?.rejectionReason && (
+          <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3, borderLeftWidth: 4, borderLeftColor: '#C62828' }}>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: '#999', marginBottom: 4 }}>Motivo da recusa</Text>
+            <Text style={{ fontSize: 14, color: '#333', lineHeight: 20 }}>{application.rejectionReason}</Text>
+          </View>
+        )}
+
         {!showRejectConfirm ? (
           <View>
             <TouchableOpacity disabled={!canReview} onPress={onApprove} style={{ backgroundColor: canReview ? '#8B2E0F' : '#CCC', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 15, flexDirection: 'row', justifyContent: 'center' }}>
@@ -69,10 +79,30 @@ export const TelaDetalheSolicitacao = ({
           <View style={{ marginTop: 15 }}>
             <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, borderLeftWidth: 4, borderLeftColor: '#E65100' }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 8 }}>Tem certeza?</Text>
-              <Text style={{ fontSize: 13, color: '#666', lineHeight: 18 }}>Você está prestes a recusar esta solicitação de adoção.</Text>
+              <Text style={{ fontSize: 13, color: '#666', lineHeight: 18, marginBottom: 12 }}>Você está prestes a recusar esta solicitação de adoção. Informe um motivo para o adotante.</Text>
+              <TextInput
+                value={rejectionReason}
+                onChangeText={onChangeRejectionReason}
+                placeholder="Ex: No momento o perfil não atende às necessidades deste pet."
+                placeholderTextColor="#999"
+                multiline
+                maxLength={500}
+                style={{
+                  minHeight: 96,
+                  backgroundColor: '#F7F7F7',
+                  borderRadius: 10,
+                  padding: 12,
+                  fontSize: 13,
+                  color: '#1E1E1E',
+                  textAlignVertical: 'top',
+                  borderWidth: 1,
+                  borderColor: canReject || !rejectionReason ? '#E0E0E0' : '#E65100'
+                }}
+              />
+              <Text style={{ fontSize: 11, color: '#999', marginTop: 6, textAlign: 'right' }}>{rejectionReason.length}/500</Text>
             </View>
 
-            <TouchableOpacity onPress={onConfirmReject} style={{ backgroundColor: '#E65100', paddingVertical: 14, borderRadius: 50, alignItems: 'center' }}>
+            <TouchableOpacity disabled={!canReject} onPress={onConfirmReject} style={{ backgroundColor: canReject ? '#E65100' : '#CCC', paddingVertical: 14, borderRadius: 50, alignItems: 'center' }}>
               <Text style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>Sim, Recusar</Text>
             </TouchableOpacity>
 

@@ -156,6 +156,7 @@ model AdoptionRequest {
   shelter     User                   @relation("ShelterRequests", fields: [shelterId], references: [id], onDelete: Cascade)
 
   message     String?
+  rejectionReason String?
   status      AdoptionRequestStatus  @default(PENDING)
 
   adoption    Adoption?

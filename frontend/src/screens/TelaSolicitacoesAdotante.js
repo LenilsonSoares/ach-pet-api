@@ -164,14 +164,20 @@ export const TelaSolicitacoesAdotante = ({
                         paddingTop: 12, 
                         borderTopWidth: 1, 
                         borderTopColor: '#F0F0F0',
-                        flexDirection: 'row',
-                        alignItems: 'center',
                         gap: 8
                       }}>
-                        <Ionicons name="alert-circle" size={16} color="#F44336" />
-                        <Text style={{ fontSize: 12, color: '#F44336', flex: 1 }}>
-                          Solicitação não aprovada desta vez. Continue procurando outros pets!
-                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <Ionicons name="alert-circle" size={16} color="#F44336" />
+                          <Text style={{ fontSize: 12, color: '#F44336', flex: 1 }}>
+                            Solicitação não aprovada desta vez.
+                          </Text>
+                        </View>
+                        {!!app.rejectionReason && (
+                          <View style={{ backgroundColor: '#FFF7F7', borderRadius: 8, padding: 10 }}>
+                            <Text style={{ fontSize: 11, fontWeight: '700', color: '#C62828', marginBottom: 4 }}>Motivo informado pelo abrigo</Text>
+                            <Text style={{ fontSize: 12, color: '#555', lineHeight: 17 }}>{app.rejectionReason}</Text>
+                          </View>
+                        )}
                       </View>
                     )}
                   </View>

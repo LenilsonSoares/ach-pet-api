@@ -128,6 +128,7 @@ export const mapApiRequestToAdopterApplication = (request) => {
     adopterEmail: request.adopter?.email,
     adopterPhone: '',
     status: requestStatusToLabel[request.status] || request.status,
+    rejectionReason: request.rejectionReason || '',
     date: request.createdAt,
     adoptionId: request.adoption?.id,
     threadId: request.adoption?.thread?.id
@@ -149,6 +150,7 @@ export const mapApiRequestToShelterApplication = (request) => {
     adopterPhone: '',
     message: request.message,
     status: requestStatusToLabel[request.status] || request.status,
+    rejectionReason: request.rejectionReason || '',
     date: request.createdAt,
     adoptionId: request.adoption?.id,
     threadId: request.adoption?.thread?.id

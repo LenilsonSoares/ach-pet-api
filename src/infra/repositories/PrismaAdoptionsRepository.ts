@@ -23,6 +23,7 @@ export class PrismaAdoptionsRepository implements AdoptionsRepository {
         adopterId: true,
         shelterId: true,
         message: true,
+        rejectionReason: true,
         status: true,
         createdAt: true,
       },
@@ -48,6 +49,7 @@ export class PrismaAdoptionsRepository implements AdoptionsRepository {
         adopterId: true,
         shelterId: true,
         message: true,
+        rejectionReason: true,
         status: true,
         createdAt: true,
       },
@@ -85,7 +87,7 @@ export class PrismaAdoptionsRepository implements AdoptionsRepository {
     const adoption = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const req = await tx.adoptionRequest.update({
         where: { id: requestId },
-        data: { status: "APPROVED" },
+        data: { status: "APPROVED", rejectionReason: null },
         select: { id: true, petId: true },
       });
 
@@ -104,16 +106,17 @@ export class PrismaAdoptionsRepository implements AdoptionsRepository {
     return { adoption: { id: adoption.id, followUpDays: adoption.followUpDays, thread: { id: adoption.thread!.id } } };
   }
 
-  async rejectRequest(requestId: string): Promise<AdoptionRequest> {
+  async rejectRequest(requestId: string, rejectionReason: string): Promise<AdoptionRequest> {
     return prisma.adoptionRequest.update({
       where: { id: requestId },
-      data: { status: "REJECTED" },
+      data: { status: "REJECTED", rejectionReason },
       select: {
         id: true,
         petId: true,
         adopterId: true,
         shelterId: true,
         message: true,
+        rejectionReason: true,
         status: true,
         createdAt: true,
       },

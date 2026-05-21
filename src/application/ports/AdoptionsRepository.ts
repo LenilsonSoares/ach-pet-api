@@ -6,6 +6,7 @@ export type AdoptionRequest = {
   adopterId: string;
   shelterId: string;
   message: string | null;
+  rejectionReason: string | null;
   status: AdoptionRequestStatus;
   createdAt: Date;
 };
@@ -51,6 +52,7 @@ export type InboxRequest = {
   pet: PetWithPhotos;
   adopter: { id: string; name: string; email: string };
   message: string | null;
+  rejectionReason: string | null;
   status: AdoptionRequestStatus;
   createdAt: Date;
   adoption: AdoptionSnapshot | null;
@@ -60,6 +62,7 @@ export type MineRequest = {
   id: string;
   pet: PetWithPhotos;
   message: string | null;
+  rejectionReason: string | null;
   status: AdoptionRequestStatus;
   createdAt: Date;
   adoption: AdoptionSnapshot | null;
@@ -75,7 +78,7 @@ export type AdoptionsRepository = {
 
   getRequestForDecision(requestId: string): Promise<{ id: string; status: AdoptionRequestStatus; shelterId: string; petId: string } | null>;
   approveRequest(requestId: string, followUpDays: number): Promise<{ adoption: { id: string; followUpDays: number; thread: { id: string } } }>; 
-  rejectRequest(requestId: string): Promise<AdoptionRequest>;
+  rejectRequest(requestId: string, rejectionReason: string): Promise<AdoptionRequest>;
 
   getAdoptionForAction(adoptionId: string): Promise<AdoptionActionSnapshot | null>;
   interveneAdoption(adoptionId: string): Promise<{ id: string; status: AdoptionStatus }>;
