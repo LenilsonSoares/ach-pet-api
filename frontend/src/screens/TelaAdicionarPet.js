@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CabecalhoAbrigo } from '../components/CabecalhoAbrigo';
 
@@ -18,6 +18,7 @@ export const TelaAdicionarPet = ({
   onFormChange,
   onPhotoChange,
   onSave,
+  isSaving = false,
   onCancel,
   onVoltar
 }) => {
@@ -43,8 +44,12 @@ export const TelaAdicionarPet = ({
               <Ionicons name="camera-outline" size={48} color="#999" />
             )}
           </View>
-          <TouchableOpacity onPress={onPhotoChange} style={{ backgroundColor: '#F4A51C', paddingVertical: 12, borderRadius: 50, alignItems: 'center', marginBottom: 12 }}>
-            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>Carregar Foto</Text>
+          <TouchableOpacity
+            onPress={onPhotoChange}
+            disabled={isSaving}
+            style={{ backgroundColor: '#F4A51C', paddingVertical: 12, borderRadius: 50, alignItems: 'center', marginBottom: 12, opacity: isSaving ? 0.65 : 1 }}
+          >
+            <Text style={{ color: 'white', fontSize: 14, fontWeight: '600' }}>{petPhoto ? 'Trocar Foto' : 'Carregar Foto'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -129,11 +134,19 @@ export const TelaAdicionarPet = ({
           />
         </View>
 
-        <TouchableOpacity onPress={onSave} style={{ backgroundColor: '#8B2E0F', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 10 }}>
-          <Text style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>Salvar Pet</Text>
+        <TouchableOpacity
+          onPress={onSave}
+          disabled={isSaving}
+          style={{ backgroundColor: '#8B2E0F', paddingVertical: 14, borderRadius: 50, alignItems: 'center', marginTop: 10, opacity: isSaving ? 0.75 : 1 }}
+        >
+          {isSaving ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>Salvar Pet</Text>
+          )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onCancel} style={{ paddingVertical: 14, alignItems: 'center' }}>
+        <TouchableOpacity onPress={onCancel} disabled={isSaving} style={{ paddingVertical: 14, alignItems: 'center', opacity: isSaving ? 0.65 : 1 }}>
           <Text style={{ color: '#8B2E0F', fontSize: 14, fontWeight: '600' }}>Cancelar</Text>
         </TouchableOpacity>
       </ScrollView>

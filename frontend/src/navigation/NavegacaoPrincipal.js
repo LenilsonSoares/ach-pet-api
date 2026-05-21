@@ -5,6 +5,7 @@ import {
   Alert,
   Platform
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { DATABASE } from '../services/bancoDados';
 import { api } from '../services/api';
 import {
@@ -77,6 +78,8 @@ export const NavegacaoPrincipal = () => {
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
   const [petForm, setPetForm] = useState({ nome: '', tipo: 'dogs', idade: '', sexo: '', porte: '', descricao: '' });
   const [petPhoto, setPetPhoto] = useState(null);
+  const [petPhotoAsset, setPetPhotoAsset] = useState(null);
+  const [isSavingPet, setIsSavingPet] = useState(false);
   const [isEditingPet, setIsEditingPet] = useState(false);
   const [currentChatId, setCurrentChatId] = useState(null);
   const [chatMessage, setChatMessage] = useState('');
@@ -93,6 +96,30 @@ export const NavegacaoPrincipal = () => {
   const optionalField = (value) => {
     const trimmed = typeof value === 'string' ? value.trim() : '';
     return trimmed || undefined;
+  };
+
+  const buildPetPhotoFormData = async (asset) => {
+    const formData = new FormData();
+    const fileName = asset.fileName || `pet-${Date.now()}.jpg`;
+    const mimeType = asset.mimeType || 'image/jpeg';
+
+    if (Platform.OS === 'web') {
+      if (asset.file) {
+        formData.append('photo', asset.file, fileName);
+      } else {
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+        formData.append('photo', blob, fileName);
+      }
+    } else {
+      formData.append('photo', {
+        uri: asset.uri,
+        name: fileName,
+        type: mimeType
+      });
+    }
+
+    return formData;
   };
 
   const getPetAgeYears = (pet) => {
@@ -528,6 +555,7 @@ export const NavegacaoPrincipal = () => {
   const goToAddPet = () => {
     setPetForm({ nome: '', tipo: 'dogs', idade: '', sexo: '', porte: '', descricao: '' });
     setPetPhoto(null);
+    setPetPhotoAsset(null);
     setIsEditingPet(false);
     setCurrentScreen('shelter-add-pet');
   };
@@ -546,9 +574,42 @@ export const NavegacaoPrincipal = () => {
         descricao: pet.description
       });
       setPetPhoto(pet.image);
+      setPetPhotoAsset(null);
       setIsEditingPet(true);
       setSelectedShelterPet(pet);
       setCurrentScreen('shelter-add-pet');
+    }
+  };
+
+  const selectPetPhoto = async () => {
+    try {
+      if (Platform.OS !== 'web') {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+          notify('Permissão necessária', 'Autorize o acesso à galeria para escolher a foto do pet.');
+          return;
+        }
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8
+      });
+
+      if (result.canceled || !result.assets?.length) return;
+
+      const asset = result.assets[0];
+      if (asset.fileSize && asset.fileSize > 5 * 1024 * 1024) {
+        notify('Foto muito grande', 'Escolha uma imagem de até 5 MB.');
+        return;
+      }
+
+      setPetPhoto(asset.uri);
+      setPetPhotoAsset(asset);
+    } catch (error) {
+      notify('Erro ao escolher foto', error.message);
     }
   };
 
@@ -584,6 +645,8 @@ export const NavegacaoPrincipal = () => {
   };
 
   const saveShelterPet = async () => {
+    if (isSavingPet) return;
+
     const { nome, tipo, idade, sexo, porte, descricao } = petForm;
     if (!nome || !tipo || !idade || !sexo || !porte || !descricao) {
       notify('Erro', 'Preencha todos os campos!');
@@ -601,22 +664,47 @@ export const NavegacaoPrincipal = () => {
         sex: sexo,
         ageMonths: Number(idade) * 12,
         size: porte,
-        description: descricao
+        description: descricao,
+        ...(isEditingPet ? { status: 'AVAILABLE' } : {})
     };
 
     try {
+      setIsSavingPet(true);
+      let result;
+
       if (isEditingPet && selectedShelterPet) {
-        await api.updatePet(authToken, selectedShelterPet.id, payload);
+        result = await api.updatePet(authToken, selectedShelterPet.id, payload);
       } else {
-        await api.createPet(authToken, payload);
+        result = await api.createPet(authToken, payload);
+      }
+
+      const savedPetId = result?.pet?.id || selectedShelterPet?.id;
+      let photoUploadError = null;
+
+      if (petPhotoAsset && savedPetId) {
+        try {
+          const formData = await buildPetPhotoFormData(petPhotoAsset);
+          await api.addPetPhoto(authToken, savedPetId, formData);
+        } catch (error) {
+          photoUploadError = error;
+        }
       }
 
       await loadShelterData();
       await loadAvailablePets({ silent: true });
-      notify('Sucesso', 'Pet salvo com sucesso!');
+      setPetPhotoAsset(null);
+
+      if (photoUploadError) {
+        notify('Pet salvo', `O pet foi salvo, mas a foto não foi enviada: ${photoUploadError.message}`);
+      } else {
+        notify('Sucesso', petPhotoAsset ? 'Pet e foto salvos com sucesso!' : 'Pet salvo com sucesso!');
+      }
+
       setCurrentScreen('shelter-manage-pets');
     } catch (error) {
       notify('Erro ao salvar pet', error.message);
+    } finally {
+      setIsSavingPet(false);
     }
   };
 
@@ -861,10 +949,9 @@ export const NavegacaoPrincipal = () => {
             petForm={petForm}
             petPhoto={petPhoto}
             onFormChange={(field, value) => setPetForm({...petForm, [field]: value})}
-            onPhotoChange={() => {
-              notify('Foto do pet', 'Seleção de foto ainda não está disponível.');
-            }}
+            onPhotoChange={selectPetPhoto}
             onSave={saveShelterPet}
+            isSaving={isSavingPet}
             onCancel={() => setCurrentScreen('shelter-manage-pets')}
             onVoltar={goBack}
           />
