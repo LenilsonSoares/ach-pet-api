@@ -25,10 +25,13 @@ PORT=80
 HOST=0.0.0.0
 NODE_ENV=production
 DATABASE_URL=postgres://prisma.PROJECT_REF:SENHA_DO_BANCO@REGION.pooler.supabase.com:5432/postgres
+SUPABASE_DATABASE_URL=postgres://prisma.PROJECT_REF:SENHA_DO_BANCO@REGION.pooler.supabase.com:5432/postgres
 JWT_SECRET=troque-por-uma-chave-grande-e-segura
 JWT_EXPIRES_IN=7d
 UPLOADS_DIR=uploads
 ```
+
+`SUPABASE_DATABASE_URL` e opcional, mas ajuda no deploy da Square: o script de start prefere uma URL do Supabase se alguma variavel antiga da Square ainda aparecer no ambiente.
 
 ## Variaveis de banco que devem sair
 
@@ -55,6 +58,8 @@ No PowerShell:
 ```powershell
 [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("postgres://prisma.PROJECT_REF:SENHA_DO_BANCO@REGION.pooler.supabase.com:5432/postgres"))
 ```
+
+Se configurar `SUPABASE_DATABASE_URL`, nao precisa de Base64.
 
 ## Variaveis opcionais para upload em nuvem
 
@@ -111,5 +116,6 @@ Se retornar timeout 408, confira no painel:
 - `PORT=80`
 - `HOST=0.0.0.0`
 - `DATABASE_URL` do Supabase correta
+- se o log insistir em mostrar `square-cloud-db`, configure tambem `SUPABASE_DATABASE_URL` com a mesma URL do Supabase
 - banco Supabase ativo
 - logs de inicializacao do app
