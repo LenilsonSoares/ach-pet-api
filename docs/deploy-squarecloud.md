@@ -77,13 +77,13 @@ Se nem `CLOUDINARY_URL` nem as tres variaveis separadas estiverem configuradas, 
 O arquivo `squarecloud.app` ja esta configurado para:
 
 ```ini
-START=npx prisma generate && npm run build && npm start
+START=npm ci --omit=dev --no-audit --no-fund && node scripts/write-prisma-cert.js && prisma generate && npm run build && npm start
 ```
 
 O `npm start` roda:
 
 ```bash
-npx prisma migrate deploy && node dist/server.js
+prisma migrate deploy && node dist/server.js
 ```
 
 Ou seja: quando a Square Cloud iniciar o app, as migrations do Prisma serao aplicadas automaticamente no banco configurado em `DATABASE_URL`.
