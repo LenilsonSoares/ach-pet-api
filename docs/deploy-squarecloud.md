@@ -1,12 +1,22 @@
-# Deploy Square Cloud
+# Deploy Square Cloud com banco Supabase
 
 ## O que falta criar fora do projeto
 
-Crie um banco PostgreSQL na Square Cloud.
+Crie um projeto no Supabase e use o Postgres dele como banco da API.
 
-Depois copie a connection string PostgreSQL e configure no painel da Square Cloud como `DATABASE_URL`.
+No Supabase, abra o painel do projeto, clique em **Connect** e copie a connection string do **Supavisor Session pooler**. Para deploy em servidor como Square Cloud, prefira a string de session pooler com porta `5432`.
 
-Para Prisma/PostgreSQL, inclua o nome do database na URL. Se voce nao criou um database especifico, use `squarecloud`.
+Formato esperado:
+
+```env
+DATABASE_URL=postgres://prisma.PROJECT_REF:SENHA_DO_BANCO@REGION.pooler.supabase.com:5432/postgres
+```
+
+Se voce usar o usuario `postgres` em vez de criar usuario proprio para Prisma, o formato costuma ser:
+
+```env
+DATABASE_URL=postgres://postgres.PROJECT_REF:SENHA_DO_BANCO@REGION.pooler.supabase.com:5432/postgres
+```
 
 ## Variaveis obrigatorias na Square Cloud
 
@@ -14,43 +24,37 @@ Para Prisma/PostgreSQL, inclua o nome do database na URL. Se voce nao criou um d
 PORT=80
 HOST=0.0.0.0
 NODE_ENV=production
-DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/squarecloud?schema=public
+DATABASE_URL=postgres://prisma.PROJECT_REF:SENHA_DO_BANCO@REGION.pooler.supabase.com:5432/postgres
 JWT_SECRET=troque-por-uma-chave-grande-e-segura
 JWT_EXPIRES_IN=7d
 UPLOADS_DIR=uploads
 ```
 
-## Certificado SSL/TLS do banco
+## Variaveis de banco que devem sair
 
-A Square Cloud pode exigir certificado para conexao PostgreSQL. No Prisma v6, baixe o `certificate.pem` no painel do banco, separe o certificado e a chave em `cert.pem` e `key.pem`, gere um `.p12` e coloque em `prisma/certs/client-identity.p12`.
+Se voce saiu do banco PostgreSQL da Square Cloud, remova ou deixe vazias estas variaveis antigas do painel:
 
-```bash
-openssl pkcs12 -export -out prisma/certs/client-identity.p12 -inkey prisma/certs/key.pem -in prisma/certs/cert.pem
+```text
+PGDATABASE
+PGHOST
+PGPASSWORD
+PGPORT
+PGSSLMODE
+PGUSER
+PRISMA_CLIENT_IDENTITY_P12_BASE64
 ```
 
-Depois ajuste a URL no painel da aplicacao:
+O Supabase normalmente nao precisa do certificado `.p12` usado pelo banco da Square.
 
-```env
-DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/squarecloud?schema=public&sslidentity=./certs/client-identity.p12&sslpassword=SENHA_DO_P12
-```
+## Base64 opcional
 
-Se a Square nao repassar `DATABASE_URL` para o Prisma, configure tambem `ACH_PET_DB_URL_BASE64` com a mesma URL convertida para Base64. O script de start cria um `.env` temporario antes de rodar `prisma generate` e `prisma migrate deploy`.
+Se a Square nao repassar `DATABASE_URL` para o Prisma, configure tambem `ACH_PET_DB_URL_BASE64` com a mesma URL do Supabase convertida para Base64. O script de start cria um `.env` temporario antes de rodar `prisma generate` e `prisma migrate deploy`.
 
 No PowerShell:
 
 ```powershell
-[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("postgresql://USER:PASSWORD@HOST:PORT/squarecloud?schema=public&sslidentity=./certs/client-identity.p12&sslpassword=SENHA_DO_P12"))
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("postgres://prisma.PROJECT_REF:SENHA_DO_BANCO@REGION.pooler.supabase.com:5432/postgres"))
 ```
-
-Se o deploy for pelo GitHub, nao envie o `.p12` no repositorio. Converta o arquivo para Base64 e configure o conteudo em `PRISMA_CLIENT_IDENTITY_P12_BASE64` nas variaveis da aplicacao. O `START` executa `scripts/write-prisma-cert.js` e recria o arquivo antes do Prisma rodar.
-
-No PowerShell:
-
-```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("prisma/certs/client-identity.p12"))
-```
-
-Arquivos dentro de `prisma/certs/` ficam ignorados pelo Git porque podem conter segredo.
 
 ## Variaveis opcionais para upload em nuvem
 
@@ -77,7 +81,7 @@ Se nem `CLOUDINARY_URL` nem as tres variaveis separadas estiverem configuradas, 
 O arquivo `squarecloud.app` ja esta configurado para:
 
 ```ini
-START=npm ci --omit=dev --no-audit --no-fund && node scripts/write-prisma-cert.js && prisma generate && npm run build && npm start
+START=npm ci --omit=dev --no-audit --no-fund && node scripts/write-prisma-cert.js && npm run prisma:generate && npm run build && npm start
 ```
 
 O `npm start` roda:
@@ -106,6 +110,6 @@ Se retornar timeout 408, confira no painel:
 
 - `PORT=80`
 - `HOST=0.0.0.0`
-- `DATABASE_URL` correta
-- banco PostgreSQL ativo e acessivel externamente
+- `DATABASE_URL` do Supabase correta
+- banco Supabase ativo
 - logs de inicializacao do app
